@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+if __name__ == "__main__":
+    sys.path.append(os.path.join(os.path.join(os.getcwd(), os.path.dirname(__file__)), '..'))
+    from i2fhirb2.generate_i2b2 import generate_i2b2
+    generate_i2b2(sys.argv[1:])
