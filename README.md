@@ -79,6 +79,13 @@ This package uses Python 3 and has been tested with Python 3.6.1
    * Non-required FHIR coded elements are both underspecified and too numerous to be represented as enums OR discrete codes (?). Choices include:
        * Update the ontology as data is entered - only include *actual* codes in the information
        * Connect up to a terminology server (!)
+       
+### dimensions
+The project currently assumes that all information appears in the `observation_fact` table.  This obviously isn't the case as:
+* Patient / provider / visit information either maps to or extends the i2b2 dimension tables
+* Resources such as 'Device', 'Medication', etc. currently have no place in i2b2 at all.
+
+
 
 ## Issues
 ### Representational Issues

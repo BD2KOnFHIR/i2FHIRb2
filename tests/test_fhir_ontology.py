@@ -29,7 +29,7 @@ import os
 import unittest
 from datetime import datetime
 
-from i2fhirb2.fhirontology import FHIROntology
+from i2fhirb2.fhir.fhirontology import FHIROntology
 
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot
@@ -37,7 +37,7 @@ from i2fhirb2.i2b2model.i2b2ontology import OntologyRoot
 from tests.base_test_case import BaseTestCase, shared_graph
 
 # True means create the output file -- false means test it
-create_output_files = True
+create_output_files = False
 
 
 class W5OntologyTestCase(BaseTestCase):
