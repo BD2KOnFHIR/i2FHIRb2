@@ -40,7 +40,7 @@ from tests.base_test_case import BaseTestCase, shared_graph
 create_output_files = False
 
 
-class W5OntologyTestCase(BaseTestCase):
+class FHIROntologyTestCase(BaseTestCase):
 
     @staticmethod
     def esc_output(txt: str) -> str:
@@ -48,7 +48,7 @@ class W5OntologyTestCase(BaseTestCase):
 
     def tst_output(self, o: FHIROntology, outfname: str):
         o += shared_graph
-        v = o.dimension_list(FHIR.Observation)
+        v = o.dimension_list()
         if create_output_files:
             with open(outfname, 'w') as outf:
                 outf.write(o.tsv_header() + '\n')
@@ -62,7 +62,7 @@ class W5OntologyTestCase(BaseTestCase):
             self.assertEqual(outf.read(), "")
         self.assertEqual(False, create_output_files, "Test fails if generating the output file")
 
-    def test_w5_concept_dimension(self):
+    def test_concept_dimension(self):
         from i2fhirb2.fhir.fhirontology import FHIRConceptDimension
         from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension
         ConceptDimension._clear()
@@ -72,20 +72,19 @@ class W5OntologyTestCase(BaseTestCase):
         ConceptDimensionRoot.update_date = datetime(2017, 5, 25, 13, 0)
 
         self.tst_output(FHIRConceptDimension(),
-                        os.path.join(shared_graph.dirname, 'data_out', 'w5_concept_dimension.tsv'))
+                        os.path.join(shared_graph.dirname, 'data_out', 'fhir_concept_dimension.tsv'))
 
-    def test_w5_modifier_dimension(self):
+    def test_modifier_dimension(self):
         from i2fhirb2.fhir.fhirontology import FHIRModifierDimension
         from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
         ModifierDimension._clear()
         ModifierDimension.sourcesystem_cd = "FHIR STU3"
-        ModifierDimension.update_date = ModifierDimension.import_date = ModifierDimension.download_date =\
-            datetime(2017, 5, 25, 13, 0)
+        ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
 
         self.tst_output(FHIRModifierDimension(),
-                        os.path.join(shared_graph.dirname, 'data_out', 'w5_modifier_dimension.tsv'))
+                        os.path.join(shared_graph.dirname, 'data_out', 'fhir_modifier_dimension.tsv'))
 
-    def test_w5_ontology(self):
+    def test_ontology(self):
         from i2fhirb2.fhir.fhirontology import FHIROntologyTable
         from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry
         from i2fhirb2.i2b2model import metadata_xml
@@ -97,7 +96,7 @@ class W5OntologyTestCase(BaseTestCase):
         OntologyRoot.update_date = datetime(2017, 5, 25, 13, 0)
 
         self.tst_output(FHIROntologyTable(),
-                        os.path.join(shared_graph.dirname, 'data_out', 'w5_ontology.tsv'))
+                        os.path.join(shared_graph.dirname, 'data_out', 'fhir_ontology.tsv'))
 
 if __name__ == '__main__':
     unittest.main()

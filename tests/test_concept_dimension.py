@@ -32,7 +32,6 @@ from datetime import datetime
 from rdflib import Namespace
 
 from i2fhirb2.fhir.fhirspecific import W5, FHIR
-from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot
 from tests.base_test_case import BaseTestCase, shared_graph
 
 
@@ -90,6 +89,9 @@ class ConceptDimensionTestCase(BaseTestCase):
                          'download_date\timport_date\tsourcesystem_cd\tupload_id', ConceptDimension._header())
 
     def test_fhir_conceptdimensionroot(self):
+        from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot, ConceptDimension
+        ConceptDimensionRoot._clear()
+        ConceptDimension._clear()
         cdr = ConceptDimensionRoot('FHIR')
         ConceptDimensionRoot.update_date = datetime(2017, 5, 25)
         self.assertEqual(OrderedDict([

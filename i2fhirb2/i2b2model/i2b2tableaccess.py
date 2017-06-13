@@ -34,7 +34,7 @@ from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements
 
 class TableAccess(DynObject):
     _t = DynElements(DynObject)
-    _visualattributes = VisualAttributes("FA")
+    _visualattributes = VisualAttributes("CA")
     _query = ConceptQuery("\\FHIR\\")
 
     @DynObject.entry(_t)

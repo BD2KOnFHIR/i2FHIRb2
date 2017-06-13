@@ -25,9 +25,9 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+from rdflib import OWL
 
 from i2fhirb2.i2b2model.commondimension import CommonDimension
-from i2fhirb2.i2b2model.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements
 
 
@@ -50,12 +50,18 @@ class ConceptDimension(CommonDimension):
     def concept_blob(self) -> str:
         return self.blob()
 
+    def __lt__(self, other):
+        return self.concept_path < other.concept_path
 
-class ConceptDimensionRoot(I2B2_Core_With_Upload_Id):
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+    def __eq__(self, other):
+        return self.concept_path == other.concept_path
+
+
+class ConceptDimensionRoot(ConceptDimension):
+    _t = DynElements(ConceptDimension)
 
     def __init__(self, base: str, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(OWL.Class, **kwargs)
         self._base = base
 
     @DynObject.entry(_t)

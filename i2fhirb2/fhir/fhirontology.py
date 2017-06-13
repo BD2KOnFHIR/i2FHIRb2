@@ -28,11 +28,20 @@
 from typing import List, Set, Optional, cast
 
 from rdflib import Graph, RDFS, RDF, OWL, URIRef
+from rdflib.namespace import split_uri
 
-from i2fhirb2.fhir.fhirspecific import FHIR, i2b2_paths, concept_path, skip_w5_categories, is_w5_path, is_w5_uri
+from i2fhirb2.fhir.fhirspecific import FHIR, i2b2_paths, w5_infrastructure_category, is_w5_path, is_w5_uri, \
+    concept_code, recursive_fhir_types, skip_fhir_predicates
 from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension, ConceptDimensionRoot
 from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, ConceptOntologyEntry, ModifierOntologyEntry, OntologyRoot
+
+
+class ModifierPath:
+    def __init__(self, predicate: URIRef, depth: int, typ: URIRef):
+        self.predicate = predicate
+        self.depth = depth
+        self.type = typ
 
 
 class FHIROntology(Graph):
@@ -59,7 +68,7 @@ class FHIROntology(Graph):
         Return the uris for the w5 (classification) classes. This becomes the i2b2 navigational concepts
         """
         return {subj for subj in self.subjects(RDF.type, OWL.Class)
-                if isinstance(subj, URIRef) and is_w5_uri(subj) and subj not in skip_w5_categories}
+                if isinstance(subj, URIRef) and is_w5_uri(subj) and not w5_infrastructure_category(self, subj)}
 
     def fhir_resource_concepts(self) -> Set[URIRef]:
         """
@@ -69,7 +78,7 @@ class FHIROntology(Graph):
         rval = set()
         for c in self.transitive_subjects(RDFS.subClassOf, FHIR.DomainResource):
             if isinstance(c, URIRef):
-                if not set(self.transitive_objects(c, RDFS.subClassOf)).intersection(skip_w5_categories):
+                if not w5_infrastructure_category(self, c):
                     rval.add(c)
         return rval
 
@@ -102,6 +111,67 @@ class FHIROntology(Graph):
         """ Abstract class to return i2b2 dimension entries"""
         return []
 
+    def is_primitive(self, obj) -> bool:
+        return self.value(obj, RDFS.subClassOf, None) is None or obj in {FHIR.Reference}
+
+    def skipped_v5_domain(self, pred: URIRef) -> bool:
+        """
+        Return true if the domain of pred falls in a skipped domain
+        :param pred: p
+        :return:
+        """
+        for dom in self.objects(pred, RDFS.domain):
+            if w5_infrastructure_category(self, dom):
+                return True
+        return False
+
+    def value_property(self, prop) -> Optional[URIRef]:
+        """
+        Determine whether prop is one of the [x]'s in value[x]
+        :param prop: predicate to test
+        :return: base value property if it is an '[x]' type
+        """
+        super_prop = self.value(prop, RDFS.subPropertyOf)
+        # TODO: We need to upgrade the ontology to provide a semantic way to do this
+        return super_prop if super_prop and str(super_prop).endswith(".value") else None
+
+    def generate_modifier_path(self, prop: URIRef, range_type: URIRef, depth: int=1,
+                               seen: Optional[List[URIRef]]=None) -> List[ModifierPath]:
+        """
+        Generate a list of URI's that represent the transitive clousure of prop's predicates
+        :param prop: URI if root property
+        :param range_type: URI of a range or prop
+        :param depth: Nesting depth
+        :param seen: list of things we've looked at. Recursion prevention
+        :return: list of all URI's included in prop
+        """
+        rval = []               # type: List[ModifierPath]
+        if seen is None:
+            seen = []
+        seen.append(range_type)
+        for pred in self.subjects(RDFS.domain, range_type):
+            if pred not in skip_fhir_predicates:
+                # Take the concept code of the range, remove the first element before the '.'
+                # Sometimes the last part of the property matches the first part of the range
+                # (e.g. Observation.component.referenceRange + Observation.referenceRange.type)  When this occurs,
+                # remove the redundant element
+                prop_base, prop_code = split_uri(prop)
+                range_code = split_uri(pred)[1].split('.', 1)[1]
+                last_element_in_prop_code = prop_code.rsplit('.', 1)[1] if '.' in prop_code else None
+                first_element_in_range_code, rest_of_range = range_code.split('.', 1) \
+                    if '.' in range_code else (None, range_code)
+                if first_element_in_range_code == last_element_in_prop_code:
+                    range_code = rest_of_range
+                extended_prop = URIRef(prop_base + prop_code + '.' + range_code)
+                for rng in self.objects(pred, RDFS.range):
+                    rval.append(ModifierPath(extended_prop, depth, rng))
+                    # TODO: Is this a bug in the interpreter?
+                    if rng not in seen:
+                        if not self.is_primitive(rng):
+                            rval += self.generate_modifier_path(extended_prop, rng, depth+1, seen)
+        assert(seen.pop()==range_type)
+        return rval
+
     @staticmethod
     def tsv_header() -> str:
         """ Abstract class to return i2b2 dimension tsv header"""
@@ -113,7 +183,7 @@ class FHIRConceptDimension(FHIROntology):
     def dimension_list(self, subject: Optional[URIRef]=None) -> List[ConceptDimension]:
         return [cast(ConceptDimension, ConceptDimensionRoot('FHIR'))] + \
                [ConceptDimension(subj, self._name_base)
-                for subj in self.w5_concepts().union(self.fhir_concepts(subject))]
+                for subj in self.fhir_concepts(subject)]
 
     @staticmethod
     def tsv_header() -> str:
@@ -122,12 +192,42 @@ class FHIRConceptDimension(FHIROntology):
 
 class FHIRModifierDimension(FHIROntology):
     """ A list of all FHIR predicates. """
-    def dimension_list(self, _: Optional[URIRef]=None) -> List[ModifierDimension]:
+
+    def dimension_list(self, _: Optional[URIRef]=None, domain: Optional[URIRef]=None) -> List[ModifierDimension]:
+        """
+        Return the complete set of modifiers in the ontology
+        :param _: subject - used for testing and ignored here
+        :param domain: restrict to properties in this domain (e.g. FHIR.CodeableConcept)
+        :return: list of modifiers
+        """
         # TODO: Include references as modifiers (e.g. \FHIR\Patient\managingOrganization\
-        # subject is ignored -- too hard to determine dependences for a modifier
+        rval = []               # type: List[ModifierDimension]
+        value_added = False     # If we're in the value[x] space, add one element, 'value'
         conc_dimension = self.fhir_concepts()
-        return [ModifierDimension(subj, self._name_base) for subj in self.subjects(RDF.type, OWL.ObjectProperty)
-                if subj not in conc_dimension]
+        properties = self.subjects(RDFS.domain, domain) if domain else self.subjects(RDF.type, OWL.ObjectProperty)
+        for prop in properties:
+            if prop not in conc_dimension and not self.skipped_v5_domain(prop):
+                vp = self.value_property(prop)
+                if vp:
+                    if not value_added:
+                        rval.append(ModifierDimension(vp, self._name_base))
+                        value_added = True
+                else:
+                    rval.append(ModifierDimension(prop, self._name_base))
+                    for range_ in self.objects(prop, RDFS.range):
+                        if not self.is_primitive(range_) and \
+                                        range_ not in recursive_fhir_types:
+                            rval += self.extend_modifier_path(prop, range_)
+        return rval
+
+    def extend_modifier_path(self, prop: URIRef, range_type: URIRef) -> List[ModifierDimension]:
+        """
+        Synthesize a URI for embedded paths (e.g. CodeableConcept.coding.[Coding].system)
+        :param prop: Base URI
+        :param range_type: URI of range
+        :return:
+        """
+        return [ModifierDimension(p.predicate, self._name_base) for p in self.generate_modifier_path(prop, range_type)]
 
     @staticmethod
     def tsv_header() -> str:
@@ -137,9 +237,6 @@ class FHIRModifierDimension(FHIROntology):
 class FHIROntologyTable(FHIROntology):
     """  The set of i2b2 ontology table entries for the supplied subject or all root concepts
     """
-
-    def is_primitive(self, obj) -> bool:
-        return not self.value(obj, RDFS.subClassOf, None) or obj in {FHIR.Reference}
 
     def dimension_list(self, subject: Optional[URIRef]=None) -> List[OntologyEntry]:
         """
@@ -151,65 +248,56 @@ class FHIROntologyTable(FHIROntology):
 
         for subj in self.w5_concepts():
             for path in i2b2_paths(self._name_base, self, subj, RDFS.subClassOf):
-                rval.append(ConceptOntologyEntry(subj, path, path, False))
+                rval.append(ConceptOntologyEntry(subj, path, path, False, False))
 
         for subj in self.fhir_concepts(subject):
             for path in i2b2_paths(self._name_base, self, subj, RDFS.subClassOf, is_w5_path):
-                rval.append(ConceptOntologyEntry(subj, path, path, False))
+                print("-->{}<--".format(subj))
+                if '.' not in split_uri(subj)[1]:
+                    print("!!!!!!")
+                    rval.append(ConceptOntologyEntry(subj, path, path, False))
                 # Add an entry for each property of the subject
                 for prop in self.concept_properties(subj):
                     for obj in self.objects(prop, RDFS.range):
                         if self.is_primitive(obj):
-                            # Primitive type -- enter as a modifier and continue
-                            entry = ModifierOntologyEntry(1,
-                                                          subj,
-                                                          prop,
-                                                          path + concept_path(subj),
-                                                          self._name_base,
-                                                          True,
-                                                          obj)
+                            # Primitive type -- Can be accessed with a single code
+                            entry = ConceptOntologyEntry(prop,
+                                                         path,
+                                                         self._name_base,
+                                                         True,
+                                                         True,
+                                                         obj)
                         else:
                             # Nested type -- first level becomes a concept, the remainder will be classes
                             entry = ConceptOntologyEntry(prop,
                                                          path,
                                                          self._name_base,
-                                                         False)
+                                                         False,
+                                                         '.' in concept_code(prop))
                             rval += self.modifiers(subj, prop, entry.c_fullname, self._name_base)
                         rval.append(entry)
 
         return rval
 
-    def modifiers(self,
-                  subj: URIRef,
-                  prop: URIRef,
-                  full_concept_path: str,
-                  modifier_base_path: str,
-                  depth: int=1,
-                  nested: bool=False) -> List[ModifierOntologyEntry]:
+    def modifiers(self, subj: URIRef, prop: URIRef, full_concept_path: str, modifier_base_path: str,
+                  depth: int=1) -> List[ModifierOntologyEntry]:
         rval = []
-        for obj in self.objects(prop, RDFS.range):
-
-            # Primitives and primitive-like objects
-            if self.is_primitive(obj):
-                rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True, obj))
-
-            # Recursion checkpoint - shouldn't happen - filter with the obj not in below
-            elif depth > 7:
-                raise Exception("Recursion error")
-
-            # Non-primitive - extend the path to all of the leaf nodes.
-            elif obj not in {FHIR.TermComponent, FHIR.Extension, FHIR.Meta}:
-                if nested:
-                    rval.append(ModifierOntologyEntry(depth, obj, prop, full_concept_path, modifier_base_path, False))
-                for obj_prop in self.concept_properties(obj):
-                    rval += self.modifiers(obj,
-                                           obj_prop,
-                                           full_concept_path,
-                                           modifier_base_path,
-                                           (depth+1) if nested else depth, True)
+        value_added = False
+        for range_obj in self.objects(prop, RDFS.range):
+            vp = self.value_property(prop)
+            if vp:
+                if not value_added:
+                    rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
+                                                      vp))
+                    value_added = True
+            elif self.is_primitive(range_obj):
+                rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
+                                                  range_obj))
             else:
-                pass            # debug point
-
+                recursive_modifiers = self.generate_modifier_path(prop, range_obj)
+                for rm in recursive_modifiers:
+                    rval.append(ModifierOntologyEntry(rm.depth, subj, rm.predicate, full_concept_path,
+                                                      modifier_base_path, self.is_primitive(rm.type), rm.type))
         return rval
 
     @staticmethod

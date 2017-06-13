@@ -39,8 +39,9 @@ This package uses Python 3 and has been tested with Python 3.6.1
     ```
 2) Install dependencies, etc. In the root project directory (i2FHIRb2):
     ```bash
-   (venv) > pip setup.py -e .
+   (venv) > pip install -e .
    ```
+   (Don't miss the '.' in the above command)
 3) Validate the installation
     ```bash
     (venv) > generate_i2b2 -h
@@ -60,7 +61,7 @@ This package uses Python 3 and has been tested with Python 3.6.1
                             Name of specific resource to emit (e.g. Observation) -
                             default is all
       -s SOURCESYSTEM, --sourcesystem SOURCESYSTEM
-                            sourcesystem code. Default: 'FFHIR STU3'
+                            sourcesystem code. Default: 'FHIR STU3'
       -b BASE, --base BASE  Concept dimension and ontology base path.
                             Default:\FHIR\ 
    ```

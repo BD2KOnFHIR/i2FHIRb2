@@ -30,7 +30,6 @@ import datetime
 import unittest
 from collections import OrderedDict
 
-from i2fhirb2.i2b2model.i2b2ontology import OntologyRoot
 from tests.base_test_case import shared_graph
 
 
@@ -166,7 +165,9 @@ class OntologyTestCase(unittest.TestCase):
              ('c_symbol', None)]), o._freeze())
 
     def test_ontology_root(self):
+        from i2fhirb2.i2b2model.i2b2ontology import OntologyRoot, OntologyEntry
         OntologyRoot._clear()
+        OntologyEntry._clear()
         o = OntologyRoot("FHIR")
         OntologyRoot.update_date = datetime.datetime(2017, 5, 25, 13, 0)
         self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR\t\tconcept_cd\tconcept_dimension\t'

@@ -50,9 +50,15 @@ class ModifierDimension(CommonDimension):
     def modifier_blob(self) -> str:
         return self.blob()
 
+    def __lt__(self, other):
+        return self.modifier_path < other.modifier_path
 
-class ModifierDimensionRoot(I2B2_Core_With_Upload_Id):
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+    def __eq__(self, other):
+        return self.modifier_path == other.modifier_path
+
+
+class ModifierDimensionRoot(ModifierDimension):
+    _t = DynElements(ModifierDimension)
 
     def __init__(self, base: str, **kwargs):
         super().__init__(**kwargs)

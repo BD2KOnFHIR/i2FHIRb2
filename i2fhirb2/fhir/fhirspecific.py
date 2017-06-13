@@ -97,12 +97,27 @@ def modifier_name(g: Graph, modifier: URIRef) -> str:
     default_name = split_uri(modifier)[1]
     full_name = str(g.label(modifier, default_name))
     if '.' in full_name:
-        full_name = default_name.split('.', 1)[1]        # Remove first name setment
+        full_name = default_name.split('.', 1)[1]        # Remove first name segment
     return full_name.replace('.', ' ')
 
 
 # List of W5 categores that should not be included in the output
-skip_w5_categories = {W5.conformance, W5.infrastructure, W5.general}
+w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
+recursive_fhir_types = {FHIR.TermComponent, FHIR.Extension, FHIR.Meta, FHIR.QuestionnaireItemComponent,
+                        FHIR.Quantity, FHIR.SimpleQuantity, FHIR.QuestionnaireResponseItemComponent,
+                        FHIR.SectionComponent, FHIR.GraphDefinitionLinkComponent, FHIR.GraphDefinitionLinkTargetComponent}
+skip_fhir_predicates = {FHIR['index'], FHIR.nodeRole, FHIR['id']}
+
+
+def w5_infrastructure_category(g: Graph, subj: URIRef) -> bool:
+    """
+    Determine whether subj belongs to a w5 infrastructure category
+    :param g: Graph for transitive parent traversal
+    :param subj: FHIR Element
+    :return:
+    """
+    return bool(set(g.transitive_objects(subj, RDFS.subClassOf)).intersection(w5_infrastructure_categories))
+
 
 def is_w5_uri(uri: URIRef) -> bool:
     return split_uri(uri)[0] == str(W5)
@@ -119,10 +134,10 @@ def is_w5_path(path: List[URIRef]) -> bool:
     if len(path) > 1:
         if split_uri(path[0])[0] != str(W5):
             return False
-    if bool(set(path).intersection(skip_w5_categories)):
-        print("Reject {}".format('.'.join(split_uri(e)[1] for e in path)))
+    if bool(set(path).intersection(w5_infrastructure_categories)):
+        print("Skipping {}".format('.'.join(split_uri(e)[1] for e in path)))
         return False
-    return not bool(set(path).intersection(skip_w5_categories))
+    return not bool(set(path).intersection(w5_infrastructure_categories))
 
 
 def full_paths(g: Graph, subject: URIRef, predicate: URIRef) -> List[List[URIRef]]:
