@@ -45,19 +45,19 @@ class I2B2_Core(DynObject):
         self._import_date = import_date
 
     @DynObject.entry(_t)
-    def update_date(self):
+    def update_date(self) -> datetime:
         return self._resolve(self._update_date) if self._update_date is not None else datetime.now()
 
     @DynObject.entry(_t)
-    def download_date(self):
+    def download_date(self) -> datetime:
         return self._resolve(self._download_date) if self._download_date is not None else self.update_date
 
     @DynObject.entry(_t)
-    def import_date(self):
+    def import_date(self) -> datetime:
         return self._resolve(self._import_date) if self._import_date is not None else self.update_date
 
     @DynObject.entry(_t)
-    def sourcesystem_cd(self):
+    def sourcesystem_cd(self) -> str:
         return self._resolve(self._sourcesystem_cd) if self._sourcesystem_cd is not None else "Unspecified"
 
 

@@ -31,7 +31,7 @@ from rdflib import Graph, RDFS, RDF, OWL, URIRef
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirspecific import FHIR, i2b2_paths, w5_infrastructure_category, is_w5_path, is_w5_uri, \
-    concept_code, recursive_fhir_types, skip_fhir_predicates
+    concept_code, recursive_fhir_types, skip_fhir_predicates, composite_modifier
 from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension, ConceptDimensionRoot
 from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, ConceptOntologyEntry, ModifierOntologyEntry, OntologyRoot
@@ -104,8 +104,9 @@ class FHIROntology(Graph):
         :param subj: subject class
         :return: list of associated properties property predicates
         """
-        return {s for s in self.subjects(RDFS.domain, subj)
-                if not any(e for e in self.objects(s, RDFS.subPropertyOf) if not is_w5_uri(e))}
+        # TODO: Temporary fix for putting together the poster
+        return {s for s in self.subjects(RDFS.domain, subj)}
+                # if not any(e for e in self.objects(s, RDFS.subPropertyOf) if not is_w5_uri(e))}
 
     def dimension_list(self, subj: Optional[URIRef]=None) -> List[OntologyEntry]:
         """ Abstract class to return i2b2 dimension entries"""
@@ -131,6 +132,8 @@ class FHIROntology(Graph):
         :param prop: predicate to test
         :return: base value property if it is an '[x]' type
         """
+        # TODO: Make this work correctly
+        return None
         super_prop = self.value(prop, RDFS.subPropertyOf)
         # TODO: We need to upgrade the ontology to provide a semantic way to do this
         return super_prop if super_prop and str(super_prop).endswith(".value") else None
@@ -138,7 +141,7 @@ class FHIROntology(Graph):
     def generate_modifier_path(self, prop: URIRef, range_type: URIRef, depth: int=1,
                                seen: Optional[List[URIRef]]=None) -> List[ModifierPath]:
         """
-        Generate a list of URI's that represent the transitive clousure of prop's predicates
+        Generate a list of URI's that represent the transitive closure of prop's predicates
         :param prop: URI if root property
         :param range_type: URI of a range or prop
         :param depth: Nesting depth
@@ -155,14 +158,7 @@ class FHIROntology(Graph):
                 # Sometimes the last part of the property matches the first part of the range
                 # (e.g. Observation.component.referenceRange + Observation.referenceRange.type)  When this occurs,
                 # remove the redundant element
-                prop_base, prop_code = split_uri(prop)
-                range_code = split_uri(pred)[1].split('.', 1)[1]
-                last_element_in_prop_code = prop_code.rsplit('.', 1)[1] if '.' in prop_code else None
-                first_element_in_range_code, rest_of_range = range_code.split('.', 1) \
-                    if '.' in range_code else (None, range_code)
-                if first_element_in_range_code == last_element_in_prop_code:
-                    range_code = rest_of_range
-                extended_prop = URIRef(prop_base + prop_code + '.' + range_code)
+                extended_prop = composite_modifier(prop, pred)
                 for rng in self.objects(pred, RDFS.range):
                     rval.append(ModifierPath(extended_prop, depth, rng))
                     # TODO: Is this a bug in the interpreter?
@@ -252,9 +248,8 @@ class FHIROntologyTable(FHIROntology):
 
         for subj in self.fhir_concepts(subject):
             for path in i2b2_paths(self._name_base, self, subj, RDFS.subClassOf, is_w5_path):
-                print("-->{}<--".format(subj))
                 if '.' not in split_uri(subj)[1]:
-                    print("!!!!!!")
+                    # TODO: find a semantic way to resolve this -- lexical parsing is brittle
                     rval.append(ConceptOntologyEntry(subj, path, path, False))
                 # Add an entry for each property of the subject
                 for prop in self.concept_properties(subj):

@@ -160,3 +160,14 @@ def i2b2_paths(base: str, g: Graph, subject: URIRef, predicate: URIRef,
         if not filtr or filtr(path):
             rval.append(base + (''.join(concept_path(e) for e in path[:-1])))
     return rval
+
+
+def composite_modifier(parent: URIRef, mod: URIRef) -> URIRef:
+    parent_base, parent_code = split_uri(parent)
+    mod_code = split_uri(mod)[1].split('.', 1)[1]
+    last_element_in_parent_code = parent_code.rsplit('.', 1)[1] if '.' in parent_code else None
+    first_element_in_mod_code, rest_of_mod = mod_code.split('.', 1) \
+        if '.' in mod_code else (None, mod_code)
+    if first_element_in_mod_code == last_element_in_parent_code:
+        mod_code = rest_of_mod
+    return URIRef(parent_base + parent_code + '.' + mod_code)
