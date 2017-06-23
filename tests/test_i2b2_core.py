@@ -65,12 +65,12 @@ class I2B2CoreTestCase(BaseTestCase):
         self.assertEqual('update_date\tdownload_date\timport_date\tsourcesystem_cd\tupload_id', rtn._header())
         rtn = I2B2_Core()
         with self.assertRaises(AttributeError):
-            x = rtn.upload_id
+            _ = rtn.upload_id
 
     def test_settings(self):
         I2B2_Core._clear()
         rtn = I2B2_Core(sourcesystem_cd="abcd",
-                        update_date=datetime(2014,7,31),
+                        update_date=datetime(2014, 7, 31),
                         download_date=datetime.now)
         rtnf = rtn._freeze()
         self.assertEqual(str(rtnf['update_date']), '2014-07-31 00:00:00')

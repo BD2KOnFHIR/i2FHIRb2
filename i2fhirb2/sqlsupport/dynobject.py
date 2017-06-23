@@ -26,21 +26,21 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from collections import OrderedDict
-from typing import Any, Dict, Tuple, Callable, Union, List, Optional
+from typing import Any, Dict, Tuple, Callable, Union, List
 
 DynamicPropType = Union[type(classmethod), type(staticmethod), Callable[[object], object], object]
 
 
 class DynElements:
     """
-    Represents a set of 'distinguished' static class attributes
+    An map from an element name either a function that returns an object or an object itself.
     :param parent: parent DynObject
     """
     _delimiter = '\t'
 
     def __init__(self, parent=None):
-        self.elements = OrderedDict()               # type: OrderedDict[Optional[str], Tuple(bool, Any)]
-        self.override_elements = OrderedDict()      # type: OrderedDict[str, Tuple(bool, Any)]
+        self.elements = OrderedDict()               # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
+        self.override_elements = OrderedDict()      # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
         self.parent_dynelements = parent._t if parent else None
 
     def add(self, c: DynamicPropType) -> DynamicPropType:
@@ -223,7 +223,7 @@ class DynObject(metaclass=DynObjectMetaClass):
 
     @classmethod
     def _escape(cls, txt: str) -> str:
-        return str.replace(cls._t._delimiter, '\\' + cls._t._delimiter)
+        return txt.replace(cls._t._delimiter, '\\' + cls._t._delimiter)
 
     def __str__(self):
         return "DynObject({})".format(', '.join(["{}:'{}'".format(k, getattr(self, k)) for k in self._t.keys()]))

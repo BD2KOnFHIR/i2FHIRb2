@@ -26,19 +26,19 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from rdflib import URIRef, Graph, BNode, RDF, XSD
 from rdflib.term import Node, Literal
 
-from i2fhirb2.fhir.fhirspecific import concept_code, FHIR, composite_modifier
-from i2fhirb2.i2b2model.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, valuetype_text, \
-    valuetype_date, valuetype_number, valuetype_novalue
+from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
+from i2fhirb2.fhir.fhirspecific import concept_code, FHIR
+from i2fhirb2.i2b2model.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
+    valuetype_text, valuetype_date, valuetype_number
 from i2fhirb2.sqlsupport.dynobject import DynElements
 
 
 def literal_val(val: Literal) -> str:
-    # TODO: Escape line feeds, tabs and the like
     return '"{}"'.format(str(val).replace('\n', '\\n').replace(r'\t', '\\t'))
 
 
@@ -51,7 +51,7 @@ def date_val(val: Literal) -> datetime:
 
 
 def datetime_val(val: Literal) -> datetime:
-    return datetime.strptime(val.value,'%Y-%m-%dT%H:%M:%SZ')
+    return datetime.strptime(val.value, '%Y-%m-%dT%H:%M:%SZ')
 
 
 def decimal_val(val: Literal) -> float:
@@ -69,7 +69,7 @@ def gYearMonth_val(val: Literal) -> datetime:
 def time_val(val: Literal) -> datetime:
     return datetime.strptime(val.value, '%H:%M:%S')
 
-
+# Conversion table from XSD data type to corresponding i2b2 field
 literal_conversions = {
     XSD.base64Binary: (literal_val, valuetype_blob),
     XSD.boolean: (boolean_val, valuetype_text),
@@ -87,20 +87,25 @@ literal_conversions = {
 class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
 
-    def __init__(self, g: Graph, ofk: ObservationFactKey, subject: URIRef, predicate: URIRef, object: Node):
+    def __init__(self, g: Graph, ofk: ObservationFactKey, predicate: URIRef, object: Node):
         """
-        Construct an o
-        :param g:
-        :param ofk:
-        :param subject:
-        :param predicate:
-        :param object:
+        Construct an observation fact entry
+        :param g: Graph containing information about the object
+        :param ofk: Observation fact key - patient, encounter, etc
+        :param predicate: predicate of concept_code
+        :param object: object of concept_code
         """
         super().__init__(ofk, concept_code(predicate))
         self.fhir_primitive(g, object)
 
     @staticmethod
-    def is_primitive(g: Graph, obj:Optional[Node]) -> bool:
+    def is_primitive(g: Graph, obj: Optional[Node]) -> bool:
+        """
+        Determine whether obj is a primitive or composite object
+        :param g: Graph context for testing
+        :param obj: object to test
+        :return:
+        """
         if obj is None or not isinstance(obj, BNode):
             return False
         obj_val = g.value(obj, FHIR.value)
@@ -121,7 +126,7 @@ class FHIRObservationFact(ObservationFact):
                 dt = f(val)
                 self._tval_char = dt.strftime('%Y-%m-%d %H:%M')
                 self._nval_num = (dt.year * 10000) + (dt.month * 100) + dt.day + \
-                                 ( ((dt.hour / 100.0) + (dt.minute / 10000.0)) if isinstance(dt, datetime) else 0)
+                                 (((dt.hour / 100.0) + (dt.minute / 10000.0)) if isinstance(dt, datetime) else 0)
             else:
                 self._tval_char = f(val)
             self._valtype_cd = t.code
@@ -143,22 +148,25 @@ class FHIRObservationFactFactory:
 
     def generate_facts(self, subject: URIRef) -> List[FHIRObservationFact]:
         rval = []               # type: List[FHIRObservationFact]
+
+        # Concept codes
         for conc, obj in self.g.predicate_objects(subject):
             if conc not in self.special_processing_list:
                 if FHIRObservationFact.is_primitive(self.g, obj):
-                    rval.append(FHIRObservationFact(self.g, self.ofk, subject, conc, obj))
+                    rval.append(FHIRObservationFact(self.g, self.ofk, conc, obj))
                 else:
-                    for mod, modobj in self.g.predicate_objects(obj):
-                        if FHIRObservationFact.is_primitive(self.g, modobj):
-                            obsfact = FHIRObservationFact(self.g, self.ofk, subject, conc, modobj)
-                            obsfact._modifier_cd = concept_code(mod)
-                            rval.append(obsfact)
-                        else:
-                            for emod, emodobj in self.g.predicate_objects(modobj):
-                                if FHIRObservationFact.is_primitive(self.g, emodobj):
-                                    modfact = FHIRObservationFact(self.g, self.ofk, subject, conc, emodobj)
-                                    modfact._modifier_cd = concept_code(composite_modifier(mod, emod))
-                                    rval.append(modfact)
-                                else:
-                                    print("RECURSE YOU {} {}".format(mod, emod))
+                    rval += self.generate_modifiers(subject, conc, obj)
+        return rval
+
+    def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: URIRef,
+                           modifier_root: Optional[URIRef] = None) -> List[FHIRObservationFact]:
+        rval = []               # type: List[FHIRObservationFact]
+        for modifier, modifier_object in self.g.predicate_objects(obj):
+            if FHIRObservationFact.is_primitive(self.g, modifier_object):
+                obsfact = FHIRObservationFact(self.g, self.ofk, concept, modifier_object)
+                obsfact._modifier_cd = concept_code(FHIRMetadata.composite_uri(modifier_root, modifier)
+                                                    if modifier_root else modifier)
+                rval.append(obsfact)
+            elif modifier not in self.special_processing_list:
+                rval += self.generate_modifiers(subject, concept, modifier_object, modifier)
         return rval

@@ -31,6 +31,9 @@ import datetime
 
 
 class Query:
+    """
+    Representation of the query portion of an ontology table, including table, column, type, operator and code
+    """
     def __init__(self,
                  table: str,
                  key: str,
@@ -53,6 +56,9 @@ class Query:
 
 
 class ConceptQuery(Query):
+    """
+    A query for the concept dimension.   The only (typical) variable is the object of the WHERE clause.
+    """
     def __init__(self, where_obj: str):
         """
         Concept dimension query.
@@ -69,6 +75,9 @@ class ConceptQuery(Query):
 
 
 class ModifierQuery(Query):
+    """
+    Modifier dimension query.  The only (typical) variable is the object of the WHERE clause.
+    """
     def __init__(self, where_obj: str):
         """
         Modifier dimension query.
@@ -85,6 +94,7 @@ class ModifierQuery(Query):
 
 
 class PatientQuery(Query):
+    """ Patient Dimension Query """
     def __init__(self,
                  where_subj: str,
                  where_pred: str,

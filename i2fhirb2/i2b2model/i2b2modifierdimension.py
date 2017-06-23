@@ -27,7 +27,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from i2fhirb2.i2b2model.commondimension import CommonDimension
-from i2fhirb2.i2b2model.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements
 
 

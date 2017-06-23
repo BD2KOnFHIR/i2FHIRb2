@@ -29,7 +29,7 @@ import os
 import unittest
 from datetime import datetime
 
-from i2fhirb2.fhir.fhirontology import FHIROntology
+from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot
@@ -46,9 +46,8 @@ class FHIROntologyTestCase(BaseTestCase):
     def esc_output(txt: str) -> str:
         return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
 
-    def tst_output(self, o: FHIROntology, outfname: str):
-        o += shared_graph
-        v = o.dimension_list()
+    def tst_output(self, o: FHIRMetadata, outfname: str):
+        v = o.dimension_list(FHIR.DomainResource)
         if create_output_files:
             with open(outfname, 'w') as outf:
                 outf.write(o.tsv_header() + '\n')
@@ -63,7 +62,7 @@ class FHIROntologyTestCase(BaseTestCase):
         self.assertEqual(False, create_output_files, "Test fails if generating the output file")
 
     def test_concept_dimension(self):
-        from i2fhirb2.fhir.fhirontology import FHIRConceptDimension
+        from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
         from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension
         ConceptDimension._clear()
         ConceptDimension.sourcesystem_cd = "FHIR STU3"
@@ -71,21 +70,21 @@ class FHIROntologyTestCase(BaseTestCase):
             datetime(2017, 5, 25, 13, 0)
         ConceptDimensionRoot.update_date = datetime(2017, 5, 25, 13, 0)
 
-        self.tst_output(FHIRConceptDimension(),
+        self.tst_output(FHIRConceptDimension(shared_graph),
                         os.path.join(shared_graph.dirname, 'data_out', 'fhir_concept_dimension.tsv'))
 
     def test_modifier_dimension(self):
-        from i2fhirb2.fhir.fhirontology import FHIRModifierDimension
+        from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
         from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
         ModifierDimension._clear()
         ModifierDimension.sourcesystem_cd = "FHIR STU3"
         ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
 
-        self.tst_output(FHIRModifierDimension(),
+        self.tst_output(FHIRModifierDimension(shared_graph),
                         os.path.join(shared_graph.dirname, 'data_out', 'fhir_modifier_dimension.tsv'))
 
     def test_ontology(self):
-        from i2fhirb2.fhir.fhirontology import FHIROntologyTable
+        from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
         from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry
         from i2fhirb2.i2b2model import metadata_xml
         metadata_xml.creation_date = datetime(2017, 5, 25, 13, 0)
@@ -95,7 +94,7 @@ class FHIROntologyTestCase(BaseTestCase):
         OntologyRoot.sourcesystem_cd = "FHIR STU3"
         OntologyRoot.update_date = datetime(2017, 5, 25, 13, 0)
 
-        self.tst_output(FHIROntologyTable(),
+        self.tst_output(FHIROntologyTable(shared_graph),
                         os.path.join(shared_graph.dirname, 'data_out', 'fhir_ontology.tsv'))
 
 if __name__ == '__main__':

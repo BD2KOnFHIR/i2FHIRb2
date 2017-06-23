@@ -113,7 +113,8 @@ def metadata_xml(typ: URIRef, c_basecode: str, c_name: str, pos_values: Optional
         pos_values = enum_bool_values
         datatype = "Enum"
     if datatype == "Enum" and pos_values is not None:
-        enum_list = '\n        ' + '\n        '.join(enum_entry_template.format(desc, val) for desc, val in pos_values) + "\n    "
+        enum_list = '\n        ' + \
+                    '\n        '.join(enum_entry_template.format(desc, val) for desc, val in pos_values) + "\n    "
     else:
         enum_list = ""
     return xml_template.format(**locals())

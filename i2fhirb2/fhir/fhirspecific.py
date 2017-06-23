@@ -25,15 +25,34 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import List, Callable, Optional
-
-from rdflib import Namespace, Graph, URIRef, RDFS
+from rdflib import Namespace, Graph, URIRef
 from rdflib.namespace import split_uri
 
+# Namespaces
 W5 = Namespace("http://hl7.org/fhir/w5#")
 FHIR = Namespace("http://hl7.org/fhir/")
+
+# Namespace map from URI to nsname
 nsmap = {str(W5): "W5",
          str(FHIR): "FHIR"}
+
+
+# List of W5 categores that should not be included in the output
+w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
+
+# List of predicates that aren't a direct part of the i2b2 structure
+skip_fhir_predicates = {FHIR['index'], FHIR.nodeRole, FHIR['id']}
+
+# List of FHIR 'primitive' types, not to be further expanded
+fhir_primitives = {FHIR.Reference}
+
+
+class AnonNS:
+    _nsnum = 0
+
+    def __init__(self):
+        self._nsnum += 1
+        self.ns = 'ns{}'.format(self._nsnum)
 
 
 def concept_path(subject: URIRef) -> str:
@@ -49,11 +68,13 @@ def concept_path(subject: URIRef) -> str:
 def concept_code(subject: URIRef) -> str:
     """
     Return the i2b2 concept code for subject
-    :param subject:
-    :return:
+    :param subject: URI to convert
+    :return: 'ns:code' form of URI
     """
     ns, code = split_uri(subject)
-    return nsmap[ns] + ':' +  code
+    if ns not in nsmap:
+        nsmap[ns] = AnonNS().ns
+    return '{}:{}'.format(nsmap[ns], code)
 
 
 def concept_name(g: Graph, subject: URIRef) -> str:
@@ -75,7 +96,7 @@ def modifier_path(modifier: URIRef) -> str:
     :return: i2b2 path fragment
     """
     path = split_uri(modifier)[1]
-    return (path.split('.', 1)[1].replace('.', '\\') if '.' in path else path)  + '\\'
+    return (path.split('.', 1)[1].replace('.', '\\') if '.' in path else path) + '\\'
 
 
 def modifier_code(modifier: URIRef) -> str:
@@ -99,75 +120,3 @@ def modifier_name(g: Graph, modifier: URIRef) -> str:
     if '.' in full_name:
         full_name = default_name.split('.', 1)[1]        # Remove first name segment
     return full_name.replace('.', ' ')
-
-
-# List of W5 categores that should not be included in the output
-w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
-recursive_fhir_types = {FHIR.TermComponent, FHIR.Extension, FHIR.Meta, FHIR.QuestionnaireItemComponent,
-                        FHIR.Quantity, FHIR.SimpleQuantity, FHIR.QuestionnaireResponseItemComponent,
-                        FHIR.SectionComponent, FHIR.GraphDefinitionLinkComponent, FHIR.GraphDefinitionLinkTargetComponent}
-skip_fhir_predicates = {FHIR['index'], FHIR.nodeRole, FHIR['id']}
-
-
-def w5_infrastructure_category(g: Graph, subj: URIRef) -> bool:
-    """
-    Determine whether subj belongs to a w5 infrastructure category
-    :param g: Graph for transitive parent traversal
-    :param subj: FHIR Element
-    :return:
-    """
-    return bool(set(g.transitive_objects(subj, RDFS.subClassOf)).intersection(w5_infrastructure_categories))
-
-
-def is_w5_uri(uri: URIRef) -> bool:
-    return split_uri(uri)[0] == str(W5)
-
-
-def is_w5_path(path: List[URIRef]) -> bool:
-    """
-    Determine whether path represents a primary w5 path.  This exists to remove the alternate
-    paths that culminate in fhir:Thing.
-    :param path: path to test
-    :return: True if it is a single length path (e.g. Patient.status) or has a non-skipped w5
-    category in its ancestors.
-    """
-    if len(path) > 1:
-        if split_uri(path[0])[0] != str(W5):
-            return False
-    if bool(set(path).intersection(w5_infrastructure_categories)):
-        print("Skipping {}".format('.'.join(split_uri(e)[1] for e in path)))
-        return False
-    return not bool(set(path).intersection(w5_infrastructure_categories))
-
-
-def full_paths(g: Graph, subject: URIRef, predicate: URIRef) -> List[List[URIRef]]:
-    parents = [obj for obj in g.objects(subject, predicate) if isinstance(obj, URIRef)]
-    if not parents:
-        rval = [[subject]]
-    else:
-        rval = []
-        for parent in parents:
-            for e in full_paths(g, parent, predicate):
-                e.append(subject)
-                rval.append(e)
-    return rval
-
-
-def i2b2_paths(base: str, g: Graph, subject: URIRef, predicate: URIRef,
-               filtr: Optional[Callable[[List[URIRef]], bool]]=None) -> [str]:
-    rval = []
-    for path in full_paths(g, subject, predicate):
-        if not filtr or filtr(path):
-            rval.append(base + (''.join(concept_path(e) for e in path[:-1])))
-    return rval
-
-
-def composite_modifier(parent: URIRef, mod: URIRef) -> URIRef:
-    parent_base, parent_code = split_uri(parent)
-    mod_code = split_uri(mod)[1].split('.', 1)[1]
-    last_element_in_parent_code = parent_code.rsplit('.', 1)[1] if '.' in parent_code else None
-    first_element_in_mod_code, rest_of_mod = mod_code.split('.', 1) \
-        if '.' in mod_code else (None, mod_code)
-    if first_element_in_mod_code == last_element_in_parent_code:
-        mod_code = rest_of_mod
-    return URIRef(parent_base + parent_code + '.' + mod_code)

@@ -43,7 +43,7 @@ class TableAccess(DynObject):
 
     @DynObject.entry(_t)
     def c_table_name(self) -> str:
-        return "Custom_Metadata"
+        return "custom_meta"
 
     @DynObject.entry(_t)
     def c_protected_acess(self) -> str:
@@ -86,7 +86,7 @@ class TableAccess(DynObject):
         return self._query.key
 
     @DynObject.entry(_t)
-    def c_tablename(self) -> str:
+    def c_dimtablename(self) -> str:
         return self._query.table
 
     @DynObject.entry(_t)

@@ -92,8 +92,6 @@ class OntologyTestCase(unittest.TestCase):
                                  navigational_path,
                                  ontology_path,
                                  False)
-        from pprint import PrettyPrinter; pp = PrettyPrinter().pprint
-        pp(o._freeze())
         self.assertEqual(OrderedDict([
              ('c_hlevel', 3),
              ('c_fullname', '\\FHIR\\administrative\\individual\\Patient\\'),

@@ -36,7 +36,7 @@ class TableAccessTestCase(unittest.TestCase):
         ta = TableAccess()
         self.assertEqual(('c_table_cd\tc_table_name\tc_protected_acess\tc_hlevel\tc_fullname\tc_name\t'
                           'c_synonym_cd\tc_visualattributes\tc_totalnum\tc_basecode\tc_metadataxml\t'
-                          'c_facttablecolumn\tc_tablename\tc_columnname\tc_columndatatype\tc_operator\t'
+                          'c_facttablecolumn\tc_dimtablename\tc_columnname\tc_columndatatype\tc_operator\t'
                           'c_dimcode\tc_comment\tc_tooltip\tc_entry_date\tc_change_date\tc_status_cd\t'
                           'valuetype_cd'), ta._header())
         self.assertEqual(OrderedDict([
@@ -52,7 +52,7 @@ class TableAccessTestCase(unittest.TestCase):
              ('c_basecode', None),
              ('c_metadataxml', None),
              ('c_facttablecolumn', 'concept_cd'),
-             ('c_tablename', 'concept_dimension'),
+             ('c_dimtablename', 'concept_dimension'),
              ('c_columnname', 'concept_path'),
              ('c_columndatatype', 'T'),
              ('c_operator', 'like'),

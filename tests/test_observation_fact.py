@@ -30,7 +30,7 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
-from rdflib import URIRef, Graph, RDF
+from rdflib import Graph
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.fhir.fhirspecific import FHIR
@@ -83,7 +83,6 @@ class ObservationFactTestCase(unittest.TestCase):
     def test_fhirobservationfact(self):
         from i2fhirb2.i2b2model.i2b2observationfact import ObservationFactKey
         from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
-        from tests.base_test_case import shared_graph
 
         ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
         FHIRObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
@@ -91,8 +90,7 @@ class ObservationFactTestCase(unittest.TestCase):
 
         for subj in self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
             obj = self.g.value(subj, FHIR["Observation.status"])
-            fof = FHIRObservationFact(self.g, ofk, URIRef("http://hl7.org/fhir/Observation/bmi"),
-                                      FHIR["Observation.status"], obj)
+            fof = FHIRObservationFact(self.g, ofk, FHIR["Observation.status"], obj)
             self.assertEqual(OrderedDict([
                  ('encounter_num', 23456),
                  ('patient_num', 12345),
@@ -126,15 +124,12 @@ class ObservationFactTestCase(unittest.TestCase):
         FHIRObservationFact.sourcesystem_cd = "FHIR STU3"
         oflist = FHIRObservationFactFactory(self.g, ofk, None)
 
-        from pprint import PrettyPrinter
-        pp = PrettyPrinter().pprint
         for ofle in oflist.facts:
             print(repr(ofle))
-        with open ('data_out/fhir_observation_fact.tsv', 'w') as outf:
+        with open('data_out/fhir_observation_fact.tsv', 'w') as outf:
             outf.write(FHIRObservationFact._header() + '\n')
             for e in oflist.facts:
                 outf.write(repr(e) + '\n')
-
 
 
 if __name__ == '__main__':

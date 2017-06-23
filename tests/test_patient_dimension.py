@@ -40,7 +40,8 @@ class PatientDimensionTestCase(unittest.TestCase):
         self.assertEqual('patient_num\tvital_status_cd\tbirth_date\tdeath_date\tsex_cd\tage_in_years_num\tlanguage_cd\t'
                          'race_cd\tmarital_status_cd\treligion_cd\tzip_cd\tstatecityzip_path\tincome_cd\tpatient_blob\t'
                          'update_date\tdownload_date\timport_date\tsourcesystem_cd\tupload_id', x._header())
-        self.assertEqual(OrderedDict([('patient_num', 12345),
+        self.assertEqual(OrderedDict([
+             ('patient_num', 12345),
              ('vital_status_cd', 'UL'),
              ('birth_date', None),
              ('death_date', None),
@@ -59,7 +60,6 @@ class PatientDimensionTestCase(unittest.TestCase):
              ('import_date', datetime(2017, 1, 3, 0, 0)),
              ('sourcesystem_cd', 'Unspecified'),
              ('upload_id', None)]), x._freeze())
-
 
 
 if __name__ == '__main__':

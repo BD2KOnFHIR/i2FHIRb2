@@ -72,7 +72,8 @@ class MetadataXMLTestCase(unittest.TestCase):
     <UnitValues/>
 </ValueMetadata>""", self.fix_date(metadata_xml(FHIR.boolean, "FHIR:Like.boolean", "Do you like me")))
 
-        rval = metadata_xml(FHIR.code, "FHIR:Coded.code", "Flavors", [("Blue", "B"), ("Yeller", "Y"), ("Squeak", "SQK")])
+        rval = metadata_xml(FHIR.code, "FHIR:Coded.code", "Flavors",
+                            [("Blue", "B"), ("Yeller", "Y"), ("Squeak", "SQK")])
         self.assertEqual("""<?xml version="1.0"?>
 <ValueMetadata>
     <Version>3.02</Version>

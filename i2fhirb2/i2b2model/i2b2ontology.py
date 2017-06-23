@@ -187,7 +187,7 @@ class OntologyRoot(OntologyEntry):
 
     @DynObject.entry(_t)
     def c_basecode(self) -> Optional[str]:
-        return self._base
+        return self._base + ':'
 
 
 class ModifierOntologyEntry(OntologyEntry):
