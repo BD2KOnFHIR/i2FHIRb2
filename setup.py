@@ -2,13 +2,15 @@ from distutils.core import setup
 
 import sys
 
+from i2fhirb2 import __version__
+
 requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2']
 if sys.version_info < (3, 5):
     requires.append('typing')
 
 setup(
     name='i2FHIRb2',
-    version='0.0.2',
+    version=__version__,
     packages=['tests', 'scripts', 'i2fhirb2', 'i2fhirb2.fhir', 'i2fhirb2.i2b2model', 'i2fhirb2.sqlsupport'],
     url='https://github.com/BD2KOnFHIR/i2FHIRb2',
     license='Apache 2.0',

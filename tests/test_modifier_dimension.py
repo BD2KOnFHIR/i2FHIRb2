@@ -222,7 +222,7 @@ class ModifierDimensionTestCase(BaseTestCase):
                  '\\FHIR\\Observation\\component\\valueString\\',
                  '\\FHIR\\Observation\\component\\valueTime\\'],
                          list(e.modifier_path for e in
-                              sorted(ot.dimension_list(domain=FHIR.ObservationComponentComponent))))
+                              sorted(ot.dimension_list(domain=FHIR.ObservationComponent))))
 
 if __name__ == '__main__':
     unittest.main()

@@ -41,7 +41,7 @@ class TableAccessTestCase(unittest.TestCase):
                           'valuetype_cd'), ta._header())
         self.assertEqual(OrderedDict([
              ('c_table_cd', 'FHIR'),
-             ('c_table_name', 'Custom_Metadata'),
+             ('c_table_name', 'custom_meta'),
              ('c_protected_acess', 'N'),
              ('c_hlevel', 1),
              ('c_fullname', '\\FHIR\\'),

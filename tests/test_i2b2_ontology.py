@@ -168,7 +168,7 @@ class OntologyTestCase(unittest.TestCase):
         OntologyEntry._clear()
         o = OntologyRoot("FHIR")
         OntologyRoot.update_date = datetime.datetime(2017, 5, 25, 13, 0)
-        self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR\t\tconcept_cd\tconcept_dimension\t'
+        self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR:\t\tconcept_cd\tconcept_dimension\t'
                           'concept_path\tT\tlike\t\\FHIR\\\t\t\t@\t2017-05-25 13:00:00\t2017-05-25 '
                           '13:00:00\t2017-05-25 13:00:00\tFHIR\t\t\t\t'), repr(o))
 

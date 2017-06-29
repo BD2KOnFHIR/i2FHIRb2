@@ -28,8 +28,9 @@
 
 import collections
 
+
+# Taken from https://stackoverflow.com/questions/1653970/does-python-have-an-ordered-set#1653974
 class OrderedSet(collections.OrderedDict, collections.MutableSet):
-    """ Taken from https://stackoverflow.com/questions/1653970/does-python-have-an-ordered-set#1653974 """
 
     def update(self, *args, **kwargs):
         if kwargs:
@@ -37,7 +38,7 @@ class OrderedSet(collections.OrderedDict, collections.MutableSet):
 
         for s in args:
             for e in s:
-                 self.add(e)
+                self.add(e)
 
     def add(self, elem):
         self[elem] = None

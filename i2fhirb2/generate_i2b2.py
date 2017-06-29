@@ -26,7 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace, Action
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
@@ -34,6 +34,7 @@ from rdflib import Graph, URIRef
 from sqlalchemy import delete, Table, Column
 from sqlalchemy.engine import Engine
 
+from i2fhirb2 import __version__
 from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
@@ -44,7 +45,13 @@ from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot
 from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.i2b2tableaccess import TableAccess
+from i2fhirb2.i2b2model.tablenames import i2b2table
 from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+
+Default_Sourcesystem_Code = 'FHIR STU3'
+Default_Base = 'FHIR'
+Default_Path_Base = '\\{}\\'.format(Default_Base)
+Default_Ontology_TableName = "custom_meta"
 
 
 def pluralize(cnt: int, base: Any) -> str:
@@ -66,29 +73,26 @@ def esc_output(txt: str) -> str:
     return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
 
 
-def generate_output(g: Graph, o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef], file: str) -> bool:
+def generate_output(o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef], file: str) -> bool:
     v = o.dimension_list(resource)
     return write_tsv(opts, file, o.tsv_header(), v)
 
 
 def write_tsv(opts: Namespace, file: str, hdr: str, values: List[object]) -> bool:
-    with open(opts.outdir + file + ('.tsv' if '.' not in file else ''), 'w') as outf:
+    ofn = opts.outdir + file + ('.tsv' if '.' not in file else '')
+    print("writing {}".format(ofn))
+    with open(ofn, 'w') as outf:
         outf.write(hdr + '\n')
         for e in sorted(values):
             outf.write(esc_output(repr(e)) + '\n')
     return True
 
 
-Default_Sourcesystem_Code = 'FHIR STU3'
-Default_Base = 'FHIR'
-Default_Path_Base = '\\{}\\'.format(Default_Base)
-
-
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
-    return ((opts.table and opts.table != 'table_access') or generate_table_access(opts)) and \
-           ((opts.table and opts.table != 'concept_dimension') or generate_concept_dimension(g, opts)) and \
-           ((opts.table and opts.table != 'modifier_dimension') or generate_modifier_dimension(g, opts)) and \
-           ((opts.table and opts.table != 'ontology') or generate_ontology(g, opts))
+    return ((opts.table and opts.table != i2b2table.table_access) or generate_table_access(opts)) and \
+           ((opts.table and opts.table != i2b2table.concept_dimension) or generate_concept_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2table.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2table.ontology_table) or generate_ontology(g, opts))
 
 
 def generate_table_access(opts: Namespace) -> bool:
@@ -100,10 +104,10 @@ def generate_table_access(opts: Namespace) -> bool:
 
 
 def update_table_access_table(opts: Namespace, table: Table, records: List[Dict[str, Any]]) -> bool:
-    ndel = opts.tables.connection.execute(delete(table).where(table.c.c_table_cd == Default_Base)).rowcount
+    ndel = opts.tables.ont_connection.execute(delete(table).where(table.c.c_table_cd == Default_Base)).rowcount
     if ndel > 0:
         print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
-    nins = opts.tables.connection.execute(table.insert(), records).rowcount
+    nins = opts.tables.ont_connection.execute(table.insert(), records).rowcount
     print("{} {} {} inserted".format(nins, table, pluralize(nins, "record")))
     return True
 
@@ -120,10 +124,11 @@ def generate_concept_dimension(g: Graph, opts: Namespace) -> bool:
     ConceptDimensionRoot.update_date = opts.updatedate
 
     if opts.outdir:
-        return generate_output(g, FHIRConceptDimension(g, name_base=opts.base), opts, resource, "concept_dimension")
+        return generate_output(FHIRConceptDimension(g, name_base=opts.base), opts, resource,
+                               i2b2table.concept_dimension)
     else:
         table = opts.tables.concept_dimension
-        change_column_length(table, table.c.concept_cd, 200, opts.tables.engine)
+        change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
         return update_dimension_table(FHIRConceptDimension(g, name_base=opts.base), opts, table,
                                       'concept_path', [opts.base], resource)
 
@@ -132,16 +137,17 @@ def update_dimension_table(fo: FHIRMetadata, opts: Namespace, table: Table, tabl
                            key_match: List[str], resource: Optional[URIRef]) -> bool:
     for km in key_match:
         q = delete(table).where(table.c[table_key].startswith(km.replace('\\', '\\\\')))
-        ndel = opts.tables.connection.execute(q).rowcount
+        ndel = opts.tables.crc_connection.execute(q).rowcount
         if ndel > 0:
             print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
-    nins = opts.tables.connection.execute(table.insert(), [e._freeze() for e in fo.dimension_list(resource)]).rowcount
+    nins = opts.tables.crc_connection.execute(table.insert(), [e._freeze()
+                                                               for e in fo.dimension_list(resource)]).rowcount
     print("{} {} {} inserted".format(nins, table, pluralize(nins, "record")))
     return True
 
 
 def change_column_length(table: Table, column: Column, length: int, engine: Engine) -> None:
-    if column.type.length < length or True:
+    if column.type.length < length:
         print("Changing length of {} from {} to {}".format(column, column.type.length, length))
         column.type.length = length
         column_name = column.name
@@ -157,10 +163,11 @@ def generate_modifier_dimension(g: Graph, opts: Namespace) -> bool:
     ModifierDimension.update_date = opts.updatedate
 
     if opts.outdir:
-        return generate_output(g, FHIRModifierDimension(g, name_base=opts.base), opts, resource, "modifier_dimension")
+        return generate_output(FHIRModifierDimension(g, name_base=opts.base), opts, resource,
+                               i2b2table.modifier_dimension)
     else:
         table = opts.tables.modifier_dimension
-        change_column_length(table, table.c.modifier_cd, 200, opts.tables.engine)
+        change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
         return update_dimension_table(FHIRModifierDimension(g, name_base=opts.base), opts, table,
                                       'modifier_path', [opts.base], resource)
 
@@ -177,11 +184,11 @@ def generate_ontology(g: Graph, opts: Namespace) -> bool:
     OntologyRoot.update_date = opts.updatedate
 
     if opts.outdir:
-        return generate_output(g, FHIROntologyTable(g, name_base=opts.base), opts, resource, "ontology")
+        return generate_output(FHIROntologyTable(g, name_base=opts.base), opts, resource, "ontology")
     else:
         table = opts.tables.custom_meta
-        change_column_length(table, table.c.c_basecode, 200, opts.tables.engine)
-        change_column_length(table, table.c.c_tooltip, 1600, opts.tables.engine)    # MedicationStatement is 1547 long
+        change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
+        change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)    # MedicationStatement is 1547 long
         return update_dimension_table(FHIROntologyTable(g, name_base=opts.base), opts, table, 'c_basecode',
                                       [opts.base.replace('\\', '') + ':', 'W5'], resource)
 
@@ -195,34 +202,77 @@ def load_fhir_ontology(opts: Namespace) -> Optional[Graph]:
     return g
 
 
-def genargs() -> ArgumentParser:
+class LoadFromFile (Action):
+    def __call__(self, parser: ArgumentParser, namespace: Namespace, value: str, option_string=None):
+        with open(value) as f:
+            parser.parse_args(f.read().split(), namespace)
+
+
+def create_parser() -> ArgumentParser:
     """
     Create a command line parser
     :return: parser
     """
-    parser = ArgumentParser(description="FHIR in i2b2 generator")
+    metadata_tables = [i2b2table.concept_dimension, i2b2table.modifier_dimension, i2b2table.ontology_table,
+                       i2b2table.table_access]
+    parser = ArgumentParser(description="FHIR in i2b2 metadata generator", fromfile_prefix_chars='@')
+    # For reasons we don't completely understand, the default parser doesn't split the lines...
+    parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
     parser.add_argument("indir", help="Input directory or URI of w5.ttl and fhir.ttl files")
-    parser.add_argument("-o", "--outdir", help="Output directory to store .tsv files")
-    parser.add_argument("-t", "--table", help="Table to update (e.g. concept_dimension) - default is all tables")
+    parser.add_argument("-o", "--outdir", help="Output directory to store .tsv files."
+                                               " If absent, .tsv files are not generated.")
+    parser.add_argument("-t", "--table", metavar="TABLE",
+                        help="Table to update ({}) (default: All tables)".format(', '.join(metadata_tables)),
+                        choices=metadata_tables)
     parser.add_argument("-r", "--resource",
-                        help="Name of specific resource to emit (e.g. Observation) - default is all")
-    parser.add_argument("-s", "--sourcesystem",
+                        help="Name of specific resource to emit (e.g. Observation). (default: all)")
+    parser.add_argument("--sourcesystem", metavar="SOURCESYSTEM_CD",
                         default=Default_Sourcesystem_Code,
-                        help="sourcesystem code. Default: 'F{}'".format(Default_Sourcesystem_Code))
-    parser.add_argument("-b", "--base",
+                        help="sourcesystem code (default: \"{}\")".format(Default_Sourcesystem_Code))
+    parser.add_argument("--base",
                         default=Default_Path_Base,
-                        help="Concept dimension and ontology base path. Default:{}".format(Default_Path_Base))
+                        help="Concept dimension base path. (default: \"{}\")".format(Default_Path_Base))
     parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
+    parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__))
+    parser.add_argument("-db", "--dburl", help="Default database URL")
+    parser.add_argument("-u", "--user", help="Default user name")
+    parser.add_argument("-p", "--password", help="Default password")
+    parser.add_argument("--crcdb", help="CRC database URL.  (default: DBURL)")
+    parser.add_argument("--crcuser", help="User name for CRC database. (default: USER)")
+    parser.add_argument("--crcpassword", help="Password for CRC database. (default: PASSWORD")
+    parser.add_argument("--ontdb", help="Ontology database URL.  (default: DBURL)")
+    parser.add_argument("--ontuser", help="User name for ontology database. (default: USER)")
+    parser.add_argument("--ontpassword", help="Password for ontology database. (default: PASSWORD")
+    parser.add_argument("--onttable", help="Ontology table name (default: {})".format(Default_Ontology_TableName))
     return parser
 
 
-def generate_i2b2(argv) -> bool:
-    opts = genargs().parse_args(argv)
+def genargs(argv: List[str]) -> Namespace:
+
+    def setdefault(self: Namespace, vn: str, default: object) -> None:
+        assert vn in self, "Unknown option"
+        if not getattr(self, vn):
+            setattr(self, vn, default)
+
+    opts = create_parser().parse_args(argv)
+    opts.setdefault = lambda *a: setdefault(opts, *a)
     opts.updatedate = datetime.now()
     if not opts.indir.endswith(os.sep):
         opts.indir = os.path.join(opts.indir, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
-    opts.tables = I2B2Tables() if opts.load else None
+    if opts.load:
+        opts.setdefault('crcdb', opts.dburl)
+        opts.setdefault('crcuser', opts.user)
+        opts.setdefault('crcpassword', opts.password)
+        opts.setdefault('ontdb', opts.dburl)
+        opts.setdefault('ontuser', opts.user)
+        opts.setdefault('ontpassword', opts.password)
+    return opts
+
+
+def generate_i2b2(argv: List[str]) -> bool:
+    opts = genargs(argv + ['@db_conf'])
     g = load_fhir_ontology(opts)
+    opts.tables = I2B2Tables(opts) if opts.load else None
     return g is not None and generate_i2b2_files(g, opts)

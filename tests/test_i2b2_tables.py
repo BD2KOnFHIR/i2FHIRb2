@@ -27,14 +27,23 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from argparse import ArgumentParser
 
 from sqlalchemy import select
 
 
+def caught_error(message):
+    raise ValueError(message)  # reraise an error
+
+
 class I2B2TablesTestCase(unittest.TestCase):
+    from i2fhirb2.generate_i2b2 import genargs
+
+    opts = genargs(['x', '@data/db_conf'])
+
     def test_basics(self):
         from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
-        x = I2B2Tables()
+        x = I2B2Tables(self.opts)
 
         self.assertEqual(['concept_path',
                           'concept_cd',
@@ -48,12 +57,12 @@ class I2B2TablesTestCase(unittest.TestCase):
         s = select([x.i2b2]).limit(10)
 
         # We kind of blindly assume that the first 10 records in the file are level 1...
-        for e in x.engine.execute(s).fetchall():
+        for e in x.crc_engine.execute(s).fetchall():
             self.assertEqual(e[0], 1)
 
     def test_as_dict(self):
         from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
-        x = I2B2Tables()
+        x = I2B2Tables(self.opts)
 
         self.assertEqual(x.concept_dimension, x['concept_dimension'])
 

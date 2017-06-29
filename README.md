@@ -86,46 +86,50 @@ This package uses Python 3 and has been tested with Python 3.6.1
     (venv) > generate_i2b2 -h
  
     usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
-                     [-s SOURCESYSTEM] [-b BASE] [-l]
+                         [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
                      indir
 
-    FHIR in i2b2 generator
-
+    FHIR in i2b2 metadata generator
+    
     positional arguments:
-       indir                 Input directory or URI of w5.ttl and fhir.ttl files
-
+      indir                 Input directory or URI of w5.ttl and fhir.ttl files
+    
     optional arguments:
-        -h, --help            show this help message and exit
-       -o OUTDIR, --outdir OUTDIR
-                               Output directory to store .tsv files
-       -t TABLE, --table TABLE
-                               Table to update (e.g. concept_dimension) - default is
-                        all tables
-       -r RESOURCE, --resource RESOURCE
-                               Name of specific resource to emit (e.g. Observation) -
-                        default is all
-       -s SOURCESYSTEM, --sourcesystem SOURCESYSTEM
-                               sourcesystem code. Default: 'FFHIR STU3'
-       -b BASE, --base BASE  Concept dimension and ontology base path.
-                               Default:\FHIR\
-       -l, --load            Load i2b2 SQL tables
+      -h, --help            show this help message and exit
+      -o OUTDIR, --outdir OUTDIR
+                            Output directory to store .tsv files. If absent, .tsv
+                            files are not generated.
+      -t TABLE, --table TABLE
+                            Table to update (concept_dimension,
+                            modifier_dimension, ontology_table, table_access)
+                            (default: All tables)
+      -r RESOURCE, --resource RESOURCE
+                            Name of specific resource to emit (e.g. Observation).
+                            (default: all)
+      --sourcesystem SOURCESYSTEM_CD
+                            sourcesystem code (default: "FHIR STU3")
+      --base BASE           Concept dimension base path. (default: "\FHIR\")
+      -l, --load            Load i2b2 SQL tables
+      -v, --version         show program's version number and exit
    ```
+   
 4) Creating the i2b2 metadata
 
-    This package is still under development has only been tested with PostgreSQL.  At the moment, it assumes that the PostgreSQL is running locally at the standard coordinates, `jdbc:postgresql://localhost:5432/i2b2`.
-    ```bash
-    (venv) > generate_i2b2 tests/data -l
-    Loading fhir.ttl
-    loading w5.ttl
-    1 i2b2metadata.table_access record inserted
-    Changing length of concept_dimension.concept_cd from 50 to 200
-    1478 i2b2demodata.concept_dimension records inserted
-    Changing length of modifier_dimension.modifier_cd from 50 to 200
-    7682 i2b2demodata.modifier_dimension records inserted
-    Changing length of custom_meta.c_basecode from 50 to 200
-    Changing length of custom_meta.c_tooltip from 700 to 1600
-    15523 i2b2metadata.custom_meta records inserted
-    ```
+This package is still under development has only been tested with PostgreSQL.  At the moment, it assumes that the PostgreSQL is running locally at the standard coordinates,`jdbc:postgresql://localhost:5432/i2b2`.
+```bash
+(venv) > generate_i2b2 tests/data -l
+Loading fhir.ttl
+loading w5.ttl
+1 i2b2metadata.table_access record inserted
+Changing length of concept_dimension.concept_cd from 50 to 200
+1478 i2b2demodata.concept_dimension records inserted
+Changing length of modifier_dimension.modifier_cd from 50 to 200
+7682 i2b2demodata.modifier_dimension records inserted
+Changing length of custom_meta.c_basecode from 50 to 200
+Changing length of custom_meta.c_tooltip from 700 to 1600
+15523 i2b2metadata.custom_meta records inserted
+(venv) >
+```
 
 
 ## Current State of the Project

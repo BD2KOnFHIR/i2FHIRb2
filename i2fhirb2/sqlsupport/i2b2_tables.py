@@ -25,28 +25,39 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional
+from argparse import Namespace
 
-from sqlalchemy import MetaData, create_engine, Table, select
+from sqlalchemy import MetaData, create_engine
 
 
 class I2B2Tables:
     i2b2metadata = 'i2b2metadata'
     i2b2crc = 'i2b2demodata'
 
-    def __init__(self):
-        self._metadata = MetaData()
-        self.engine = create_engine('postgresql+psycopg2://i2b2:demouser@localhost:5432/i2b2')
-        self.connection = self.engine.connect()
-        self._metadata.reflect(bind=self.engine, schema=self.i2b2metadata)
-        self._metadata_tables = self._metadata.tables
-        self._metadata.reflect(bind=self.engine, schema=self.i2b2crc)
-        self._crc_tables = self._metadata_tables
+    def __init__(self, opts: Namespace):
+        _metadata = MetaData()
+        crc_url = opts.crcdb.replace("//", "//{crcuser}:{crcpassword}@".format(**opts.__dict__))
+        ont_url = opts.ontdb.replace("//", "//{ontuser}:{ontpassword}@".format(**opts.__dict__))
 
+        self.crc_engine = create_engine(crc_url)
+        self.crc_connection = self.crc_engine.connect()
+        _metadata.reflect(bind=self.crc_engine, schema=self.i2b2crc)
+        self._crc_tables = _metadata.tables
+        if ont_url != crc_url:
+            self.ont_engine = create_engine(ont_url)
+            self.ont_connection = self.ont_engine.connect()
+        else:
+            self.ont_engine = self.crc_engine
+            self.ont_connection = self.crc_connection
+
+        _metadata.reflect(bind=self.ont_engine, schema=self.i2b2metadata)
+        self._ont_tables = _metadata.tables
+
+    # Note: If you get a recursion error below, you've got an unitialized self variable in the __init__ section
     def __getattr__(self, item):
         k = I2B2Tables.i2b2metadata + '.' + item
-        if k in self._metadata_tables:
-            return self._metadata_tables[k]
+        if k in self._ont_tables:
+            return self._ont_tables[k]
         k = I2B2Tables.i2b2crc + '.' + item
         if k in self._crc_tables:
             return self._crc_tables[k]

@@ -162,8 +162,6 @@ class FHIRMetadata(metaclass=ABCMeta):
         rval = []               # type: List[ModifierPath]
         if seen is None:
             seen = set()
-        if depth > 7:
-            print("HERE")
         for pred in self.g.subjects(RDFS.domain, range_type):
             if pred not in skip_fhir_predicates:
                 # Concatenate the root property and predicates in the nested range
