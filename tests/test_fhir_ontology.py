@@ -47,7 +47,7 @@ class FHIROntologyTestCase(BaseTestCase):
         return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
 
     def tst_output(self, o: FHIRMetadata, outfname: str):
-        v = o.dimension_list(FHIR.DomainResource)
+        v = o.dimension_list(FHIR.Observation)
         if create_output_files:
             with open(outfname, 'w') as outf:
                 outf.write(o.tsv_header() + '\n')

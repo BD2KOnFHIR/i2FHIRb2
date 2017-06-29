@@ -6606,25 +6606,25 @@ modifier_path	modifier_cd	name_char	modifier_blob	update_date	download_date	impo
 \FHIR\VisionPrescription\dispense\product\text\	FHIR:VisionPrescription.dispense.product.text	FHIR VisionPrescription dispense product text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\VisionPrescription\dispense\sphere\	FHIR:VisionPrescription.dispense.sphere	FHIR VisionPrescription dispense sphere		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\VisionPrescription\reason\	FHIR:VisionPrescription.reason	FHIR VisionPrescription reason		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\actor\	W5:who.actor	W5 who actor		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\author\	W5:who.author	W5 who author		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\cause\	W5:who.cause	W5 who cause		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\class\	W5:class	W5 class		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\context\	W5:context	W5 context		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\done\	W5:when.done	W5 when done		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\focus\	W5:who.focus	W5 who focus		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\grade\	W5:grade	W5 grade		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\id\	W5:id	W5 id		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\id\version\	W5:id.version	W5 id version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\init\	W5:when.init	W5 when init		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\link\	FHIR:link	FHIR link		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\planned\	W5:when.planned	W5 when planned		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\recorded\	W5:when.recorded	W5 when recorded		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\source\	W5:who.source	W5 who source		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\status\	W5:status	W5 status		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\version\	W5:id.version	W5 id version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\what\	W5:what	W5 what		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\when\	W5:when	W5 when		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\when\done\	W5:when.done	W5 when done		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\when\init\	W5:when.init	W5 when init		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\when\planned\	W5:when.planned	W5 when planned		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\when\recorded\	W5:when.recorded	W5 when recorded		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\where\	W5:where	W5 where		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\who\	W5:who	W5 who		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\actor\	W5:who.actor	W5 who actor		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\author\	W5:who.author	W5 who author		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\cause\	W5:who.cause	W5 who cause		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\focus\	W5:who.focus	W5 who focus		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\source\	W5:who.source	W5 who source		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
-\FHIR\who\witness\	W5:who.witness	W5 who witness		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\why\	W5:why	W5 why		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\witness\	W5:who.witness	W5 who witness		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	

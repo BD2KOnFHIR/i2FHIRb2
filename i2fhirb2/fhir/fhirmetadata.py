@@ -122,9 +122,10 @@ class FHIRMetadata(metaclass=ABCMeta):
         """
         Determine whether subj is 'primitive' in the FHIR context
         :param subj:
-        :return: True
+        :return:
         """
-        return self.g.value(subj, RDFS.subClassOf, None) is None or subj in fhir_primitives
+        parents = set(self.g.objects(subj, RDFS.subClassOf))
+        return not parents or FHIR.Primitive in parents or subj in fhir_primitives
 
     def skipped_v5_domain(self, pred: URIRef) -> bool:
         """

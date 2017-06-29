@@ -272,7 +272,7 @@ def genargs(argv: List[str]) -> Namespace:
 
 
 def generate_i2b2(argv: List[str]) -> bool:
-    opts = genargs(argv + ['@db_conf'])
+    opts = genargs(argv)
     g = load_fhir_ontology(opts)
     opts.tables = I2B2Tables(opts) if opts.load else None
     return g is not None and generate_i2b2_files(g, opts)

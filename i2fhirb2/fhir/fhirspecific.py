@@ -62,7 +62,11 @@ def concept_path(subject: URIRef) -> str:
     :param subject: FHIR URI
     :return: i2b2 path fragment
     """
-    return split_uri(subject)[1].replace('.', '\\') + '\\'
+    subj_path = split_uri(subject)[1]
+    if is_w5_uri(subject):
+        return (subj_path.rsplit('.', 1)[1] if '.' in subj_path else subj_path) + '\\'
+    else:
+        return split_uri(subject)[1].replace('.', '\\') + '\\'
 
 
 def concept_code(subject: URIRef) -> str:
@@ -120,3 +124,7 @@ def modifier_name(g: Graph, modifier: URIRef) -> str:
     if '.' in full_name:
         full_name = default_name.split('.', 1)[1]        # Remove first name segment
     return full_name.replace('.', ' ')
+
+
+def is_w5_uri(uri: URIRef) -> bool:
+    return split_uri(uri)[0] == str(W5)

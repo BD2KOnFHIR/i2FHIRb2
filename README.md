@@ -1,7 +1,7 @@
 # i2FHIRb2 - FHIR in i2b2
 
 ## Introduction
-This package creates an i2b2 ontology from the FHIR STU3 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Model Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
+This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
 
 ## Installation
 1) Clone or download this package from [https://github.com/BD2KOnFHIR/i2FHIRb2](https://github.com/BD2KOnFHIR/i2FHIRb2)
@@ -9,10 +9,148 @@ This package creates an i2b2 ontology from the FHIR STU3 resource model.  It use
    > git clone https://github.com/BD2KOnFHIR/i2FHIRb2
    > cd i2FHIRb2
     ```
-## Loading the i2b2 ontology and concept/modifier dimension tables
-This package is still under development has only been tested with PostgreSQL.  At the moment, it assumes that the PostgreSQL is running locally at the standard coordinates, `jdbc:postgresql://localhost:5432/i2b2`.  For details on how to load the tables directly, see: [Running the conversion utility](#Running the conversion utility).
+    
+## Loading i2b2 tables
+There are two ways to load/update an existing set of i2b2 tables:
+1) Run `generate_i2b2` and load the tables directly
+2) Import the tab separated value (.tsv) tables that have been preloaded as part of this project
 
-We also supply tab-separated-value (tsv) tables that (theoretically) can be loaded into any existing implementation.  
+### Running `generate_i2b2`
+
+#### Prerequsites 
+You need [Python 3](https://www.python.org/) (ideally, 3.6) installed on your computer. 
+
+```text
+> python3 --version
+Python 3.6.1
+>
+```
+
+ 
+1) Download or clone the [FHIR in i2b2 (i2FHIRb2)](https://github.com/BD2KOnFHIR/i2FHIRb2) package.
+```text
+> git clone https://github.com/BD2KonFHIR/i2FHIRb2
+> cd i2FHIRb2
+```
+
+2) (Optional) Create a virtual environment:
+    1) Install `virtualenv` if needed:
+    ```text
+    > virtualenv --version
+    -bash: virtualenv: command not found    <-- If you get this message ...
+    > pip install virtualenv                <-- ... install virtualenv
+       ...
+    > virtualenv --version
+    15.1.0
+    >
+    ```
+    2) Activate the virtual environment
+    ```text
+    > virtualenv venv -p python3
+    Running virtualenv with interpreter /Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+    Using base prefix '/Library/Frameworks/Python.framework/Versions/3.6'
+       ...
+    > . venv/bin/activate
+    (venv) > 
+    ```
+3) Install dependencies, etc. 
+    
+    In the root project directory (i2FHIRb2):
+    ```text
+   (venv) > pip install -e .
+    Obtaining file:///Users/mrf7578/Downloads/i2b2test/i2FHIRb2
+    Collecting SQLAlchemy (from i2FHIRb2==0.0.2)
+    Collecting python_dateutil (from i2FHIRb2==0.0.2)
+      Using cached python_dateutil-2.6.0-py2.py3-none-any.whl
+    Collecting rdflib (from i2FHIRb2==0.0.2)
+      Using cached rdflib-4.2.2-py3-none-any.whl
+       ...
+   ```
+   (Don't miss the '.' in the above command)
+   ```text
+    (venv) > pip install cx_Oracle --pre           <-- If you will be using an Oracle database
+       ...
+    (venv) > 
+    ```
+    There are a number of different dialects available for Microsoft SQL Server. See: http://docs.sqlalchemy.org/en/latest/dialects/mssql.html for details.
+4) Validate the installation
+    ```bash
+    (venv) > generate_i2b2 -h
+     usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
+                         [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
+                         [-db DBURL] [-u USER] [-p PASSWORD] [--crcdb CRCDB]
+                         [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
+                         [--ontdb ONTDB] [--ontuser ONTUSER]
+                         [--ontpassword ONTPASSWORD] [--onttable ONTTABLE]
+                         indir
+    
+    FHIR in i2b2 metadata generator
+    
+    positional arguments:
+      indir                 Input directory or URI of w5.ttl and fhir.ttl files
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o OUTDIR, --outdir OUTDIR
+                            Output directory to store .tsv files. If absent, .tsv
+                            files are not generated.
+      -t TABLE, --table TABLE
+                            Table to update (concept_dimension,
+                            modifier_dimension, ontology_table, table_access)
+                            (default: All tables)
+      -r RESOURCE, --resource RESOURCE
+                            Name of specific resource to emit (e.g. Observation).
+                            (default: all)
+      --sourcesystem SOURCESYSTEM_CD
+                            sourcesystem code (default: "FHIR STU3")
+      --base BASE           Concept dimension base path. (default: "\FHIR\")
+      -l, --load            Load i2b2 SQL tables
+      -v, --version         show program's version number and exit
+      -db DBURL, --dburl DBURL
+                            Default database URL
+      -u USER, --user USER  Default user name
+      -p PASSWORD, --password PASSWORD
+                            Default password
+      --crcdb CRCDB         CRC database URL. (default: DBURL)
+      --crcuser CRCUSER     User name for CRC database. (default: USER)
+      --crcpassword CRCPASSWORD
+                            Password for CRC database. (default: PASSWORD
+      --ontdb ONTDB         Ontology database URL. (default: DBURL)
+      --ontuser ONTUSER     User name for ontology database. (default: USER)
+      --ontpassword ONTPASSWORD
+                            Password for ontology database. (default: PASSWORD
+      --onttable ONTTABLE   Ontology table name (default: custom_meta)
+   ```
+5) Edit the SQL configuration file.
+  
+    Note: this loader uses the [SQLSlchemy](http://www.sqlalchemy.org/), which means that, theoretically, it should work with any supported SQL database.  That said, it has only been tested with PostgreSQL.  If you have other installations, we would be happy to know whether it works.
+    
+    Edit db_conf config file and change the db, user and password parameters.  As an alternative, these can be supplied as parameters to the `generate_i2b2` program.
+    ```text
+    > edit db_conf
+    --db postgresql+psycopg2://localhost:5432/i2b2
+    --user i2b2
+    --password demouser
+    ```
+6) Run the FHIR in i2b2 loader
+
+```text
+(venv) > generate_i2b2 tests/data -l @db_conf
+Loading fhir.ttl
+loading w5.ttl
+1 i2b2metadata.table_access record inserted
+Changing length of concept_dimension.concept_cd from 50 to 200
+1466 i2b2demodata.concept_dimension records inserted
+Changing length of modifier_dimension.modifier_cd from 50 to 200
+6629 i2b2demodata.modifier_dimension records inserted
+Changing length of custom_meta.c_basecode from 50 to 200
+Changing length of custom_meta.c_tooltip from 700 to 1600
+10016 i2b2metadata.custom_meta records inserted
+(venv) >
+```
+
+### Importing .tsv files
+
 
 **NOTE**: Before you load the files below, you need to adjust the length of the following columns:
 <table>
@@ -48,8 +186,8 @@ We also supply tab-separated-value (tsv) tables that (theoretically) can be load
 </tr>
 </table>
 
-### TSV Files
-
+#### TSV Files
+The pre-loaded tsv files can be found in the `i2b2files` subdirectory of the `i2FHIRb2` install:
 
 * **`table_access.tsv`** -- the `table_access` table describes the location and root paths of i2b2 metadata.  This file has one row that states that FHIR resource definitions can be found in the `custom_meta` table with the root '\\FHIR\\'.
 * **`concept_dimension.tsv`** --  the `concept_dimension` table links defines the set of possible concept codes that can appear in the `observation_fact` table.  For FHIR, this includes all "first level" resource entries -- Observation.identifier, Observation.basedOn, etc.
@@ -58,78 +196,16 @@ We also supply tab-separated-value (tsv) tables that (theoretically) can be load
 
 All of these tables have tab-separated values and the first row of each table has the column headers.   They can be imported directly into the corresponding i2b2 tables
 
-<sub>**NOTE:** We have been unable to convince the postgreSQL import tool to represent empty columns as `NULL` values.  While, in beneral, the i2b2 software appears to treat Nulls and zero-length strings as equivalent, there is at least one place where this breaks -- the `m_exclusion_cd` column in the `custom_meta` (ontology) table. After loading the `ontology.tsv` table it is necessary to execute the following SQL:
+<sub>**NOTE:** We have been unable to convince the postgreSQL import tool to treat empty columns as `NULL` values.  While, in general, the i2b2 software appears to treat NULLs and zero-length strings as equivalent, there is at least one place where this breaks -- the `m_exclusion_cd` column in the `custom_meta` (ontology) table. After loading the `ontology.tsv` table it is necessary to execute the following SQL:
  ```sql
  UPDATE custom_meta SET m_exclusion_cd = NULL WHERE m_exclusion_cd = '';
  ```
 </sub>
 
+## Testing the installation
+Open the i2b2 browser and navigate to the `FHIR Resources`.  As you drill down it should look like:
 
-
-### Dependencies
-This package uses Python 3 and has been tested with Python 3.6.1
-
-## Running the conversion utility
-1) (Optional) Create a virtual environment:
-    ```bash
-    > virtualenv venv -p python3
-    > . venv/bin/activate
-    (venv) > 
-    ```
-2) Install dependencies, etc. In the root project directory (i2FHIRb2):
-    ```bash
-   (venv) > pip install -e .
-   ```
-   (Don't miss the '.' in the above command)
-3) Validate the installation
-    ```bash
-    (venv) > generate_i2b2 -h
- 
-    usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
-                         [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
-                     indir
-
-    FHIR in i2b2 metadata generator
-    
-    positional arguments:
-      indir                 Input directory or URI of w5.ttl and fhir.ttl files
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -o OUTDIR, --outdir OUTDIR
-                            Output directory to store .tsv files. If absent, .tsv
-                            files are not generated.
-      -t TABLE, --table TABLE
-                            Table to update (concept_dimension,
-                            modifier_dimension, ontology_table, table_access)
-                            (default: All tables)
-      -r RESOURCE, --resource RESOURCE
-                            Name of specific resource to emit (e.g. Observation).
-                            (default: all)
-      --sourcesystem SOURCESYSTEM_CD
-                            sourcesystem code (default: "FHIR STU3")
-      --base BASE           Concept dimension base path. (default: "\FHIR\")
-      -l, --load            Load i2b2 SQL tables
-      -v, --version         show program's version number and exit
-   ```
-   
-4) Creating the i2b2 metadata
-
-This package is still under development has only been tested with PostgreSQL.  At the moment, it assumes that the PostgreSQL is running locally at the standard coordinates,`jdbc:postgresql://localhost:5432/i2b2`.
-```bash
-(venv) > generate_i2b2 tests/data -l
-Loading fhir.ttl
-loading w5.ttl
-1 i2b2metadata.table_access record inserted
-Changing length of concept_dimension.concept_cd from 50 to 200
-1478 i2b2demodata.concept_dimension records inserted
-Changing length of modifier_dimension.modifier_cd from 50 to 200
-7682 i2b2demodata.modifier_dimension records inserted
-Changing length of custom_meta.c_basecode from 50 to 200
-Changing length of custom_meta.c_tooltip from 700 to 1600
-15523 i2b2metadata.custom_meta records inserted
-(venv) >
-```
+![Protege Screenshot](images/SampleBrowser.png)
 
 
 ## Current State of the Project
@@ -153,9 +229,3 @@ The project currently assumes that all information appears in the `observation_f
 * FHIR values -- the number of possible types for FHIR `value[x]` entries is sizeable.  Expanding each of these as URI's can potentially expand the size of the ontology table by an order of magnitude.  We need to decide what to do about the values and core data types.  One possibility would be a plug-in similar to the existing lab-value plug in.
 
 
-
-### FHIR Ontology Issues
-1) The current W5 ontology is missing `w5:when`
-2) The W5 root is defined as an `owl:OntologyEntry`.  We need to model this correctly -- should it be a root class or, an entity whose *members* are the root classe?
-3) Parts of W5 use a nested notation (`who.actor`, `when.done`) while others don't (`device`, `diagnostics`).  FHIR uses nested notation throughout (`administrative.device`, `clinical.diagnostics`)
-4) The naming convention in `fhir.ttl` turns out not to be unique.  As an example, `ExplanationOfBenefit`, `Claim`, and `ClaimResponse` all have `item` elements which all get mapped to a single type, `ItemComponent` despite the fact that each type is significantly different.  This problem will occur whenever there are embedded `BackboneElements` having the same name.
