@@ -31,7 +31,8 @@ from rdflib import URIRef, RDFS
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirspecific import concept_code, concept_path, W5, w5_infrastructure_categories
+from i2fhirb2.fhir.fhirspecific import concept_code, concept_path, W5, w5_infrastructure_categories, \
+    skip_fhir_predicates
 from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, ModifierOntologyEntry
 
 
@@ -52,30 +53,31 @@ class FHIROntologyTable(FHIRMetadata):
                 rval.append(ConceptOntologyEntry(subj, path, path, False, False))
 
         for subj in self.fhir_concepts(subject):
-            for path in self.i2b2_paths(self._name_base, subj, RDFS.subClassOf, self.is_w5_path):
-                if '.' not in split_uri(subj)[1]:
-                    # TODO: find a semantic way to resolve this -- lexical parsing is brittle
-                    rval.append(ConceptOntologyEntry(subj, path, path, False))
-                # Add an entry for each property of the subject
-                for prop in self.concept_properties(subj):
-                    for obj in self.g.objects(prop, RDFS.range):
-                        if self.is_primitive(obj):
-                            # Primitive type -- Can be accessed with a single code
-                            entry = ConceptOntologyEntry(prop,
-                                                         path,
-                                                         self._name_base,
-                                                         True,
-                                                         True,
-                                                         obj)
-                        else:
-                            # Nested type -- first level becomes a concept, the remainder will be classes
-                            entry = ConceptOntologyEntry(prop,
-                                                         path,
-                                                         self._name_base,
-                                                         False,
-                                                         '.' in concept_code(prop))
-                            rval += self.modifiers(subj, prop, entry.c_fullname, self._name_base)
-                        rval.append(entry)
+            if subj not in skip_fhir_predicates:
+                for path in self.i2b2_paths(self._name_base, subj, RDFS.subClassOf, self.is_w5_path):
+                    if '.' not in split_uri(subj)[1]:
+                        # TODO: find a semantic way to resolve this -- lexical parsing is brittle
+                        rval.append(ConceptOntologyEntry(subj, path, path, False))
+                    # Add an entry for each property of the subject
+                    for prop in self.concept_properties(subj):
+                        for obj in self.g.objects(prop, RDFS.range):
+                            if self.is_primitive(obj):
+                                # Primitive type -- Can be accessed with a single code
+                                entry = ConceptOntologyEntry(prop,
+                                                             path,
+                                                             self._name_base,
+                                                             True,
+                                                             True,
+                                                             obj)
+                            else:
+                                # Nested type -- first level becomes a concept, the remainder will be classes
+                                entry = ConceptOntologyEntry(prop,
+                                                             path,
+                                                             self._name_base,
+                                                             False,
+                                                             '.' in concept_code(prop))
+                                rval += self.modifiers(subj, prop, entry.c_fullname, self._name_base)
+                            rval.append(entry)
 
         return rval
 
