@@ -127,6 +127,7 @@ Python 3.6.1
     
     Edit db_conf config file and change the db, user and password parameters.  As an alternative, these can be supplied as parameters to the `generate_i2b2` program.
     ```text
+    > cd scripts
     > edit db_conf
     --db postgresql+psycopg2://localhost:5432/i2b2
     --user i2b2
