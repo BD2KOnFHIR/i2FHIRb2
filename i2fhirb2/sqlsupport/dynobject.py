@@ -185,7 +185,7 @@ class DynObject(metaclass=DynObjectMetaClass):
         """
         Set a dynamic value.  This is always local - it will not replace the parent attribute
         """
-        elements: DynElements = super().__getattribute__('_t')
+        elements = super().__getattribute__('_t')
         if elements.has_entry(key):
             raise ValueError("Attributes must be changed on class level")
         else:
@@ -197,7 +197,7 @@ class DynObject(metaclass=DynObjectMetaClass):
         :param item: name of item to retrieve
         :return: value for item
         """
-        elements: DynElements = super().__getattribute__('_t')
+        elements = super().__getattribute__('_t')
         if elements.has_entry(item):
             return elements.get_entry(self, item)
         else:
