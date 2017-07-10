@@ -26,7 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace
-from typing import List
+from typing import List, Tuple
 
 from sqlalchemy import MetaData, create_engine
 
@@ -37,8 +37,7 @@ class I2B2Tables:
 
     def __init__(self, opts: Namespace):
         _metadata = MetaData()
-        crc_url = opts.crcdb.replace("//", "//{crcuser}:{crcpassword}@".format(**opts.__dict__))
-        ont_url = opts.ontdb.replace("//", "//{ontuser}:{ontpassword}@".format(**opts.__dict__))
+        crc_url, ont_url = self._db_urls(opts)
 
         self.crc_engine = create_engine(crc_url)
         self.crc_connection = self.crc_engine.connect()
@@ -67,5 +66,19 @@ class I2B2Tables:
     def __getitem__(self, item):
         return getattr(self, item)
 
-    def _tables(self) -> List[str]:
-        return self._ont_tables.keys()
+    @staticmethod
+    def _db_urls(opts: Namespace) -> Tuple[str, str]:
+        """
+        Return the crc and ontology db urls
+        :param opts: options
+        :return: Tuple w/ crc and ontology url
+        """
+        return opts.crcdb.replace("//", "//{crcuser}:{crcpassword}@".format(**opts.__dict__)),\
+               opts.ontdb.replace("//", "//{ontuser}:{ontpassword}@".format(**opts.__dict__))
+
+    def _tables(self) -> List[Tuple[str, str]]:
+        """
+        Return the table name and its full path
+        :return:
+        """
+        return [(k.rsplit('.', 1)[1] if '.' in k else k, k) for k in self._ont_tables.keys()]

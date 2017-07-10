@@ -18,7 +18,7 @@ There are two ways to load/update an existing set of i2b2 tables:
 ### Running `generate_i2b2`
 
 #### Prerequsites 
-You need [Python 3](https://www.python.org/) (ideally, 3.6) installed on your computer. 
+You need a version of [Python 3](https://www.python.org/) (ideally, 3.6) installed on your computer. 
 
 ```text
 > python3 --version
@@ -67,23 +67,28 @@ Python 3.6.1
        ...
    ```
    (Don't miss the '.' in the above command)
+   
+   i2FHIRb2 comes with the python postgresql driver (psycopg2) pre-installed. If you are using an Oracle databae, you need to:
    ```text
-    (venv) > pip install cx_Oracle --pre           <-- If you will be using an Oracle database
+    (venv) > pip install cx_Oracle --pre       
        ...
     (venv) > 
     ```
-    There are a number of different dialects available for Microsoft SQL Server. See: http://docs.sqlalchemy.org/en/latest/dialects/mssql.html for details.
+    (Note: these tools haven't been tested with Oracle -- they may not work)
+    
+    There are a number of different dialects available for Microsoft SQL Server. See: http://docs.sqlalchemy.org/en/latest/dialects/mssql.html for details. Note that the same testing caveat applies.
 4) Validate the installation
     ```bash
     (venv) > generate_i2b2 -h
      usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
-                         [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
-                         [-db DBURL] [-u USER] [-p PASSWORD] [--crcdb CRCDB]
-                         [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
-                         [--ontdb ONTDB] [--ontuser ONTUSER]
-                         [--ontpassword ONTPASSWORD] [--onttable ONTTABLE]
-                         indir
-    
+                     [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-g]
+                     [-v] [--list] [-db DBURL] [-u USER] [-p PASSWORD]
+                     [--test] [--crcdb CRCDB] [--crcuser CRCUSER]
+                     [--crcpassword CRCPASSWORD] [--ontdb ONTDB]
+                     [--ontuser ONTUSER] [--ontpassword ONTPASSWORD]
+                     [--onttable ONTTABLE]
+                     indir
+
     FHIR in i2b2 metadata generator
     
     positional arguments:
@@ -105,12 +110,15 @@ Python 3.6.1
                             sourcesystem code (default: "FHIR STU3")
       --base BASE           Concept dimension base path. (default: "\FHIR\")
       -l, --load            Load i2b2 SQL tables
+      -g, --gentsv          Generate TSV output
       -v, --version         show program's version number and exit
+      --list                List table names
       -db DBURL, --dburl DBURL
                             Default database URL
       -u USER, --user USER  Default user name
       -p PASSWORD, --password PASSWORD
                             Default password
+      --test                Test the confguration
       --crcdb CRCDB         CRC database URL. (default: DBURL)
       --crcuser CRCUSER     User name for CRC database. (default: USER)
       --crcpassword CRCPASSWORD
@@ -122,17 +130,42 @@ Python 3.6.1
       --onttable ONTTABLE   Ontology table name (default: custom_meta)
    ```
 5) Edit the SQL configuration file.
-  
-    Note: this loader uses the [SQLSlchemy](http://www.sqlalchemy.org/), which means that, theoretically, it should work with any supported SQL database.  That said, it has only been tested with PostgreSQL.  If you have other installations, we would be happy to know whether it works.
-    
-    Edit db_conf config file and change the db, user and password parameters.  As an alternative, these can be supplied as parameters to the `generate_i2b2` program.
+      
+   Edit db_conf config file and change the db, user and password parameters. In the i2FHIRb2 root directory:
+ 
     ```text
     > cd scripts
     > edit db_conf
-    --db postgresql+psycopg2://localhost:5432/i2b2
-    --user i2b2
-    --password demouser
+    -db "postgresql+psycopg2://localhost:5432/i2b2"
+    --user postgres
+    --password postgres
     ```
+    (Note that these parameters can also be run directly from the command line:
+    ```text
+    (venv) > generate_i2b2 tests/data -l -db "postgresql+psycopg2://localhost:5432/i2b2" -u postgres -p postgres``)
+ 
+6) Test the configuration:
+    ```text
+    (venv) > generate_i2b2 tests/data --test @db.conf
+     Validating input files
+        File: ../tests/data/fhir.ttl exists
+        File: ../tests/data/w5.ttl exists
+    Validating sql connection
+        Connection validated
+    Validating target tables
+        Table concept_dimension exists
+        Table modifier_dimension exists
+        Table ontology_table exists
+        Table patient_dimension exists
+        Table provider_dimension exists
+        Table table_access exists
+        Table visit_dimension exists
+    Testing write access
+        2 rows updated in table_access table
+     (venv) >
+        
+    ```
+   
 6) Run the FHIR in i2b2 loader
 
 ```text

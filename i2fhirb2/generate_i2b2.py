@@ -29,9 +29,10 @@ import os
 from argparse import ArgumentParser, Namespace, Action
 from datetime import datetime
 from typing import Optional, List, Dict, Any
+from pathlib import Path
 
 from rdflib import Graph, URIRef
-from sqlalchemy import delete, Table, Column
+from sqlalchemy import delete, Table, Column, table, update
 from sqlalchemy.engine import Engine
 
 from i2fhirb2 import __version__
@@ -208,6 +209,74 @@ class LoadFromFile (Action):
             parser.parse_args(f.read().split(), namespace)
 
 
+def test_configuration(opts: Namespace) -> bool:
+    """ Test the configuration, making sure that the tsv files exist, the database can be opened and that we have
+    write access to at least some of the tables
+    """
+    def test_ttl_file(name: str) -> bool:
+        f = Path(opts.indir + name)
+        if f.is_file():
+            print("\tFile: {}{} exists".format(opts.indir, name))
+            return True
+        else:
+            return error("'{}' file not found in {}".format(name, opts.indir))
+
+    def test_tn(name: str, tables: I2B2Tables) -> bool:
+        if name in [k for k, _ in tables._tables()]:
+            print("\tTable {} exists".format(tn))
+            return True
+        else:
+            return error("unable to locate table '{}'".format(tn))
+
+    def error(msg: str) -> bool:
+        print("  Error: -> {}".format(msg))
+        return False
+
+    print("Validating input files")
+    success = test_ttl_file('fhir.ttl')
+    if not test_ttl_file('w5.ttl'):
+        success = False
+
+    print("Validating sql connection")
+    tables = None
+    try:
+        tables = I2B2Tables(opts)
+    except Exception as e:
+        print(str(e))
+
+    if not tables:
+        success = error("Unable to open SQL database")
+        ont_url, crc_url = I2B2Tables._db_urls(opts)
+        if ont_url == crc_url:
+            print("\tURL: {}".format(ont_url))
+        else:
+            print("\tOntoogy URL: {}".format(ont_url))
+            print("\tCRC URL: {}".format(crc_url))
+    else:
+        print("\tConnection validated")
+        print("Validating target tables")
+        for tn in i2b2table.all_tables():
+            if not test_tn(i2b2table.phys_name(tn), tables):
+                success = False
+
+    if success:
+        print("Testing write access")
+        row_count = 0
+        try:
+            row_count = tables.ont_connection.execute(update(tables.table_access)
+                                                      .where(tables.table_access.c.c_hlevel == 0)
+                                                      .values(c_hlevel=0)).rowcount
+        except Exception as e:
+            if "permission" not in str(e) or "denied" not in str(e):
+                print(str(e))
+        if row_count > 0:
+            print("\t{} rows updated in table_access table ".format(row_count))
+        else:
+            success = error("Write permission denied for table_access table")
+
+    return success
+
+
 def create_parser() -> ArgumentParser:
     """
     Create a command line parser
@@ -239,6 +308,7 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("-db", "--dburl", help="Default database URL")
     parser.add_argument("-u", "--user", help="Default user name")
     parser.add_argument("-p", "--password", help="Default password")
+    parser.add_argument("--test", help="Test the confguration", action="store_true")
     parser.add_argument("--crcdb", help="CRC database URL.  (default: DBURL)")
     parser.add_argument("--crcuser", help="User name for CRC database. (default: USER)")
     parser.add_argument("--crcpassword", help="Password for CRC database. (default: PASSWORD")
@@ -263,7 +333,7 @@ def genargs(argv: List[str]) -> Namespace:
         opts.indir = os.path.join(opts.indir, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
-    if opts.load or opts.gentsv or opts.list:
+    if opts.load or opts.gentsv or opts.list or opts.test:
         opts.setdefault('crcdb', opts.dburl)
         opts.setdefault('crcuser', opts.user)
         opts.setdefault('crcpassword', opts.password)
@@ -275,11 +345,15 @@ def genargs(argv: List[str]) -> Namespace:
 
 def generate_i2b2(argv: List[str]) -> bool:
     opts = genargs(argv)
+
+    if opts.test:
+        if not test_configuration(opts):
+            return False
+    opts.tables = I2B2Tables(opts) if (opts.load or opts.list) and not opts.test else None
     if opts.load or opts.gentsv:
         g = load_fhir_ontology(opts)
-    opts.tables = I2B2Tables(opts) if opts.load or opts.list else None
     if opts.list:
-        print('\n'.join(opts.tables._tables()))
+        print('\n'.join(["{} : {}".format(tn, tp) for tn, tp in opts.tables._tables()]))
     if opts.load or opts.gentsv:
         return g is not None and generate_i2b2_files(g, opts)
     else:
