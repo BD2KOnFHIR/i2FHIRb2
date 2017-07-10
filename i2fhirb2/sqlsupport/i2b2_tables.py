@@ -26,6 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace
+from typing import List
 
 from sqlalchemy import MetaData, create_engine
 
@@ -65,3 +66,6 @@ class I2B2Tables:
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def _tables(self) -> List[str]:
+        return self._ont_tables.keys()

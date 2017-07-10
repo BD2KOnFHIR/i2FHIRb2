@@ -233,7 +233,9 @@ def create_parser() -> ArgumentParser:
                         default=Default_Path_Base,
                         help="Concept dimension base path. (default: \"{}\")".format(Default_Path_Base))
     parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
+    parser.add_argument("-g", "--gentsv", help="Generate TSV output", action="store_true")
     parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__))
+    parser.add_argument("--list", help="List table names", action="store_true")
     parser.add_argument("-db", "--dburl", help="Default database URL")
     parser.add_argument("-u", "--user", help="Default user name")
     parser.add_argument("-p", "--password", help="Default password")
@@ -261,7 +263,7 @@ def genargs(argv: List[str]) -> Namespace:
         opts.indir = os.path.join(opts.indir, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
-    if opts.load:
+    if opts.load or opts.gentsv or opts.list:
         opts.setdefault('crcdb', opts.dburl)
         opts.setdefault('crcuser', opts.user)
         opts.setdefault('crcpassword', opts.password)
@@ -273,6 +275,12 @@ def genargs(argv: List[str]) -> Namespace:
 
 def generate_i2b2(argv: List[str]) -> bool:
     opts = genargs(argv)
-    g = load_fhir_ontology(opts)
-    opts.tables = I2B2Tables(opts) if opts.load else None
-    return g is not None and generate_i2b2_files(g, opts)
+    if opts.load or opts.gentsv:
+        g = load_fhir_ontology(opts)
+    opts.tables = I2B2Tables(opts) if opts.load or opts.list else None
+    if opts.list:
+        print('\n'.join(opts.tables._tables()))
+    if opts.load or opts.gentsv:
+        return g is not None and generate_i2b2_files(g, opts)
+    else:
+        return True
