@@ -54,7 +54,7 @@ def genargs() -> ArgumentParser:
     :return: parser
     """
     parser = ArgumentParser(description="Load FHIR data into i2b2 observation fact table")
-    parser.add_argument("-f", "--file", help="URI or input file")
+    parser.add_argument("-f", "--file", help="URL or name of input .ttl file")
     parser.add_argument("-d", "--dir", help="URI of server or directory of input files")
     parser.add_argument("-o", "--outdir", help="Output directory to store .tsv files. "
                                                "If absent, no .tsv files are generated.")
