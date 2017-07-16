@@ -34,7 +34,7 @@ class TableAccessTestCase(unittest.TestCase):
     def test(self):
         from i2fhirb2.i2b2model.i2b2tableaccess import TableAccess
         ta = TableAccess()
-        self.assertEqual(('c_table_cd\tc_table_name\tc_protected_acess\tc_hlevel\tc_fullname\tc_name\t'
+        self.assertEqual(('c_table_cd\tc_table_name\tc_protected_access\tc_hlevel\tc_fullname\tc_name\t'
                           'c_synonym_cd\tc_visualattributes\tc_totalnum\tc_basecode\tc_metadataxml\t'
                           'c_facttablecolumn\tc_dimtablename\tc_columnname\tc_columndatatype\tc_operator\t'
                           'c_dimcode\tc_comment\tc_tooltip\tc_entry_date\tc_change_date\tc_status_cd\t'
@@ -42,7 +42,7 @@ class TableAccessTestCase(unittest.TestCase):
         self.assertEqual(OrderedDict([
              ('c_table_cd', 'FHIR'),
              ('c_table_name', 'custom_meta'),
-             ('c_protected_acess', 'N'),
+             ('c_protected_access', 'N'),
              ('c_hlevel', 1),
              ('c_fullname', '\\FHIR\\'),
              ('c_name', 'FHIR Resources'),

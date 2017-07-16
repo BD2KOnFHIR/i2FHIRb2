@@ -46,7 +46,7 @@ class TableAccess(DynObject):
         return "custom_meta"
 
     @DynObject.entry(_t)
-    def c_protected_acess(self) -> str:
+    def c_protected_access(self) -> str:
         return "N"
 
     @DynObject.entry(_t)
