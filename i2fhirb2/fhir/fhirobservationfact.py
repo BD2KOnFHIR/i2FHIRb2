@@ -32,8 +32,9 @@ from rdflib import URIRef, Graph, BNode, RDF, XSD
 from rdflib.term import Node, Literal
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
+from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirspecific import concept_code, FHIR
-from i2fhirb2.i2b2model.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
+from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
     valuetype_text, valuetype_date, valuetype_number
 from i2fhirb2.sqlsupport.dynobject import DynElements
 
@@ -136,17 +137,30 @@ class FHIRObservationFact(ObservationFact):
 
 
 class FHIRObservationFactFactory:
+    """
+    FHIRObservationFactFactory takes an RDF graph and generates a set of observation_fact, patient_dimension,
+    visit_dimension, provider_dimension, patient_mapping and provider_mapping entries
+    """
 
     special_processing_list = {RDF.type: None, FHIR.nodeRole: None}
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]):
         self.g = g
         self.ofk = ofk
-        self.facts = []                                             # type: List[FHIRObservationFact]
-        for s in {subject} if subject else self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
-            self.facts += self.generate_facts(s)
+        self.observation_facts = []         # type: List[FHIRObservationFact]
+        self.patient_dimensions = []        # type: List[FHIRPatientDimension]
+        self.provider_dimensions = []       # type: List[FHIRProviderDimension]
+        self.visit_dimensions = []          # type: List[FHIRVisitDimension]
+        self.patient_mappings = []          # type: List[FHIRPatientMapping]
+        self.provider_mappings = []         # type: List[FHIRProviderMapping]
 
-    def generate_facts(self, subject: URIRef) -> List[FHIRObservationFact]:
+        # TODO: look at DomainResource embedded entries (claim-example-oral-bridge).  Perhaps we should change the
+        # RDF generator to add type arcs to all resources?
+        for s in {subject} if subject else self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
+            resource = self.g.value(s, FHIR.resourceType)
+            self.generate_facts(s)
+
+    def generate_facts(self, subject: URIRef) -> None:
         rval = []               # type: List[FHIRObservationFact]
 
         # Concept codes

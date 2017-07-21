@@ -28,13 +28,13 @@
 from abc import ABCMeta, abstractmethod
 from typing import Set, Optional, List
 
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from rdflib import Graph, URIRef, RDF, OWL, RDFS
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirspecific import FHIR, skip_fhir_predicates, w5_infrastructure_categories, W5, fhir_primitives
-from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
+from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
 
 
 class ModifierPath:
@@ -184,6 +184,12 @@ class FHIRMetadata(metaclass=ABCMeta):
         :param mod: modifier URI
         :return: composite
         """
+        p1 = split_uri(mod)
+        if len(p1) < 2:
+            print("E1")
+        p2 = p1[1].rsplit('.', 1)
+        if len(p2) < 2:
+            print("E2")
         last_mod_component = split_uri(mod)[1].rsplit('.', 1)[1]
         return URIRef(str(parent) + '.' + last_mod_component)
 

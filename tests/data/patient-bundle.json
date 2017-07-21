@@ -1,0 +1,3475 @@
+{
+  "resourceType": "Bundle",
+  "id": "e16055e9-34f7-40b6-8f4d-e24b081da8",
+  "meta": {
+    "lastUpdated": "2017-07-13T14:25:52Z"
+  },
+  "type": "searchset",
+  "total": 595,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://test.fhir.org/r3/Patient?_format=application/json+fhir&search-id=20887bbf-8645-457b-9b75-d259950060"
+    },
+    {
+      "relation": "first",
+      "url": "http://test.fhir.org/r3/Patient?_format=application/json+fhir&search-id=20887bbf-8645-457b-9b75-d259950060&search-offset=0&_count=50"
+    },
+    {
+      "relation": "next",
+      "url": "http://test.fhir.org/r3/Patient?_format=application/json+fhir&search-id=20887bbf-8645-457b-9b75-d259950060&search-offset=50&_count=50"
+    },
+    {
+      "relation": "last",
+      "url": "http://test.fhir.org/r3/Patient?_format=application/json+fhir&search-id=20887bbf-8645-457b-9b75-d259950060&search-offset=550&_count=50"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060692",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060692",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:23:51Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "un0fWox2uY3NXO09",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersEtWllgLh",
+            "given": [
+              "PeterEtWllgLh",
+              "JamesEtWllgLh"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhonBFGINQpgo St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "0606"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060693",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060693",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:23:54Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "2TGVcLd6lTi6stYD",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersHvMTocJT",
+            "given": [
+              "PeterHvMTocJT",
+              "JamesHvMTocJT"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhonyybKilvPh St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "2961"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060694",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060694",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:23:57Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "value": "CREATE-IDENTIFER"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "CREATE-FAMILY",
+            "given": [
+              "CREATE-GIVEN"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2001-01-01"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060695",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060695",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:23:57Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "value": "CREATE-IDENTIFER"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "CREATE-FAMILY",
+            "given": [
+              "CREATE-GIVEN"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2001-01-01"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060696",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060696",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:02Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "c9SQNZy00fCQ106927",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersemQpRH",
+            "given": [
+              "PeteremQpRH"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(03) 9293 9293",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "776 ErewhonemQpRH St"
+            ],
+            "city": "PleasantVilleemQpRH",
+            "state": "VicemQpRH",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060697",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060697",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:04Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "kXzNaQF6mDeu776683",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersrmQXDJ",
+            "given": [
+              "PeterrmQXDJ"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(04) 8351 8351",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "518 ErewhonrmQXDJ St"
+            ],
+            "city": "PleasantVillermQXDJ",
+            "state": "VicrmQXDJ",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060698",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060698",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:07Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "0GvnlAfoANgn477220",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersMfrObT",
+            "given": [
+              "PeterMfrObT"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(08) 5918 5918",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "285 ErewhonMfrObT St"
+            ],
+            "city": "PleasantVilleMfrObT",
+            "state": "VicMfrObT",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060699",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060699",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:08Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "lMWJtd21qMSB237313",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersjgeSYw",
+            "given": [
+              "PeterjgeSYw"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(03) 1408 1408",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "524 ErewhonjgeSYw St"
+            ],
+            "city": "PleasantVillejgeSYw",
+            "state": "VicjgeSYw",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060700",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060700",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:12Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "tCKiqN34VvKn226979",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersyBaCmC",
+            "given": [
+              "PeteryBaCmC"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(02) 2042 2042",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "672 ErewhonyBaCmC St"
+            ],
+            "city": "PleasantVilleyBaCmC",
+            "state": "VicyBaCmC",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060701",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060701",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:14Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "I4h2RKhtSjBU925179",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmerskMMajA",
+            "given": [
+              "PeterkMMajA"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(02) 6277 6277",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "562 ErewhonkMMajA St"
+            ],
+            "city": "PleasantVillekMMajA",
+            "state": "VickMMajA",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060702",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060702",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:17Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "uCRfE6TbItKU162542",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersEptEFx",
+            "given": [
+              "PeterEptEFx"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(02) 8995 8995",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "852 ErewhonEptEFx St"
+            ],
+            "city": "PleasantVilleEptEFx",
+            "state": "VicEptEFx",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060703",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060703",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:18Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "DAB415eyF2A4843074",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersSNzRIb",
+            "given": [
+              "PeterSNzRIb"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(05) 4894 4894",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "021 ErewhonSNzRIb St"
+            ],
+            "city": "PleasantVilleSNzRIb",
+            "state": "VicSNzRIb",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060704",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060704",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:22Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "UevTOjWDHMWZ257203",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersLOsvQH",
+            "given": [
+              "PeterLOsvQH"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(08) 9941 9941",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "197 ErewhonLOsvQH St"
+            ],
+            "city": "PleasantVilleLOsvQH",
+            "state": "VicLOsvQH",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060705",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060705",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:24Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "pZd8QraB3aYo867801",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersGiTrCj",
+            "given": [
+              "PeterGiTrCj"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(07) 5944 5944",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "527 ErewhonGiTrCj St"
+            ],
+            "city": "PleasantVilleGiTrCj",
+            "state": "VicGiTrCj",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060706",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060706",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:27Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "XNA0qoeb0xq9469980",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersqdahBy",
+            "given": [
+              "PeterqdahBy"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(09) 2181 2181",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "299 ErewhonqdahBy St"
+            ],
+            "city": "PleasantVilleqdahBy",
+            "state": "VicqdahBy",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060707",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060707",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:29Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "svTEwHonS6P2535927",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersorICfe",
+            "given": [
+              "PeterorICfe"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(07) 6590 6590",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "179 ErewhonorICfe St"
+            ],
+            "city": "PleasantVilleorICfe",
+            "state": "VicorICfe",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060708",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060708",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:35Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "Y6PXrCJOtYLs021419",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersFHWVPw",
+            "given": [
+              "PeterFHWVPw"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(06) 0543 0543",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "396 ErewhonFHWVPw St"
+            ],
+            "city": "PleasantVilleFHWVPw",
+            "state": "VicFHWVPw",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060709",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060709",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:24:39Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "SXvHQjgs9Jqd613832",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersaEhfcZ",
+            "given": [
+              "PeteraEhfcZ"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(00) 2531 2531",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "479 ErewhonaEhfcZ St"
+            ],
+            "city": "PleasantVilleaEhfcZ",
+            "state": "VicaEhfcZ",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060713",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060713",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:28Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "FgIq7bHmKF1rnPLg",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersqFmGjvZd",
+            "given": [
+              "PeterqFmGjvZd",
+              "JamesqFmGjvZd"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhonYDsxBhiKS St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "4493"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060714",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060714",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:31Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "VWZiXflzeNQ9Na4v",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersRPPrSWAB",
+            "given": [
+              "PeterRPPrSWAB",
+              "JamesRPPrSWAB"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhondQgkjZhfi St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "1052"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060715",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060715",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:35Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "PN9rSFV2PkEqcJgY",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersywtJBeYq",
+            "given": [
+              "PeterywtJBeYq",
+              "JamesywtJBeYq"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhonrewEyyeYt St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "7864"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060716",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060716",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:39Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "iIZQAnbt9QC84AMP",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersdbHjobMY",
+            "given": [
+              "PeterdbHjobMY",
+              "JamesdbHjobMY"
+            ]
+          },
+          {
+            "use": "usual",
+            "given": [
+              "Jim"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "use": "home"
+          },
+          {
+            "system": "phone",
+            "value": "(03) 5555 6473",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "534 ErewhonaDzuNNXfj St"
+            ],
+            "city": "PleasantVille",
+            "state": "Vic",
+            "postalCode": "2207"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060717",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060717",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:41Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "value": "CREATE-IDENTIFER"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "CREATE-FAMILY",
+            "given": [
+              "CREATE-GIVEN"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2001-01-01"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060718",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060718",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:41Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "value": "CREATE-IDENTIFER"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "CREATE-FAMILY",
+            "given": [
+              "CREATE-GIVEN"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2001-01-01"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060719",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060719",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:46Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "ocXGNTPQ58Hz743592",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersGhqfOj",
+            "given": [
+              "PeterGhqfOj"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(02) 9579 9579",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "352 ErewhonGhqfOj St"
+            ],
+            "city": "PleasantVilleGhqfOj",
+            "state": "VicGhqfOj",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060720",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060720",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:47Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "FsJHi8OZlILX424377",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersvodpNx",
+            "given": [
+              "PetervodpNx"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(00) 9052 9052",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "739 ErewhonvodpNx St"
+            ],
+            "city": "PleasantVillevodpNx",
+            "state": "VicvodpNx",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060721",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060721",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:48Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "xO6NnC5IJO6s477982",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersTnFXmQ",
+            "given": [
+              "PeterTnFXmQ"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(08) 4835 4835",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "561 ErewhonTnFXmQ St"
+            ],
+            "city": "PleasantVilleTnFXmQ",
+            "state": "VicTnFXmQ",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060722",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060722",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:50Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "S8Dc46Wuo1Ft653600",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersysRqKZ",
+            "given": [
+              "PeterysRqKZ"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(03) 7800 7800",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "136 ErewhonysRqKZ St"
+            ],
+            "city": "PleasantVilleysRqKZ",
+            "state": "VicysRqKZ",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060723",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060723",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:54Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "mjsI9U4LBlSl214043",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersHFMgTY",
+            "given": [
+              "PeterHFMgTY"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(03) 7497 7497",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "513 ErewhonHFMgTY St"
+            ],
+            "city": "PleasantVilleHFMgTY",
+            "state": "VicHFMgTY",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060724",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060724",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:55Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "Q8HqoeyCbYxO598880",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersIxPPri",
+            "given": [
+              "PeterIxPPri"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(00) 2011 2011",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "529 ErewhonIxPPri St"
+            ],
+            "city": "PleasantVilleIxPPri",
+            "state": "VicIxPPri",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060725",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060725",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:26:57Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "S6rCCBmwVXdH526605",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersktaIgA",
+            "given": [
+              "PeterktaIgA"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(04) 3087 3087",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "041 ErewhonktaIgA St"
+            ],
+            "city": "PleasantVillektaIgA",
+            "state": "VicktaIgA",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060726",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060726",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:00Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "G7JaAGdMQER0525964",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersrGyBEj",
+            "given": [
+              "PeterrGyBEj"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(00) 9528 9528",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "189 ErewhonrGyBEj St"
+            ],
+            "city": "PleasantVillerGyBEj",
+            "state": "VicrGyBEj",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060727",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060727",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:03Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "mAVIm2LJMeDP830725",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersRPSqZs",
+            "given": [
+              "PeterRPSqZs"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(03) 3372 3372",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "520 ErewhonRPSqZs St"
+            ],
+            "city": "PleasantVilleRPSqZs",
+            "state": "VicRPSqZs",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060728",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060728",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:04Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "IBKpaUtHfNFd510573",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersahsTlJ",
+            "given": [
+              "PeterahsTlJ"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(09) 2447 2447",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "657 ErewhonahsTlJ St"
+            ],
+            "city": "PleasantVilleahsTlJ",
+            "state": "VicahsTlJ",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060729",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060729",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:07Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "TxeUgPHqcTsb571712",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmerstfJllK",
+            "given": [
+              "PetertfJllK"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(05) 6825 6825",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "118 ErewhontfJllK St"
+            ],
+            "city": "PleasantVilletfJllK",
+            "state": "VictfJllK",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060730",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060730",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:08Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "Y0CwMsh5Rx88529969",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersKdfWGA",
+            "given": [
+              "PeterKdfWGA"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(01) 5337 5337",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "398 ErewhonKdfWGA St"
+            ],
+            "city": "PleasantVilleKdfWGA",
+            "state": "VicKdfWGA",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060731",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060731",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:14Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "ITxQAISBc2Rh227560",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersyDaLMq",
+            "given": [
+              "PeteryDaLMq"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(02) 3050 3050",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "765 ErewhonyDaLMq St"
+            ],
+            "city": "PleasantVilleyDaLMq",
+            "state": "VicyDaLMq",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060732",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060732",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-07-10T06:27:17Z",
+          "tag": [
+            {
+              "system": "http://projectcrucible.org",
+              "code": "testdata"
+            },
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:oid:1.2.36.146.595.217.0.1",
+            "value": "4rFd1OXYhgby760791",
+            "period": {
+              "start": "2001-05-06"
+            },
+            "assigner": {
+              "display": "Acme Healthcare"
+            }
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "ChalmersZTRiKh",
+            "given": [
+              "PeterZTRiKh"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(00) 5236 5236",
+            "use": "work"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1974-12-25",
+        "deceasedBoolean": false,
+        "address": [
+          {
+            "use": "home",
+            "line": [
+              "791 ErewhonZTRiKh St"
+            ],
+            "city": "PleasantVilleZTRiKh",
+            "state": "VicZTRiKh",
+            "postalCode": "3999"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/1000060739",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1000060739",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2017-07-11T18:37:04Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577421"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Chandrasekharan",
+            "given": [
+              "Gopi"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1949-05-08",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/102",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "102",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:54Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577421"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Garcia",
+            "given": [
+              "Jessie"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1949-05-08",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/103",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "103",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:55Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577422"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Christensen",
+            "given": [
+              "Donald"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1933-03-02",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/104",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "104",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:55Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577423"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Hughes",
+            "given": [
+              "Teresa"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1988-05-22",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/105",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "105",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:55Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577424"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Houston",
+            "given": [
+              "Daryl"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1937-02-14",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/106",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "106",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:55Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577425"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "West",
+            "given": [
+              "James"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1946-06-08",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/107",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "107",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:55Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577426"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Nguyen",
+            "given": [
+              "Glenda"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1945-02-16",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/108",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "108",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:56Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577427"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Swanson",
+            "given": [
+              "Nathaniel"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1940-01-08",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/109",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "109",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:56Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577428"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Powers",
+            "given": [
+              "Vera"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1945-06-12",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/110",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "110",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:56Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577429"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Chandler",
+            "given": [
+              "Perry"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1960-01-12",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/111",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "111",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:56Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577430"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Carroll",
+            "given": [
+              "Alvin"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1945-06-04",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://test.fhir.org/r3/Patient/112",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "112",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2017-05-04T01:04:57Z",
+          "tag": [
+            {
+              "system": "http://hl7.org/fhir/v3/ObservationValue",
+              "code": "REDACTED",
+              "display": "redacted"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v2/0203",
+                  "code": "SS"
+                }
+              ]
+            },
+            "system": "https://github.com/projectcypress/cypress/patient",
+            "value": "577431"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Matthews",
+            "given": [
+              "Florence"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1995-01-05",
+        "managingOrganization": {
+          "reference": "Organization/1"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

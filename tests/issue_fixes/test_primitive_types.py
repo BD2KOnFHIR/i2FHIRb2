@@ -28,8 +28,6 @@
 
 import unittest
 
-from rdflib import Graph
-
 
 class PrimitiveIssueTestCase(unittest.TestCase):
     """ The fhir.ttl ontology has been updated and, among the fixes, the FHIR primitive types are now subclasses
@@ -38,10 +36,8 @@ class PrimitiveIssueTestCase(unittest.TestCase):
     def test_primitive(self):
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
         from i2fhirb2.fhir.fhirspecific import FHIR
-        g = Graph()
-        g.load('../data/w5.ttl', format="turtle")
-        g.load('../data/fhir.ttl', format="turtle")
-        mdt = FHIROntologyTable(g)
+        from tests.utils.shared_graph import shared_graph
+        mdt = FHIROntologyTable(shared_graph)
         self.assertTrue(mdt.is_primitive(FHIR.string))
         self.assertFalse(mdt.is_primitive(FHIR.CodeableConcept))
         self.assertTrue(mdt.is_primitive(FHIR.uri))

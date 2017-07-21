@@ -30,7 +30,7 @@ from typing import Optional, List, cast
 from rdflib import URIRef
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension, ConceptDimensionRoot
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension, ConceptDimensionRoot
 
 
 class FHIRConceptDimension(FHIRMetadata):

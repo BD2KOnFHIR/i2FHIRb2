@@ -26,13 +26,16 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
+import sys
 from argparse import ArgumentParser, Namespace, Action
 from datetime import datetime
-from typing import Optional, List, Dict, Any
 from pathlib import Path
+from typing import Optional, List, Dict, Any
 
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
 from rdflib import Graph, URIRef
-from sqlalchemy import delete, Table, Column, table, update
+from sqlalchemy import delete, Table, Column, update
 from sqlalchemy.engine import Engine
 
 from i2fhirb2 import __version__
@@ -41,12 +44,10 @@ from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import FHIR
-from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.i2b2conceptdimension import ConceptDimensionRoot
-from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, OntologyRoot
-from i2fhirb2.i2b2model.i2b2tableaccess import TableAccess
-from i2fhirb2.i2b2model.tablenames import i2b2table
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
+from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
+from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
+from i2fhirb2.i2b2model.shared.tablenames import i2b2table
 from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 Default_Sourcesystem_Code = 'FHIR STU3'
@@ -352,9 +353,14 @@ def generate_i2b2(argv: List[str]) -> bool:
     opts.tables = I2B2Tables(opts) if (opts.load or opts.list) and not opts.test else None
     if opts.load or opts.gentsv:
         g = load_fhir_ontology(opts)
+    else:
+        g = None
     if opts.list:
         print('\n'.join(["{} : {}".format(tn, tp) for tn, tp in opts.tables._tables()]))
     if opts.load or opts.gentsv:
         return g is not None and generate_i2b2_files(g, opts)
     else:
         return True
+
+if __name__ == "__main__":
+    generate_i2b2(sys.argv[1:])

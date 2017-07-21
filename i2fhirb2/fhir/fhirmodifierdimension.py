@@ -28,9 +28,10 @@
 from typing import List, Optional
 
 from rdflib import RDFS, RDF, OWL, URIRef
+
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirspecific import FHIR
-from i2fhirb2.i2b2model.i2b2modifierdimension import ModifierDimension
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 
 
 class FHIRModifierDimension(FHIRMetadata):
@@ -79,7 +80,7 @@ class FHIRModifierDimension(FHIRMetadata):
 
         # Add the special Narrative.text DatatypeProperty
         if not domain:
-            rval.add(ModifierDimension(FHIR['Narrative.div'], self._name_base))
+            rval.add(ModifierDimension(FHIR.Narrative.div, self._name_base))
         return rval.as_list()
 
     def extend_modifier_path(self, prop: URIRef, range_type: URIRef) -> List[ModifierDimension]:

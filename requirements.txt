@@ -1,3 +1,4 @@
+jsonasobj
 SQLAlchemy
 python-dateutil
 rdflib

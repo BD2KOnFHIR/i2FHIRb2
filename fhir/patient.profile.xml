@@ -162,7 +162,7 @@
             <img src="data: image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAWCAYAAAABxvaqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wYeFzIs1vtcMQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAE0lEQVQI12P4//8/AxMDAwNdCABMPwMo2ctnoQAAAABJRU5ErkJggg==" alt="." style="background-color: inherit" class="hierarchy"/>
             <img src="data: image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAWCAYAAADJqhx8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wYeFzI3XJ6V3QAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAANklEQVQ4y+2RsQ0AIAzDav7/2VzQwoCY4iWbZSmo1QGoUgNMghvWaIejPQW/CrrNCylIwcOCDYfLNRcNer4SAAAAAElFTkSuQmCC" alt="." style="background-color: inherit" class="hierarchy"/>
             <img src="data: image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gYBFzI0BrFQCwAAAERJREFUOMtj/P//PwMlgImBQjDwBrCcOnWKokBgYWBgYDCU+06W5i8MUggvnH/EOVJjAW4AuQHJ+O75LYqikXE0LzAAALePEntTkEoSAAAAAElFTkSuQmCC" alt="." style="background-color: white; background-color: inherit" title="Primitive Data Type" class="hierarchy"/> 
-            <span title="Patient.birthDate : The date of birth for the individual.">birthDate</span>
+            <span title="Patient.birthDate : The date of birthcode for the individual.">birthDate</span>
             <a name="Patient.birthDate"> </a>
           </td>
           <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">
@@ -172,7 +172,7 @@
           <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">
             <a href="datatypes.html#date">date</a>
           </td>
-          <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">The date of birth for the individual</td>
+          <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">The date of birthcode for the individual</td>
         </tr>
 
         <tr style="border: 0px #F0F0F0 solid; padding:0px; vertical-align: top; background-color: white;">
@@ -269,13 +269,13 @@
             <img src="data: image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAWCAYAAAABxvaqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wYeFzIs1vtcMQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAE0lEQVQI12P4//8/AxMDAwNdCABMPwMo2ctnoQAAAABJRU5ErkJggg==" alt="." style="background-color: inherit" class="hierarchy"/>
             <img src="data: image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAWCAYAAADJqhx8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wYeFzI3XJ6V3QAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAANklEQVQ4y+2RsQ0AIAzDav7/2VzQwoCY4iWbZSmo1QGoUgNMghvWaIejPQW/CrrNCylIwcOCDYfLNRcNer4SAAAAAElFTkSuQmCC" alt="." style="background-color: inherit" class="hierarchy"/>
             <img src="data: image/png;base64,R0lGODlhEAAQAMQfAGm6/idTd4yTmF+v8Xa37KvW+lyh3KHJ62aq41ee2bXZ98nm/2mt5W2Ck5XN/C1chEZieho8WXXA/2Gn4P39/W+y6V+l3qjP8Njt/lx2izxPYGyv51Oa1EJWZ////////yH5BAEAAB8ALAAAAAAQABAAAAWH4Cd+Xml6Y0pCQts0EKp6GbYshaM/skhjhCChUmFIeL4OsHIxXRAISQTl6SgIG8+FgfBMoh2qtbLZQr0TQJhk3TC4pYPBApiyFVDEwSOf18UFXxMWBoUJBn9sDgmDewcJCRyJJBoEkRyYmAABPZQEAAOhA5seFDMaDw8BAQ9TpiokJyWwtLUhADs=" alt="." style="background-color: white; background-color: inherit" title="Choice of Types" class="hierarchy"/> 
-            <span title="Patient.multipleBirth[x] : Indicates whether the patient is part of a multiple (bool) or indicates the actual birth order (integer).">multipleBirth[x]</span>
+            <span title="Patient.multipleBirth[x] : Indicates whether the patient is part of a multiple (bool) or indicates the actual birthcode order (integer).">multipleBirth[x]</span>
             <a name="Patient.multipleBirth_x_"> </a>
           </td>
           <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy"/>
           <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">0..1</td>
           <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy"></td>
-          <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">Whether patient is part of a multiple birth</td>
+          <td style="vertical-align: top; text-align : left; background-color: white; border: 0px #F0F0F0 solid; padding:0px 4px 0px 4px" class="hierarchy">Whether patient is part of a multiple birthcode</td>
         </tr>
 
         <tr style="border: 0px #F0F0F0 solid; padding:0px; vertical-align: top; background-color: white;">
@@ -794,6 +794,11 @@
     <uri value="http://loinc.org"/>
     <name value="LOINC code for the element"/>
   </mapping>
+  <mapping>
+    <identity value="i2b2"/>
+    <uri value="http://i2b2.org"/>
+    <name value="i2b2 dimension table mapping"
+  </mapping>
   <kind value="resource"/>
   <abstract value="false"/>
   <type value="Patient"/>
@@ -854,6 +859,11 @@
       <mapping>
         <identity value="w5"/>
         <map value="administrative.individual"/>
+      </mapping>
+      <mapping>
+        <identity value="i2b2"/>
+        <map value="patient_dimension"/>
+        <map value="patient_mapping"/>
       </mapping>
     </element>
     <element id="Patient.id">
@@ -1061,6 +1071,10 @@
         <identity value="w5"/>
         <map value="id"/>
       </mapping>
+      <mapping>
+        <identity value="i2b2"/>
+        <map value="patient_dimension"/>
+      </mapping>
     </element>
     <element id="Patient.active">
       <path value="Patient.active"/>
@@ -1144,7 +1158,7 @@
       <short value="male | female | other | unknown"/>
       <definition value="Administrative Gender - the gender that the patient is considered to have for administration and record keeping purposes."/>
       <comment value="The gender may not match the biological sex as determined by genetics, or the individual&#39;s preferred identification. Note that for both humans and particularly animals, there are other legitimate possibilities than M and F, though the vast majority of systems and contexts only support M and F.  Systems providing decision support or enforcing business rules should ideally do this on the basis of Observations dealing with the specific gender aspect of interest (anatomical, chromosonal, social, etc.)  However, because these observations are infrequently recorded, defaulting to the administrative gender is common practice.  Where such defaulting occurs, rule enforcement should allow for the variation between administrative and biological, chromosonal and other gender aspects.  For example, an alert about a hysterectomy on a male should be handled as a warning or overrideable error, not a &quot;hard&quot; error."/>
-      <requirements value="Needed for identification of the individual, in combination with (at least) name and birth date. Gender of individual drives many clinical processes."/>
+      <requirements value="Needed for identification of the individual, in combination with (at least) name and birthcode date. Gender of individual drives many clinical processes."/>
       <min value="0"/>
       <max value="1"/>
       <type>
@@ -1179,8 +1193,8 @@
     </element>
     <element id="Patient.birthDate">
       <path value="Patient.birthDate"/>
-      <short value="The date of birth for the individual"/>
-      <definition value="The date of birth for the individual."/>
+      <short value="The date of birthcode for the individual"/>
+      <definition value="The date of birthcode for the individual."/>
       <comment value="At least an estimated year should be provided as a guess if the real DOB is unknown  There is a standard extension &quot;patient-birthTime&quot; available that should be used where Time is required (such as in maternaty/infant care systems)."/>
       <requirements value="Age of the individual drives many clinical processes."/>
       <min value="0"/>
@@ -1298,10 +1312,10 @@
     </element>
     <element id="Patient.multipleBirth[x]">
       <path value="Patient.multipleBirth[x]"/>
-      <short value="Whether patient is part of a multiple birth"/>
-      <definition value="Indicates whether the patient is part of a multiple (bool) or indicates the actual birth order (integer)."/>
-      <comment value="Where the valueInteger is provided, the number is the birth number in the sequence.&#xA;E.g. The middle birth in tripplets would be valueInteger=2 and the third born would have valueInteger=3&#xA;If a bool value was provided for this tripplets examle, then all 3 patient records would have valueBool=true (the ordering is not indicated)."/>
-      <requirements value="For disambiguation of multiple-birth children, especially relevant where the care provider doesn&#39;t meet the patient, such as labs."/>
+      <short value="Whether patient is part of a multiple birthcode"/>
+      <definition value="Indicates whether the patient is part of a multiple (bool) or indicates the actual birthcode order (integer)."/>
+      <comment value="Where the valueInteger is provided, the number is the birthcode number in the sequence.&#xA;E.g. The middle birthcode in tripplets would be valueInteger=2 and the third born would have valueInteger=3&#xA;If a bool value was provided for this tripplets examle, then all 3 patient records would have valueBool=true (the ordering is not indicated)."/>
+      <requirements value="For disambiguation of multiple-birthcode children, especially relevant where the care provider doesn&#39;t meet the patient, such as labs."/>
       <min value="0"/>
       <max value="1"/>
       <type>
@@ -2336,7 +2350,7 @@
       <short value="male | female | other | unknown"/>
       <definition value="Administrative Gender - the gender that the patient is considered to have for administration and record keeping purposes."/>
       <comment value="The gender may not match the biological sex as determined by genetics, or the individual&#39;s preferred identification. Note that for both humans and particularly animals, there are other legitimate possibilities than M and F, though the vast majority of systems and contexts only support M and F.  Systems providing decision support or enforcing business rules should ideally do this on the basis of Observations dealing with the specific gender aspect of interest (anatomical, chromosonal, social, etc.)  However, because these observations are infrequently recorded, defaulting to the administrative gender is common practice.  Where such defaulting occurs, rule enforcement should allow for the variation between administrative and biological, chromosonal and other gender aspects.  For example, an alert about a hysterectomy on a male should be handled as a warning or overrideable error, not a &quot;hard&quot; error."/>
-      <requirements value="Needed for identification of the individual, in combination with (at least) name and birth date. Gender of individual drives many clinical processes."/>
+      <requirements value="Needed for identification of the individual, in combination with (at least) name and birthcode date. Gender of individual drives many clinical processes."/>
       <min value="0"/>
       <max value="1"/>
       <type>
@@ -2371,8 +2385,8 @@
     </element>
     <element id="Patient.birthDate">
       <path value="Patient.birthDate"/>
-      <short value="The date of birth for the individual"/>
-      <definition value="The date of birth for the individual."/>
+      <short value="The date of birthcode for the individual"/>
+      <definition value="The date of birthcode for the individual."/>
       <comment value="At least an estimated year should be provided as a guess if the real DOB is unknown  There is a standard extension &quot;patient-birthTime&quot; available that should be used where Time is required (such as in maternaty/infant care systems)."/>
       <requirements value="Age of the individual drives many clinical processes."/>
       <min value="0"/>
@@ -2490,10 +2504,10 @@
     </element>
     <element id="Patient.multipleBirth[x]">
       <path value="Patient.multipleBirth[x]"/>
-      <short value="Whether patient is part of a multiple birth"/>
-      <definition value="Indicates whether the patient is part of a multiple (bool) or indicates the actual birth order (integer)."/>
-      <comment value="Where the valueInteger is provided, the number is the birth number in the sequence.&#xA;E.g. The middle birth in tripplets would be valueInteger=2 and the third born would have valueInteger=3&#xA;If a bool value was provided for this tripplets examle, then all 3 patient records would have valueBool=true (the ordering is not indicated)."/>
-      <requirements value="For disambiguation of multiple-birth children, especially relevant where the care provider doesn&#39;t meet the patient, such as labs."/>
+      <short value="Whether patient is part of a multiple birthcode"/>
+      <definition value="Indicates whether the patient is part of a multiple (bool) or indicates the actual birthcode order (integer)."/>
+      <comment value="Where the valueInteger is provided, the number is the birthcode number in the sequence.&#xA;E.g. The middle birthcode in tripplets would be valueInteger=2 and the third born would have valueInteger=3&#xA;If a bool value was provided for this tripplets examle, then all 3 patient records would have valueBool=true (the ordering is not indicated)."/>
+      <requirements value="For disambiguation of multiple-birthcode children, especially relevant where the care provider doesn&#39;t meet the patient, such as labs."/>
       <min value="0"/>
       <max value="1"/>
       <type>

@@ -33,7 +33,8 @@ from rdflib.namespace import split_uri
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirspecific import concept_code, concept_path, W5, w5_infrastructure_categories, \
     skip_fhir_predicates
-from i2fhirb2.i2b2model.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, ModifierOntologyEntry
+from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
+    ModifierOntologyEntry
 
 
 class FHIROntologyTable(FHIRMetadata):
