@@ -1,6 +1,7 @@
---db
+-l
+-db
 postgresql+psycopg2://localhost:5432/i2b2
 --user
-postgres
+i2b2
 --password
-postgres
+demouser

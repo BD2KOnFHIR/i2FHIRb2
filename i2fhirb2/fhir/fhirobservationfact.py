@@ -33,7 +33,11 @@ from rdflib.term import Node, Literal
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
+from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
+from i2fhirb2.fhir.fhirproviderdimension import FHIRProviderDimension
+from i2fhirb2.fhir.fhirprovidermapping import FHIRProviderMapping
 from i2fhirb2.fhir.fhirspecific import concept_code, FHIR
+from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
     valuetype_text, valuetype_date, valuetype_number
 from i2fhirb2.sqlsupport.dynobject import DynElements
@@ -115,24 +119,25 @@ class FHIRObservationFact(ObservationFact):
     def fhir_primitive(self, g: Graph, obj: Optional[Node]) -> None:
         assert(self.is_primitive(g, obj))
         val = g.value(obj, FHIR.value)
+        # TODO: remove the conversions that aren't needed (toPython does the same thing)
         if val.datatype in literal_conversions:
             f, t = literal_conversions[val.datatype]
             if t == valuetype_text:
-                self._tval_char = f(val)
+                self._tval_char = val.toPython()
             elif t == valuetype_number:
-                self._nval_num = f(val)
+                self._nval_num = val.toPython()
             elif t == valuetype_blob:
-                self._observation_blob = f(val)
+                self._observation_blob = val.toPython()
             elif t == valuetype_date:
-                dt = f(val)
+                dt = val.toPython()
                 self._tval_char = dt.strftime('%Y-%m-%d %H:%M')
                 self._nval_num = (dt.year * 10000) + (dt.month * 100) + dt.day + \
                                  (((dt.hour / 100.0) + (dt.minute / 10000.0)) if isinstance(dt, datetime) else 0)
             else:
-                self._tval_char = f(val)
+                self._tval_char = val.toPython()
             self._valtype_cd = t.code
         else:
-            self._tval_char = str(val.value)
+            self._tval_char = val.toPython()
             self._valtype_cd = valuetype_text.code
 
 
@@ -157,8 +162,7 @@ class FHIRObservationFactFactory:
         # TODO: look at DomainResource embedded entries (claim-example-oral-bridge).  Perhaps we should change the
         # RDF generator to add type arcs to all resources?
         for s in {subject} if subject else self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
-            resource = self.g.value(s, FHIR.resourceType)
-            self.generate_facts(s)
+            self.observation_facts += self.generate_facts(s)
 
     def generate_facts(self, subject: URIRef) -> None:
         rval = []               # type: List[FHIRObservationFact]

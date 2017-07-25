@@ -33,46 +33,25 @@ from jsonasobj import load
 
 from i2fhirb2.rdfsupport.prettygraph import PrettyGraph
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
-from tests.utils.base_test_case import test_data_directory, test_output_directory
-
+from tests.utils.base_test_case import test_data_directory
 
 class FhirDataLoaderTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         from tests.utils.base_test_case import FHIRGraph
         cls.fhir_ontology = FHIRGraph()
-
-    def test_baseuri(self):
-        from i2fhirb2.loaders.fhirresourceloader import FHIRResource
-        self.assertEqual("http://hl7.org/fhir/",
-                         FHIRResource.base_uri("http://hl7.org/fhir/Account/example", "example", "Account"))
-        self.assertEqual("http://hl7.org/fhir/",
-                         FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example", "Account"))
-        self.assertEqual("http://hl7.org/fhir/",
-                         FHIRResource.base_uri("http://hl7.org/fhir/Account/example/test#1", "example/test#1", "Account"))
-        self.assertEqual("http://hl7.org/fhir/",
-                         FHIRResource.base_uri("http://hl7.org/fhir/Account#example", None, "Account"))
-        self.assertEqual("http://hl7.org/fhir/",
-                         FHIRResource.base_uri("http://hl7.org/fhir/Account/example", None, "Account"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "test", "Account"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example", "Claim"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example", "Account/"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example", "/Account"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example", "AnAccount"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "example/", "Account"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", "/example", "Account"))
-        self.assertIsNone(FHIRResource.base_uri("http://hl7.org/fhir/Account#example", None, "Claim"))
+        cls.base_dir = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
 
     def do_test(self, fname, root):
         from i2fhirb2.loaders.fhirresourceloader import FHIRResource
 
         json_file = fname + ".json"
         turtle_file = fname + ".ttl"
-        source = FHIRResource(self.fhir_ontology, os.path.join(test_data_directory, json_file), root)
-        with open(os.path.join(test_output_directory, turtle_file), 'w') as output:
-            output.write(str(source))
+
+        source = FHIRResource(self.fhir_ontology, os.path.join(self.base_dir, json_file), root)
+        turtle_fname = os.path.join(self.base_dir, turtle_file)
         target = PrettyGraph()
-        target.load(os.path.join(test_data_directory, turtle_file), format="turtle")
+        target.load(turtle_fname, format="turtle")
         self.assertTrue(rdf_compare(source.graph, target, sys.stdout, ignore_owl_version=False))
 
     def test_observation_example_bmd(self):
@@ -86,16 +65,21 @@ class FhirDataLoaderTestCase(unittest.TestCase):
         self.do_test('observation-example-f001-glucose', "http://hl7.org/fhir/")
 
     def test_data_entry(self):
+        save_output = False
         from i2fhirb2.loaders.fhirresourceloader import FHIRResource
         with open(os.path.join(test_data_directory, 'synthea_data', 'fhir', 'Adams301_Keyshawn30_74.json')) as f:
             collection = load(f)
-        source = FHIRResource(self.fhir_ontology, None, "http://standardhealthrecord.org/fhir/", data=collection.entry[0].resource)
-        with open(os.path.join(test_output_directory, 'synthea_data', 'fhir', 'Adams301_Keyshawn30_74_entry0.ttl'), 'w') as output:
-            output.write(str(source))
-        # target = PrettyGraph()
-        # target.load(os.path.join(test_data_directory, turtle_file), format="turtle")
-        # self.assertTrue(rdf_compare(source.graph, target, sys.stdout, ignore_header=False))
-        self.assertTrue(False)
+        source = FHIRResource(self.fhir_ontology,
+                              None,
+                              "http://standardhealthrecord.org/fhir/", data=collection.entry[0].resource)
+        turtle_fname = os.path.join(self.base_dir, 'synthea_data', 'Adams301_Keyshawn30_74_entry0.ttl')
+        if save_output:
+            with open(turtle_fname, 'w') as output:
+                output.write(str(source))
+            self.assertTrue(False, "Update output file always fails")
+        target = PrettyGraph()
+        target.load(turtle_fname, format="turtle")
+        self.assertTrue(rdf_compare(source.graph, target, sys.stdout, ignore_owl_version=True))
 
 
 if __name__ == '__main__':

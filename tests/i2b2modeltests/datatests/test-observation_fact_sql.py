@@ -25,44 +25,35 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
+
 import unittest
-from datetime import datetime, timedelta
-from typing import Union
+from datetime import datetime
 
-from dateutil.parser import parse
-from rdflib import Graph
-
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
-test_conf_directory = os.path.join(test_directory, 'conf')
+from tests.utils.connection_helper import connection_helper
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
+class ObservationFactSQLTestCase(unittest.TestCase):
+    opts = connection_helper()
+
+    def test_insert(self):
+        from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+
+        print("{} records deleted".format(ObservationFact.delete_upload_id(self.opts.tables, self.opts.uploadid)))
+        ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
+        ObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
+        ObservationFact.sourcesystem_cd = "FHIR STU3"
+        ObservationFact.upload_id = self.opts.uploadid
+        obsf = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR STU3")
+        n_upd, n_ins = ObservationFact.add_or_update_records(self.opts.tables, [obsf])
+        self.assertEqual((0, 1), (n_upd, n_ins))
+        obsf._instance_num = 2
+        obsf2 = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR STU3")
+        obsf2._instance_num = 2
+        obsf2._modifier_cd = "fhir:modifier"
+        n_upd, n_ins = ObservationFact.add_or_update_records(self.opts.tables, [obsf, obsf2])
+        self.assertEqual((0, 2), (n_upd, n_ins))
+        self.assertEqual(3, ObservationFact.delete_upload_id(self.opts.tables, self.opts.uploadid))
 
 
-class BaseTestCase(unittest.TestCase):
-    @staticmethod
-    def almostnow(d: Union[datetime, str]) -> bool:
-        if not isinstance(d, datetime):
-            d = parse(d)
-        return datetime.now() - d < timedelta(seconds=2)
-
-    @staticmethod
-    def almostequal(d1: Union[datetime, str], d2: Union[datetime, str]):
-        if not isinstance(d1, datetime):
-            d1 = parse(d1)
-        if not isinstance(d2, datetime):
-            d2 = parse(d2)
-        return d1 - d2 < timedelta(seconds=2)
-
-    def assertAlmostNow(self, d: Union[datetime, str]):
-        self.assertTrue(self.almostnow(d))
-
-    def assertDatesAlmostEqual(self, d1: str, d2: str):
-        self.assertTrue(self.almostequal(d1, d2))
+if __name__ == '__main__':
+    unittest.main()

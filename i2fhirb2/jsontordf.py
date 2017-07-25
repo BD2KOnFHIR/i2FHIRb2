@@ -27,9 +27,8 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 from argparse import Namespace, ArgumentParser
-from typing import List
+from typing import List, Union
 
-import sys
 from rdflib import Graph
 
 from i2fhirb2.loaders.fhircollectionloader import FHIRCollection
@@ -39,7 +38,7 @@ dirname, _ = os.path.split(os.path.abspath(__file__))
 
 DEFAULT_FHIR_URI = "http://hl7.org/fhir/"
 DEFAULT_RDF_DIR = "rdf"
-DEFAULT_FHIR_MV = os.path.join(dirname, '..', 'tests', 'data', 'fhir.ttl')
+DEFAULT_FHIR_MV = os.path.join(dirname, '..', 'tests', 'data', 'fhir_metadata_vocabulary', 'fhir.ttl')
 
 
 def load_fhir_ontology(opts: Namespace) -> Graph:
@@ -52,12 +51,13 @@ def load_fhir_ontology(opts: Namespace) -> Graph:
 
 class ArgParser(ArgumentParser):
     def add_argument(self, *args, **kwargs):
-        help = kwargs.pop("help", None)
+        defhelp = kwargs.pop("help", None)
         default = kwargs.pop("default", None)
-        if not help or default is None:
-            return super().add_argument(*args, help=help, default=default, **kwargs)
+        if not defhelp or default is None:
+            return super().add_argument(*args, help=defhelp, default=default, **kwargs)
         else:
-            return super().add_argument(*args, help=help + " (default: {})".format(default), default=default, **kwargs)
+            return super().add_argument(*args, help=defhelp + " (default: {})".format(default),
+                                        default=default, **kwargs)
 
 
 def create_parser() -> ArgumentParser:
@@ -75,18 +75,34 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-def jsontordf(argv: List[str]) -> bool:
+def jsontordf(argv: List[str]) -> Union[None, FHIRCollection, FHIRResource]:
     parser = create_parser()
     opts = parser.parse_args(argv)
-    mvg = load_fhir_ontology(opts)
-    json_obj = FHIRResource.load_file_or_uri(opts.jsonuri)
-    # Try to guess how the JSON is assembled
-    if 'resourceType' not in json_obj:
-        if 'entry' in json_obj:
-            rdf = FHIRCollection(mvg, None, opts.uribase, data=json_obj, add_ontology_header=not opts.noontology,
-                  replace_narrative_text=opts.nonarrative )
-    else:
-        rdf = FHIRResource(mvg, opts.jsonuri, opts.uribase, add_ontology_header=not opts.noontology,
-                           replace_narrative_text=opts.nonarrative)
-    print(str(rdf))
-    return True
+    if opts:
+        mvg = load_fhir_ontology(opts)
+        json_obj = FHIRResource.load_file_or_uri(opts.jsonuri)
+        # Try to guess how the JSON is assembled
+        if 'resourceType' not in json_obj:
+            if 'entry' in json_obj:
+                return FHIRCollection(mvg,
+                                      None,
+                                      opts.uribase,
+                                      data=json_obj,
+                                      add_ontology_header=not opts.noontology,
+                                      replace_narrative_text=opts.nonarrative)
+        else:
+            return FHIRResource(mvg,
+                                opts.jsonuri,
+                                opts.uribase,
+                                add_ontology_header=not opts.noontology,
+                                replace_narrative_text=opts.nonarrative)
+
+    return None
+
+
+def printjsontordf(argv: List[str]) -> bool:
+    """ Entry point for command line utility """
+    rdf = jsontordf(argv)
+    if rdf is not None:
+        print(str(jsontordf(argv)))
+    return rdf is not None

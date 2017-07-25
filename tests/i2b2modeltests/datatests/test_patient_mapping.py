@@ -36,10 +36,11 @@ class PatientMappingTestCase(unittest.TestCase):
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
 
-        PatientMapping._reset()
+        PatientMapping._clear()
         PatientMapping.update_date = datetime(2017, 5, 25)
         PatientMapping.sourcesystem_cd = "FHIR"
         pm = PatientMapping(10000001, "p123", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
+        pm._upload_id = 17443
 
         self.assertEqual(OrderedDict([('patient_ide', 'p123'),
              ('patient_ide_source', 'http://hl7.org/fhir/'),
@@ -50,7 +51,7 @@ class PatientMappingTestCase(unittest.TestCase):
              ('download_date', datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', None)]), pm._freeze())
+             ('upload_id', 17443)]), pm._freeze())
 
 
 if __name__ == '__main__':

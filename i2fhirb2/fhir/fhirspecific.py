@@ -32,6 +32,11 @@ from rdflib.namespace import split_uri
 # Namespaces
 from i2fhirb2.rdfsupport.dottednamespace import DottedNamespace
 
+# TODO: move this to a stable version when R4 is adopted
+DEFAULT_FMV = "http://build.fhir.org/fhir.ttl"
+DEFAULT_PROVIDER_ID = "FHIR:DefaultProvider"
+DEFAULT_ENCOUNTER_NUM = 471185
+
 W5 = DottedNamespace("http://hl7.org/fhir/w5#")
 FHIR = DottedNamespace("http://hl7.org/fhir/")
 V3 = Namespace("http://hl7.org/fhir/v3/")
@@ -88,6 +93,7 @@ FHIR_RE_ID = 5
 FHIR_RE_VERSION = 7
 
 REPLACED_NARRATIVE_TEXT = '<div xmlns="http://www.w3.org/1999/xhtml">(removed)</div>'
+
 
 class AnonNS:
     _nsnum = 0

@@ -26,10 +26,13 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple, List
+
+from sqlalchemy import delete
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
+from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 
 class ObservationFactKey:
@@ -92,6 +95,9 @@ valuetype_novalue = ValueTypeCd('@')
 
 class ObservationFact(I2B2_Core_With_Upload_Id):
     _t = DynElements(I2B2_Core_With_Upload_Id)
+
+    key_fields = ["patient_num", "concept_cd", "modifier_cd", "start_date",
+                  "encounter_num", "instance_num", "provider_id"]
 
     def __init__(self, fact_key: ObservationFactKey, concept_cd: str, **kwargs):
         super().__init__(**kwargs)
@@ -260,3 +266,18 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
     # @DynObject.entry(_t)
     # def text_search_index(self) -> float:
     #     return None
+    @property
+    def pk(self) -> Tuple:
+        return self.patient_num, self.encounter_num, self.instance_num, self.concept_cd, self.modifier_cd
+
+    def __lt__(self, other: "ObservationFact") -> bool:
+        return self.pk < other.pk
+
+    @classmethod
+    def delete_upload_id(cls, tables: I2B2Tables, upload_id: int) -> int:
+        return cls._delete_upload_id(tables.crc_connection, tables.observation_fact, upload_id)
+
+    @classmethod
+    def add_or_update_records(cls, tables: I2B2Tables, records: List["ObservationFact"]) -> Tuple[int, int]:
+        return cls._add_or_update_records(tables.crc_connection, tables.observation_fact, records)
+

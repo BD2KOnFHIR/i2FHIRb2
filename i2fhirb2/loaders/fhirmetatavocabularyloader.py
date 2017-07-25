@@ -81,6 +81,9 @@ class FHIRMetaVoc:
         """
         return self._o.value(pred, RDFS.range)
 
+    def has_type(self, t: URIRef) -> bool:
+        return (t, None, None) in self._o
+
     def is_primitive(self, t: URIRef) -> bool:
         """
         Determine whether type "t" is a FHIR primitive type

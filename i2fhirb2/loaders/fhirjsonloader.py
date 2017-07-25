@@ -25,44 +25,21 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
-import unittest
-from datetime import datetime, timedelta
-from typing import Union
-
-from dateutil.parser import parse
+from typing import Optional
 from rdflib import Graph
 
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
-test_conf_directory = os.path.join(test_directory, 'conf')
+from i2fhirb2.loaders.fhircollectionloader import FHIRCollection
+from i2fhirb2.loaders.fhirresourceloader import FHIRResource
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
-
-
-class BaseTestCase(unittest.TestCase):
-    @staticmethod
-    def almostnow(d: Union[datetime, str]) -> bool:
-        if not isinstance(d, datetime):
-            d = parse(d)
-        return datetime.now() - d < timedelta(seconds=2)
-
-    @staticmethod
-    def almostequal(d1: Union[datetime, str], d2: Union[datetime, str]):
-        if not isinstance(d1, datetime):
-            d1 = parse(d1)
-        if not isinstance(d2, datetime):
-            d2 = parse(d2)
-        return d1 - d2 < timedelta(seconds=2)
-
-    def assertAlmostNow(self, d: Union[datetime, str]):
-        self.assertTrue(self.almostnow(d))
-
-    def assertDatesAlmostEqual(self, d1: str, d2: str):
-        self.assertTrue(self.almostequal(d1, d2))
+def fhir_json_to_rdf(metavoc: Graph, json_fname: str, base_uri: str, target_graph: Optional[Graph]=None) -> Graph:
+    if target_graph is None:
+        target_graph = Graph()
+    data = FHIRResource.load_file_or_uri(json_fname)
+    if 'resourceType' in data and data.resourceType != 'Bundle':
+        FHIRResource(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=False)
+    elif 'entry' in data and isinstance(data.entry, list) and 'resource' in data.entry[0]:
+        FHIRCollection(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=False)
+    else:
+        print("File does not appear to be a FHIR resource")
+    return target_graph

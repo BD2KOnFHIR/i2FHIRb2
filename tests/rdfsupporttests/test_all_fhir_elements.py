@@ -31,7 +31,7 @@ import unittest
 
 from rdflib import Graph
 
-from i2fhirb2.loaders.fhirmetavoc import FHIRMetaVoc
+from i2fhirb2.loaders.fhirmetatavocabularyloader import FHIRMetaVoc
 from i2fhirb2.loaders.fhirresourceloader import FHIRResource
 from i2fhirb2.rdfsupport.prettygraph import PrettyGraph
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
@@ -45,17 +45,27 @@ class FHIRInstanceTestCase(ValidationTestCase):
         cls.fhir_ontology = FHIRGraph()
 
 FHIRInstanceTestCase.input_directory = "/Users/mrf7578/Development/fhir/build/publish"
+FHIRInstanceTestCase.output_directory =  os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data', 'all_fhir_elements_failures')
 FHIRInstanceTestCase.file_suffix = ".json"
 FHIRInstanceTestCase.skip = ['valuesets.json', 'xds-example.json']
 FHIRInstanceTestCase.file_filter = lambda dp, fn: ".cs." not in fn and '.vs.' not in fn and '.profile.' not in fn \
                                                   and '.canonical' not in fn and '/v2/' not in dp and '/v3/' not in dp \
                                                   and '.schema.' not in fn and '.diff.' not in fn
 FHIRInstanceTestCase.base_dir = 'http://hl7.org/fhir'
-FHIRInstanceTestCase.start_at = "claim-example-oral-bridge"
-FHIRInstanceTestCase.single_file = True
+# FHIRInstanceTestCase.start_at = "claim-example-oral-bridge"
+FHIRInstanceTestCase.single_file = False
 
 # Comparing to FHIR, so make certain we're doing FHIR dates
 FHIRMetaVoc.fhir_dates = True
+
+
+def clear_failures_directory():
+    import shutil, os
+    os.makedirs(FHIRInstanceTestCase.output_directory, exist_ok=True)
+    for fn in os.listdir(FHIRInstanceTestCase.output_directory):
+        shutil.rmtree(fn)
+
+
 
 
 def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
@@ -67,7 +77,7 @@ def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
         target = Graph()
         target.load(test_ttl_fname, format="turtle")
         if not rdf_compare(source.graph, target, sys.stdout, ignore_owl_version=True, ignore_type_arcs=True):
-            with open(os.path.join(test_output_directory, turtle_fname), 'w') as f:
+            with open(os.path.join(self.output_directory, turtle_fname), 'w') as f:
                 f.write(str(source))
             return False
         return True
@@ -78,6 +88,7 @@ def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
 
 FHIRInstanceTestCase.validation_function = json_to_ttl
 FHIRInstanceTestCase.build_test_harness()
+clear_failures_directory()
 
 
 if __name__ == '__main__':

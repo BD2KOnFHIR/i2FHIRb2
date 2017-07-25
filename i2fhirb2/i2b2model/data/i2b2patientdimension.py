@@ -51,12 +51,15 @@
 # 	upload_id integer
 # )
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple, List
 
 from rdflib import URIRef
+from sqlalchemy import delete, and_, Table, update, select, or_
+from sqlalchemy.dialects.mssql.information_schema import tables
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
+from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 
 class VitalStatusCd:
@@ -114,6 +117,8 @@ class VitalStatusCd:
 
 class PatientDimension(I2B2_Core_With_Upload_Id):
     _t = DynElements(I2B2_Core_With_Upload_Id)
+
+    key_fields = ["patient_num"]
 
     def __init__(self, patient_num, vital_status_cd: VitalStatusCd, **kwargs):
         self._patient_num = patient_num
@@ -208,3 +213,12 @@ class PatientDimension(I2B2_Core_With_Upload_Id):
     @DynObject.entry(_t)
     def patient_blob(self) -> Optional[str]:
         return self._patient_blob
+
+    @classmethod
+    def delete_upload_id(cls, tables: I2B2Tables, upload_id: int) -> int:
+        return cls._delete_upload_id(tables.crc_connection, tables.patient_dimension, upload_id)
+
+    @classmethod
+    def add_or_update_records(cls, tables: I2B2Tables, records: List["PatientDimension"]) -> Tuple[int, int]:
+        return cls._add_or_update_records(tables.crc_connection, tables.patient_dimension, records)
+

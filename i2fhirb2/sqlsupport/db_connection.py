@@ -25,44 +25,35 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
-import unittest
-from datetime import datetime, timedelta
-from typing import Union
+from argparse import ArgumentParser, Namespace
 
-from dateutil.parser import parse
-from rdflib import Graph
-
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
-test_conf_directory = os.path.join(test_directory, 'conf')
+from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
+def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
+    parser.add_argument("-db", "--dburl", help="Default database URL")
+    parser.add_argument("--user", help="Default user name")
+    parser.add_argument("--password", help="Default password")
+    parser.add_argument("--crcdb", help="CRC database URL.  (default: DBURL)")
+    parser.add_argument("--crcuser", help="User name for CRC database. (default: USER)")
+    parser.add_argument("--crcpassword", help="Password for CRC database. (default: PASSWORD")
+    parser.add_argument("--ontdb", help="Ontology database URL.  (default: DBURL)")
+    parser.add_argument("--ontuser", help="User name for ontology database. (default: USER)")
+    parser.add_argument("--ontpassword", help="Password for ontology database. (default: PASSWORD")
+    return parser
 
 
-class BaseTestCase(unittest.TestCase):
-    @staticmethod
-    def almostnow(d: Union[datetime, str]) -> bool:
-        if not isinstance(d, datetime):
-            d = parse(d)
-        return datetime.now() - d < timedelta(seconds=2)
+def process_parsed_args(opts: Namespace) -> Namespace:
+    def setdefault(vn: str, default: object) -> None:
+        assert vn in opts, "Unknown option"
+        if not getattr(opts, vn):
+            setattr(opts, vn, default)
 
-    @staticmethod
-    def almostequal(d1: Union[datetime, str], d2: Union[datetime, str]):
-        if not isinstance(d1, datetime):
-            d1 = parse(d1)
-        if not isinstance(d2, datetime):
-            d2 = parse(d2)
-        return d1 - d2 < timedelta(seconds=2)
-
-    def assertAlmostNow(self, d: Union[datetime, str]):
-        self.assertTrue(self.almostnow(d))
-
-    def assertDatesAlmostEqual(self, d1: str, d2: str):
-        self.assertTrue(self.almostequal(d1, d2))
+    setdefault('crcdb', opts.dburl)
+    setdefault('crcuser', opts.user)
+    setdefault('crcpassword', opts.password)
+    setdefault('ontdb', opts.dburl)
+    setdefault('ontuser', opts.user)
+    setdefault('ontpassword', opts.password)
+    opts.tables = I2B2Tables(opts)
+    return opts

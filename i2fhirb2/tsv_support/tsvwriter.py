@@ -26,43 +26,26 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-import unittest
-from datetime import datetime, timedelta
-from typing import Union
-
-from dateutil.parser import parse
-from rdflib import Graph
-
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
-test_conf_directory = os.path.join(test_directory, 'conf')
+from argparse import Namespace
+from typing import List
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
+def esc_output(txt: str) -> str:
+    """
+    Escape carriage returns for tsv output
+    :param txt:
+    :return:
+    """
+    return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
 
 
-class BaseTestCase(unittest.TestCase):
-    @staticmethod
-    def almostnow(d: Union[datetime, str]) -> bool:
-        if not isinstance(d, datetime):
-            d = parse(d)
-        return datetime.now() - d < timedelta(seconds=2)
-
-    @staticmethod
-    def almostequal(d1: Union[datetime, str], d2: Union[datetime, str]):
-        if not isinstance(d1, datetime):
-            d1 = parse(d1)
-        if not isinstance(d2, datetime):
-            d2 = parse(d2)
-        return d1 - d2 < timedelta(seconds=2)
-
-    def assertAlmostNow(self, d: Union[datetime, str]):
-        self.assertTrue(self.almostnow(d))
-
-    def assertDatesAlmostEqual(self, d1: str, d2: str):
-        self.assertTrue(self.almostequal(d1, d2))
+def write_tsv(filedir: str, file: str, hdr: str, values: List[object]) -> bool:
+    ofn = filedir + file + ('.tsv' if '.' not in file else '')
+    os.makedirs(os.path.dirname(ofn), exist_ok=True)
+    print("writing {}".format(ofn), end="")
+    with open(ofn, 'w') as outf:
+        outf.write(hdr + '\n')
+        for e in sorted(values):
+            outf.write(esc_output(repr(e)) + '\n')
+    print(" ({}) records written".format(len(values)))
+    return True

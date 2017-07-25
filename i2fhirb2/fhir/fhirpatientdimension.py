@@ -26,9 +26,9 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple
 
-from rdflib import Graph, RDF, URIRef, Literal, XSD
+from rdflib import Graph, URIRef, Literal, XSD
 
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from i2fhirb2.fhir.fhirspecific import FHIR, FHIR_RE_ID, FHIR_RE_BASE, V3, SNOMEDCT, \
@@ -47,21 +47,10 @@ class FHIRPatientDimension:
         """
         Generate i2b2 patient dimension and patient_mapping records from PATIENT resources in graph g
         :param g: Graph containing 0 or more FHIR Patient resources
+        :param patient: Graph subject
         """
         assert value(g, patient, FHIR.animal) is None       # We don't do animals
-        subj_type = g.value(patient, RDF.type)
-        patient_str = str(patient)
-        if not subj_type or subj_type != FHIR.Patient:
-            raise ValueError("{} does not reference a fhir:Patient".format(patient))
-        m = FHIR_RESOURCE_RE.match(patient_str)
-        if m:
-            patient_id = m.group(FHIR_RE_ID)
-            patient_ide_source = m.group(FHIR_RE_BASE)
-        else:
-            # Assume no history entry if not FHIR format...
-            patient_ide_source, patient_id = patient_str.rsplit('#', 1) if '#' in patient_str \
-                else patient_str.rsplit('/', 1) if '/' in patient_str else ('UNKNOWN', patient_str)
-        # TODO: Patient.identifier actually has system, value and all that.  Should we map it?
+        patient_id, patient_ide_source = self.uri_to_patient_id(patient)
         self.patient_mappings = FHIRPatientMapping(patient_id, patient_ide_source)
         active = value(g, patient, FHIR.Patient.active)
         if active is not None and not active:
@@ -70,6 +59,24 @@ class FHIRPatientDimension:
                                                         VitalStatusCd(VitalStatusCd.bd_unknown,
                                                                       VitalStatusCd.dd_unknown))
         self.add_patient_information(g, patient)
+
+    @staticmethod
+    def uri_to_patient_id(patient: URIRef) -> Tuple[str, str]:
+        """
+        Convert a patient URI into a patient identifier / identifier source tuple
+        :param patient: patient URI
+        :return: patient_id, patient_ide_source
+        """
+        patient_str = str(patient)
+        m = FHIR_RESOURCE_RE.match(patient_str)
+        if m:
+            patient_id = m.group(FHIR_RE_ID)
+            patient_ide_source = m.group(FHIR_RE_BASE)
+        else:
+            # Assume no history entry if not FHIR format...
+            patient_ide_source, patient_id = patient_str.rsplit('#', 1) if '#' in patient_str \
+                else patient_str.rsplit('/', 1) if '/' in patient_str else ('UNKNOWN', patient_str)
+        return patient_id, patient_ide_source
 
     def add_patient_information(self, g: Graph, patient: URIRef) -> None:
         """
@@ -81,10 +88,9 @@ class FHIRPatientDimension:
             # gender
             gender = value(g, patient, FHIR.Patient.gender)
             if gender == "male":
-                self.patient_dimension_entry._sex_cd = 'm'
+                self.patient_dimension_entry._sex_cd = 'M'
             elif gender == "female":
-                self.patient_dimension_entry._sex_cd = 'f'
-
+                self.patient_dimension_entry._sex_cd = 'F'
 
             # deceased.deceasedBoolean --> vital_status_code.deathInd
             isdeceased = value(g, patient, FHIR.Patient.deceasedBoolean)
@@ -135,7 +141,6 @@ class FHIRPatientDimension:
                     # TODO: figure out what to do with SNOMED id's (terminology service, anyone?)
                     pass
 
-
     @property
     def birthdate(self) -> Literal:
         return Literal(self.patient_dimension_entry.birth_date)
@@ -157,7 +162,9 @@ class FHIRPatientDimension:
             self.patient_dimension_entry._birth_date = bd.toPython()
 
             # Age calculation --
-            niave_bd = bd.toPython().replace(tzinfo=None)
+            # TODO: figure out what to do with tzoffset
+            # TODO: figure out what rdflib delivers in the toPython() function
+            niave_bd = bd.toPython()
             ref_date = None
             if self.patient_dimension_entry._vital_status_code.deathcode \
                     in {VitalStatusCd.dd_living, VitalStatusCd.dd_unknown}:
@@ -173,7 +180,6 @@ class FHIRPatientDimension:
                         if ref_date.day > niave_bd.day:
                             age -= 1
                 self.patient_dimension_entry._age_in_years_num = age
-
 
     @property
     def deathdate(self) -> Literal:
@@ -194,5 +200,3 @@ class FHIRPatientDimension:
             else:
                 self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_hour
             self.patient_dimension_entry._death_date = dd.toPython()
-
-

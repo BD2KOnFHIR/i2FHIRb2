@@ -49,6 +49,7 @@ from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
 from i2fhirb2.i2b2model.shared.tablenames import i2b2table
 from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
 Default_Sourcesystem_Code = 'FHIR STU3'
 Default_Base = 'FHIR'
@@ -66,28 +67,9 @@ def pluralize(cnt: int, base: Any) -> str:
     return str(base) + ('s' if cnt != 1 else '')
 
 
-def esc_output(txt: str) -> str:
-    """
-    Escape carriage returns for tsv output
-    :param txt:
-    :return:
-    """
-    return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
-
-
 def generate_output(o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef], file: str) -> bool:
     v = o.dimension_list(resource)
-    return write_tsv(opts, file, o.tsv_header(), v)
-
-
-def write_tsv(opts: Namespace, file: str, hdr: str, values: List[object]) -> bool:
-    ofn = opts.outdir + file + ('.tsv' if '.' not in file else '')
-    print("writing {}".format(ofn))
-    with open(ofn, 'w') as outf:
-        outf.write(hdr + '\n')
-        for e in sorted(values):
-            outf.write(esc_output(repr(e)) + '\n')
-    return True
+    return write_tsv(opts.outdir, file, o.tsv_header(), v)
 
 
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
@@ -100,7 +82,7 @@ def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
 def generate_table_access(opts: Namespace) -> bool:
     table_access = TableAccess()
     if opts.outdir:
-        return write_tsv(opts, 'table_access', table_access._header(), [table_access])
+        return write_tsv(opts.outdir, 'table_access', table_access._header(), [table_access])
     else:
         return update_table_access_table(opts, opts.tables.table_access, [table_access._freeze()])
 
@@ -190,7 +172,8 @@ def generate_ontology(g: Graph, opts: Namespace) -> bool:
     else:
         table = opts.tables.custom_meta
         change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
-        change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)    # MedicationStatement is 1547 long
+        # MedicationStatement is 1547 long
+        change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
         return update_dimension_table(FHIROntologyTable(g, name_base=opts.base), opts, table, 'c_basecode',
                                       [opts.base.replace('\\', '') + ':', 'W5'], resource)
 
@@ -222,8 +205,8 @@ def test_configuration(opts: Namespace) -> bool:
         else:
             return error("'{}' file not found in {}".format(name, opts.indir))
 
-    def test_tn(name: str, tables: I2B2Tables) -> bool:
-        if name in [k for k, _ in tables._tables()]:
+    def test_tn(name: str, i2b2tables: I2B2Tables) -> bool:
+        if name in [k for k, _ in i2b2tables._tables()]:
             print("\tTable {} exists".format(tn))
             return True
         else:

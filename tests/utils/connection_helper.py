@@ -25,44 +25,16 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
-import unittest
-from datetime import datetime, timedelta
-from typing import Union
+from argparse import Namespace, ArgumentParser
 
-from dateutil.parser import parse
-from rdflib import Graph
-
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
-test_conf_directory = os.path.join(test_directory, 'conf')
+from i2fhirb2.sqlsupport.db_connection import add_connection_args, process_parsed_args
+from tests.utils.base_test_case import test_conf_directory
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
-
-
-class BaseTestCase(unittest.TestCase):
-    @staticmethod
-    def almostnow(d: Union[datetime, str]) -> bool:
-        if not isinstance(d, datetime):
-            d = parse(d)
-        return datetime.now() - d < timedelta(seconds=2)
-
-    @staticmethod
-    def almostequal(d1: Union[datetime, str], d2: Union[datetime, str]):
-        if not isinstance(d1, datetime):
-            d1 = parse(d1)
-        if not isinstance(d2, datetime):
-            d2 = parse(d2)
-        return d1 - d2 < timedelta(seconds=2)
-
-    def assertAlmostNow(self, d: Union[datetime, str]):
-        self.assertTrue(self.almostnow(d))
-
-    def assertDatesAlmostEqual(self, d1: str, d2: str):
-        self.assertTrue(self.almostequal(d1, d2))
+def connection_helper() -> Namespace:
+    parser = ArgumentParser(description="Test connection", fromfile_prefix_chars='@')
+    parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
+    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
+                        help="Upload identifer -- uniquely identifies this batch", type=int, required=True)
+    opts = add_connection_args(parser).parse_args(['-u', '41712', '@' + test_conf_directory + '/db_conf'])
+    return process_parsed_args(opts)

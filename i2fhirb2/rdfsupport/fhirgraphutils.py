@@ -26,7 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime, date
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 
 from rdflib import Graph, BNode, Literal, RDF
 from rdflib.term import Identifier, URIRef, Node
@@ -44,7 +44,7 @@ def value(g: Graph, subject: Node, predicate: URIRef, asLiteral=False) -> \
         return v.toPython() if isinstance(v, Literal) and not asLiteral else v
 
 
-def extension(g: Graph, node: Identifier, extension_predicate: Union[URIRef, str], asLiteral=False)  -> \
+def extension(g: Graph, node: Identifier, extension_predicate: Union[URIRef, str], asLiteral=False) -> \
         Union[None, BNode, date, bool, datetime, int, float]:
     ext_pred = str(extension_predicate)
     for ext in g.objects(node, FHIR.Element.extension):
@@ -58,18 +58,36 @@ def extension(g: Graph, node: Identifier, extension_predicate: Union[URIRef, str
 
 def code(g: Graph, subject: Node, predicate: URIRef, system: Optional[Union[URIRef, str]]=None,
          asLiteral: bool=False) -> Union[Node, str, None]:
-    code = g.value(subject, predicate)
-    if code:
-        for coding in g.objects(code, FHIR.CodeableConcept.coding):
+    c = g.value(subject, predicate)
+    if c:
+        for coding in g.objects(c, FHIR.CodeableConcept.coding):
             if not system or str(system) == value(g, coding, FHIR.Coding.system):
                 return value(g, coding, FHIR.Coding.code, asLiteral=asLiteral)
     return None
 
+
 def concept_uri(g: Graph, subject: Node, predicate: URIRef, system: Optional[Union[URIRef, str]]=None) ->\
         Union[URIRef, None]:
-    code = g.value(subject, predicate)
-    if code:
-        for coding in g.objects(code, FHIR.CodeableConcept.coding):
+    c = g.value(subject, predicate)
+    if c:
+        for coding in g.objects(c, FHIR.CodeableConcept.coding):
             if not system or str(system) == value(g, coding, FHIR.Coding.system):
                 return value(g, coding, RDF.type, asLiteral=True)
     return None
+
+
+def link(g: Graph, subject: Node, predicate: URIRef) -> Tuple[Optional[URIRef], Optional[URIRef]]:
+    """
+    Return the link URI and link type for subject and predicate
+    :param g: graph context
+    :param subject: subject of linke
+    :param predicate: link predicate
+    :return: URI and optional type URI.  URI is None if not a link
+    """
+    link_node = g.value(subject, predicate)
+    if link_node:
+        l = g.value(link_node, FHIR.link)
+        if l:
+            typ = g.value(l, RDF.type)
+            return l, typ
+    return None, None

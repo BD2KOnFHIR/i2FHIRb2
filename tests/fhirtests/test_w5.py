@@ -25,12 +25,13 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
+import os
 import unittest
 
 from rdflib import Graph, RDFS
 
 from i2fhirb2.fhir.fhirspecific import concept_path
+from tests.utils.base_test_case import test_data_directory
 
 
 class W5TestCase(unittest.TestCase):
@@ -38,7 +39,7 @@ class W5TestCase(unittest.TestCase):
     def test_w5_concepts(self):
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
         g = Graph()
-        g.load('data/w5.ttl', format="turtle")
+        g.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
         self.assertEqual([
              'http://hl7.org/fhir/w5#administrative',
              'http://hl7.org/fhir/w5#administrative.device',
@@ -64,7 +65,7 @@ class W5TestCase(unittest.TestCase):
     def test_w5_paths(self):
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
         g = Graph()
-        g.load('data/w5.ttl', format="turtle")
+        g.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
         fot = FHIROntologyTable(g)
         rval = []
         for subj in fot.w5_concepts():
@@ -91,29 +92,6 @@ class W5TestCase(unittest.TestCase):
              '\\FHIR\\workflow\\encounter\\',
              '\\FHIR\\workflow\\order\\',
              '\\FHIR\\workflow\\scheduling\\'], sorted(rval))
-
-
-        # self.assertEqual([
-        #      '\\FHIR\\administrative\\',
-        #      '\\FHIR\\administrative\\device\\',
-        #      '\\FHIR\\administrative\\entity\\',
-        #      '\\FHIR\\administrative\\group\\',
-        #      '\\FHIR\\administrative\\individual\\',
-        #      '\\FHIR\\clinical\\',
-        #      '\\FHIR\\clinical\\careprovision\\',
-        #      '\\FHIR\\clinical\\diagnostics\\',
-        #      '\\FHIR\\clinical\\general\\',
-        #      '\\FHIR\\clinical\\medication\\',
-        #      '\\FHIR\\financial\\',
-        #      '\\FHIR\\financial\\billing\\',
-        #      '\\FHIR\\financial\\other\\',
-        #      '\\FHIR\\financial\\payment\\',
-        #      '\\FHIR\\financial\\support\\',
-        #      '\\FHIR\\workflow\\',
-        #      '\\FHIR\\workflow\\encounter\\',
-        #      '\\FHIR\\workflow\\order\\',
-        #      '\\FHIR\\workflow\\scheduling\\'], path_list)
-
 
 if __name__ == '__main__':
     unittest.main()

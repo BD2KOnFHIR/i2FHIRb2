@@ -1,4 +1,0 @@
--l
---dburl postgresql+psycopg2://localhost:5432/i2b2
---user i2b2
---password demouser

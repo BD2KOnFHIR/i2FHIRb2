@@ -37,10 +37,14 @@ from tests.utils.base_test_case import test_data_directory
 
 
 class FHIRGraphUtilsTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.base_dir = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
+
     def test_value(self):
         from i2fhirb2.rdfsupport.fhirgraphutils import value
         g = Graph()
-        g.load(os.path.join(test_data_directory, "account-example.ttl"), format="turtle")
+        g.load(os.path.join(self.base_dir, "account-example.ttl"), format="turtle")
         s = FHIR['Account/example']
         self.assertEqual("example", value(g, s, FHIR.Resource.id))
         self.assertEqual(Literal("example"), value(g, s, FHIR.Resource.id,True))
@@ -55,7 +59,7 @@ class FHIRGraphUtilsTestCase(unittest.TestCase):
     def test_extension(self):
         from i2fhirb2.rdfsupport.fhirgraphutils import extension
         g = Graph()
-        g.load(os.path.join(test_data_directory, "patient-example.ttl"), format="turtle")
+        g.load(os.path.join(self.base_dir, "patient-example.ttl"), format="turtle")
         s = FHIR['Patient/example']
         birthdate = g.value(s, FHIR.Patient.birthDate)
         birthtime = extension(g, birthdate, URIRef("http://hl7.org/fhir/StructureDefinition/patient-birthTime"))
@@ -66,7 +70,7 @@ class FHIRGraphUtilsTestCase(unittest.TestCase):
     def test_code(self):
         from i2fhirb2.rdfsupport.fhirgraphutils import code
         g = Graph()
-        g.load(os.path.join(test_data_directory, "account-example.ttl"), format="turtle")
+        g.load(os.path.join(self.base_dir, "account-example.ttl"), format="turtle")
         s = FHIR['Account/example']
         self.assertEqual("PBILLACCT", code(g, s, FHIR.Account.type))
         self.assertEqual("PBILLACCT", code(g, s, FHIR.Account.type, "http://hl7.org/fhir/v3/ActCode"))
@@ -75,13 +79,26 @@ class FHIRGraphUtilsTestCase(unittest.TestCase):
     def test_concept_uri(self):
         from i2fhirb2.rdfsupport.fhirgraphutils import concept_uri
         g = Graph()
-        g.load(os.path.join(test_data_directory, "account-example.ttl"), format="turtle")
+        g.load(os.path.join(self.base_dir, "account-example.ttl"), format="turtle")
         s = FHIR['Account/example']
         self.assertEqual(URIRef("http://hl7.org/fhir/v3/ActCode/PBILLACCT"),
                          concept_uri(g, s, FHIR.Account.type))
         self.assertEqual(URIRef("http://hl7.org/fhir/v3/ActCode/PBILLACCT"),
                          concept_uri(g, s, FHIR.Account.type, "http://hl7.org/fhir/v3/ActCode"))
         self.assertIsNone(concept_uri(g, s, FHIR.Account.type, "http://hl7.org/fhir/v3/foo"))
+
+    def test_link(self):
+        from i2fhirb2.rdfsupport.fhirgraphutils import link
+        g = Graph()
+        g.load(os.path.join(self.base_dir, "observation-example-bmd.ttl"), format="turtle")
+        s = FHIR['Observation/bmd']
+        uri, typ = link(g, s, FHIR.Observation.subject)
+        self.assertEqual(FHIR["Patient/pat2"], uri)
+        self.assertEqual(FHIR.Patient, typ)
+        uri, typ = link(g, s, FHIR.Observation.subject2 )
+        self.assertIsNone(uri)
+        self.assertIsNone(typ)
+
 
 
 if __name__ == '__main__':

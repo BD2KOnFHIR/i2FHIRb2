@@ -26,7 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+# TODO: The mapping portion of this function should be loaded from the i2b2 table mapping table
 class _T:
     _funcs = {"phys_name", "all_tables"}
 
@@ -36,8 +36,10 @@ class _T:
         self.table_access = None
         self.ontology_table = "custom_meta"
         self.patient_dimension = None
+        self.patient_mapping = None
         self.visit_dimension = None
         self.provider_dimension = None
+        self.provider_mapping = None
 
     def __getattribute__(self, item):
         if item.startswith("_") or item not in self.__dict__:
@@ -46,10 +48,19 @@ class _T:
         return item if item not in _T._funcs else v
 
     def phys_name(self, item):
+        """
+        Return the physical (mapped) name of item.
+        :param item: logical table name
+        :return: physical name of table
+        """
         v = self.__dict__[item]
         return v if v is not None else item
 
     def all_tables(self):
+        """
+        List of all known tables
+        :return:
+        """
         return sorted([k for k in self.__dict__.keys()
                        if k not in _T._funcs and not k.startswith("_")])
 

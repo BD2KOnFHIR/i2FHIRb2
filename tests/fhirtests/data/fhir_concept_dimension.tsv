@@ -1,0 +1,35 @@
+concept_path	concept_cd	name_char	concept_blob	update_date	download_date	import_date	sourcesystem_cd	upload_id
+\FHIR\	FHIR	FHIR root		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\	FHIR:Observation	FHIR Observation		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\basedOn\	FHIR:Observation.basedOn	FHIR Observation basedOn		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\bodySite\	FHIR:Observation.bodySite	FHIR Observation bodySite		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\category\	FHIR:Observation.category	FHIR Observation category		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\code\	FHIR:Observation.code	FHIR Observation code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\comment\	FHIR:Observation.comment	FHIR Observation comment		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\component\	FHIR:Observation.component	FHIR Observation component		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\context\	FHIR:Observation.context	FHIR Observation context		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\dataAbsentReason\	FHIR:Observation.dataAbsentReason	FHIR Observation dataAbsentReason		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\device\	FHIR:Observation.device	FHIR Observation device		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\effectiveDateTime\	FHIR:Observation.effectiveDateTime	FHIR Observation effectiveDateTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\effectivePeriod\	FHIR:Observation.effectivePeriod	FHIR Observation effectivePeriod		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\identifier\	FHIR:Observation.identifier	FHIR Observation identifier		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\interpretation\	FHIR:Observation.interpretation	FHIR Observation interpretation		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\issued\	FHIR:Observation.issued	FHIR Observation issued		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\method\	FHIR:Observation.method	FHIR Observation method		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\performer\	FHIR:Observation.performer	FHIR Observation performer		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\referenceRange\	FHIR:Observation.referenceRange	FHIR Observation referenceRange		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\related\	FHIR:Observation.related	FHIR Observation related		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\specimen\	FHIR:Observation.specimen	FHIR Observation specimen		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\status\	FHIR:Observation.status	FHIR Observation status		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\subject\	FHIR:Observation.subject	FHIR Observation subject		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueAttachment\	FHIR:Observation.valueAttachment	FHIR Observation valueAttachment		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueBoolean\	FHIR:Observation.valueBoolean	FHIR Observation valueBoolean		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueCodeableConcept\	FHIR:Observation.valueCodeableConcept	FHIR Observation valueCodeableConcept		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueDateTime\	FHIR:Observation.valueDateTime	FHIR Observation valueDateTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valuePeriod\	FHIR:Observation.valuePeriod	FHIR Observation valuePeriod		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueQuantity\	FHIR:Observation.valueQuantity	FHIR Observation valueQuantity		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueRange\	FHIR:Observation.valueRange	FHIR Observation valueRange		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueRatio\	FHIR:Observation.valueRatio	FHIR Observation valueRatio		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueSampledData\	FHIR:Observation.valueSampledData	FHIR Observation valueSampledData		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueString\	FHIR:Observation.valueString	FHIR Observation valueString		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueTime\	FHIR:Observation.valueTime	FHIR Observation valueTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	

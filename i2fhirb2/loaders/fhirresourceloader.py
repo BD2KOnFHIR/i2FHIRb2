@@ -36,7 +36,7 @@ from rdflib.term import Node, BNode, Literal
 
 from i2fhirb2.fhir.fhirspecific import FHIR, FHIR_RESOURCE_RE, FHIR_RE_RESOURCE, FHIR_RE_BASE, \
     REPLACED_NARRATIVE_TEXT
-from i2fhirb2.loaders.fhirmetavoc import FHIRMetaVoc
+from i2fhirb2.loaders.fhirmetatavocabularyloader import FHIRMetaVoc
 from i2fhirb2.rdfsupport.prettygraph import PrettyGraph
 
 LOINC = Namespace("http://loinc.org/owl#")
@@ -130,31 +130,6 @@ class FHIRResource:
     def graph(self):
         return self._g
 
-    @staticmethod
-    # TODO: Determine whether this is still neededd
-    def base_uri(full_uri: str, resource_id: Optional[str], resource_type: str) -> Optional[str]:
-        """
-        Determine the root of full_uri.  If full_uri matches the pattern:
-        <base>/[resource_type][/|#]resource_id, return base else None
-        :return: URI base if it can be termined
-
-        :param full_uri: complete URI
-        :param resource_id: resource id.  If not present, just strip [/|#]*
-        :param resource_type: type
-        :return:
-        """
-        if not resource_id:
-            base_uri = full_uri.rsplit('#', 1)[0] if '#' in full_uri else \
-                       full_uri.rsplit('/', 1)[0] if '/' in full_uri else \
-                       None
-        elif full_uri.endswith('#' + resource_id) or full_uri.endswith('/' + resource_id):
-            base_uri = full_uri[:-len(resource_id) - 1]
-        else:
-            base_uri = None
-        if base_uri is None or not base_uri.endswith('/' + resource_type):
-            return None
-        return base_uri[:-len(resource_type)]
-
     def add_prefixes(self, nsmap: Dict[str, Namespace]) -> None:
         """
         Add the required prefix definitions
@@ -181,14 +156,13 @@ class FHIRResource:
         return self
 
     def add_value_node(self, subj: Node, pred: URIRef, val: Union[JsonObj, str, List],
-                       valuetype: Optional[URIRef]= None) -> "FHIRResource":
+                       valuetype: Optional[URIRef]= None) -> None:
         """
         Expand val according to the range of pred and add it to the graph
         :param subj: graph subject
         :param pred: graph predicate
         :param val: JSON representation of target object
         :param valuetype: predicate type if it can't be directly determined
-        :return: self for chaining
         """
         val_meta = FHIRMetaVoc(self._vocabulary, self._meta.predicate_type(pred) if not valuetype else valuetype)
         for k, p in val_meta.predicates().items():
@@ -202,14 +176,12 @@ class FHIRResource:
                 for vk in val._as_dict.keys():
                     if vk.startswith(k):
                         self.add_val(subj, FHIR[vk], val[vk], FHIR[vk[len(k):]])
-        return self
 
-    def add_reference(self, subj: Node, val: str) -> "FHIRResource":
+    def add_reference(self, subj: Node, val: str) -> None:
         """
         Add a fhir:link and RDF type arc if it can be determined
         :param subj: reference subject
         :param val: reference value
-        :return: self for chaining
         """
         match = FHIR_RESOURCE_RE.match(val)
         ref_uri_str = res_type = None
@@ -223,7 +195,6 @@ class FHIRResource:
             ref_uri = URIRef(ref_uri_str)
             self.add(subj, FHIR.link, ref_uri)
             self.add(ref_uri, RDF.type, FHIR[res_type])
-        return self
 
     def add_type_arc(self, subj: Node, val: JsonObj) -> None:
         if "system" in val and "code" in val:
@@ -235,7 +206,7 @@ class FHIRResource:
                     break
 
     def add_val(self, subj: Node, pred: URIRef, val: Union[JsonObj, str, List],
-                valuetype: Optional[URIRef] = None) -> "FHIRResource":
+                valuetype: Optional[URIRef] = None) -> Optional[BNode]:
         """
         Add the RDF representation of val to the graph as a target of subj, pred.  Note that FHIR lists are
         represented as a list of BNODE objects with a fhir:index discrimanant
@@ -243,15 +214,15 @@ class FHIRResource:
         :param pred: predicate
         :param val: value to be expanded
         :param valuetype: value type if NOT determinable by predicate
-        :return: self for chaining
+        :return: value node if target is a BNode else None
         """
         if isinstance(val, List):
             list_idx = 0
             for lv in val:
                 entry_bnode = BNode()
-                self.add(entry_bnode, FHIR['index'], Literal(list_idx))\
-                    .add_value_node(entry_bnode, pred, lv, valuetype)\
-                    .add(subj, pred, entry_bnode)
+                self.add(entry_bnode, FHIR['index'], Literal(list_idx))
+                self.add_value_node(entry_bnode, pred, lv, valuetype)
+                self.add(subj, pred, entry_bnode)
                 list_idx += 1
         else:
             vt = self._meta.predicate_type(pred) if not valuetype else valuetype
@@ -268,17 +239,46 @@ class FHIRResource:
                 self.add(subj, pred, v)
                 if pred == FHIR.Reference.reference:
                     self.add_reference(subj, val)
-        return self
+                return v
+        return None
+
+    def add_extension_val(self, subj: BNode, extendee: str) -> None:
+        """
+        Add any extensions for the supplied
+        :param subj: Node containing subject root
+        :param extendee: name of element that is possibly extended (tested with '_' prefix)
+        """
+        extendee_name = "_" + extendee
+        if extendee_name in self.root:
+            extension = self.root[extendee_name].extension
+            if not isinstance(subj, BNode):
+                raise NotImplementedError("Extension to something other than a simple BNode")
+            self.add_val(subj, FHIR.Element.exension, extension, FHIR.Extension)
+            # for extension_entry in extension.extension:
+            #
+            #     predicate = URIRef(extension_entry.url)
+            #     for val in [e for e in extension_entry._as_dict if e != 'url']:
+            #         if val.startswith("value"):
+            #             vt = val[len("value")].lower() + val[len("value") + 1:]
+            #             if self._meta.has_type(FHIR[vt]):
+            #                 self.add_val(subj, predicate, extension_entry[val], FHIR[vt])
+            #             else:
+            #                 print("Unknown extension type: {}".format(vt))
+            #         else:
+            #             print("Unknown extension element: {}".format(val))
 
     def generate(self) -> Graph:
         self.add_prefixes(namespaces)
         if self._add_ontology_header:
             self.add_ontology_definition()
         self.add(self._resource_uri, RDF.type, FHIR[self.root.resourceType])
+        # TODO: Figure out why this isn't part of the FMV to begin with.
+        # self.add(self._resource_uri, FHIR.resourceType, Literal(self.root.resourceType))
         self.add(self._resource_uri, FHIR.nodeRole, FHIR.treeRoot)
         for k, p in self._meta.predicates().items():
             if k in self.root:
-                self.add_val(self._resource_uri, p, self.root[k])
+                val_node = self.add_val(self._resource_uri, p, self.root[k])
+                self.add_extension_val(val_node, k)
         self.add_prefixes(self._addl_namespaces)
         return self._g
 

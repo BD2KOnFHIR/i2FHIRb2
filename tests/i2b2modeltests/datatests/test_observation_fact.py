@@ -25,7 +25,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
+import os
 import unittest
 from collections import OrderedDict
 from datetime import datetime
@@ -34,7 +34,7 @@ from rdflib import Graph
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.fhir.fhirspecific import FHIR
-from tests.utils.base_test_case import FHIRGraph
+from tests.utils.base_test_case import FHIRGraph, test_output_directory
 
 bmi_graph = "http://build.fhir.org/observation-example-bmi.ttl"
 
@@ -113,23 +113,36 @@ class ObservationFactTestCase(unittest.TestCase):
                  ('download_date', datetime(2017, 2, 19, 12, 33)),
                  ('import_date', datetime(2017, 2, 19, 12, 33)),
                  ('sourcesystem_cd', 'FHIR STU3'),
-                 ('upload_id', None)]), fof._freeze())
+                 ('upload_id', 12345)]), fof._freeze())
 
     def test_complete_fact_list(self):
         from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey
         from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
 
+        filedir = os.path.split(os.path.abspath(__file__))[0]
+        # Set this to true when generating new test data
+        write_test_data = False
         ofk = ObservationFactKey(1000000133, 471882, 'LCS-I2B2:D000109100', datetime(2017, 5, 23, 11, 17))
         FHIRObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
         FHIRObservationFact.sourcesystem_cd = "FHIR STU3"
         oflist = FHIRObservationFactFactory(self.g, ofk, None)
 
-        for ofle in oflist.facts:
-            print(repr(ofle))
-        with open('data_out/fhir_observation_fact.tsv', 'w') as outf:
-            outf.write(FHIRObservationFact._header() + '\n')
-            for e in oflist.facts:
-                outf.write(repr(e) + '\n')
+        test_fname = os.path.join(filedir, 'data', 'test_complete_fact_list.tsv')
+        if write_test_data:
+            with open(test_fname, 'w') as outf:
+                outf.write(FHIRObservationFact._header() + '\n')
+                for e in sorted(oflist.observation_facts):
+                    outf.write(repr(e) + '\n')
+            self.assertTrue(False, "Creating a new test file always fails")
+        else:
+            with open(test_fname) as inf:
+                line_no = 1
+                self.assertEqual(FHIRObservationFact._header(), inf.readline().strip(), "Header mismatch")
+                for e in sorted(oflist.observation_facts):
+                    line_no += 1
+                    self.assertEqual(repr(e), inf.readline().strip(), "Line number {}".format(line_no))
+                self.assertEqual('', inf.read(1))
+
 
 
 if __name__ == '__main__':

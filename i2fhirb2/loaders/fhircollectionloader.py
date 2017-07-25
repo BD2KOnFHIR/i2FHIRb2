@@ -39,7 +39,8 @@ class FHIRCollection:
      an optional collection header.
      """
     def __init__(self, vocabulary: Graph, json_fname: Optional[str], base_uri: str, data: Optional[JsonObj] = None,
-                 add_ontology_header: Optional[bool] = True, replace_narrative_text: Optional[bool] = False):
+                 add_ontology_header: Optional[bool] = True, replace_narrative_text: Optional[bool] = False,
+                 target: Optional[Graph] = None):
         """
         Convert a JSON collection into RDF.
         :param vocabulary: fhir metadata vocabulary
@@ -48,6 +49,7 @@ class FHIRCollection:
         :param data: JsonObj to use if json fname is not present
         :param add_ontology_header: Include the OWL:Ontology declaration
         :param replace_narrative_text: Replace long narrative text with REPLACED_NARRATIVE_TEXT
+        :param target: Target graph -- load everything into this if present
         """
         if json_fname:
             collection = FHIRResource.load_file_or_uri(json_fname)
@@ -56,5 +58,6 @@ class FHIRCollection:
         if 'type' in collection and collection.type != "collection":
             raise TypeError("{} is not a FHIR collection".format(json_fname))
         self.entries = [FHIRResource(vocabulary, None, base_uri, data=entry.resource,
-                                     add_ontology_header=add_ontology_header, replace_narrative_text=replace_narrative_text)
+                                     add_ontology_header=add_ontology_header,
+                                     replace_narrative_text=replace_narrative_text, target=target)
                         for entry in collection.entry]

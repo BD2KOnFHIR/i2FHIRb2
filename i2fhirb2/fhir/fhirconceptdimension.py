@@ -36,9 +36,13 @@ from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension, C
 class FHIRConceptDimension(FHIRMetadata):
     """ A list of all FHIR resources, as identified by the DomainResource tag """
     def dimension_list(self, subject: Optional[URIRef]=None) -> List[ConceptDimension]:
+        """
+        Generate the complete set of FHIR concept entries -- the first level deep in all FHIR definitions.
+        :param subject: Specific target subject.  (Debugging -- not used in production)
+        :return: A list of FHIR concept dimension entries for loading into i2b2 tables
+        """
         return [cast(ConceptDimension, ConceptDimensionRoot('FHIR'))] + \
-               [ConceptDimension(subj, self._name_base)
-                for subj in self.fhir_concepts(subject)]
+               [ConceptDimension(subj, self._name_base) for subj in self.fhir_concepts(subject)]
 
     @staticmethod
     def tsv_header() -> str:

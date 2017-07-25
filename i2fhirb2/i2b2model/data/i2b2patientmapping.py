@@ -44,8 +44,12 @@
 # 		primary key (patient_ide, patient_ide_source, project_id)
 # )
 # ;
+from typing import List, Tuple
+
+
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
+from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 
 class PatientIDEStatus:
@@ -60,6 +64,8 @@ class PatientIDEStatus:
 
 class PatientMapping(I2B2_Core_With_Upload_Id):
     _t = DynElements(I2B2_Core_With_Upload_Id)
+
+    key_fields = ["patient_ide", "patient_ide_source", "project_id"]
 
     def __init__(self, patient_num: int, patient_id: str, patient_ide_status: PatientIDEStatus.PatientIDEStatusCode,
                  patient_ide_source: str, project_id: str, **kwargs):
@@ -117,3 +123,11 @@ class PatientMapping(I2B2_Core_With_Upload_Id):
         Project identifier
         """
         return self._project_id
+
+    @classmethod
+    def delete_upload_id(cls, tables: I2B2Tables, upload_id: int) -> int:
+        return cls._delete_upload_id(tables.crc_connection, tables.patient_mapping, upload_id)
+
+    @classmethod
+    def add_or_update_records(cls, tables: I2B2Tables, records: List["PatientMapping"]) -> Tuple[int, int]:
+        return cls._add_or_update_records(tables.crc_connection, tables.patient_mapping, records)
