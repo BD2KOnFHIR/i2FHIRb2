@@ -68,15 +68,12 @@ class FHIRModifierDimension(FHIRMetadata):
             if prop not in conc_dimension and not self.skipped_v5_domain(prop):
                 # If this is one of the value[x] properties, value_property handles the mapping.
                 # Note that the UniqueEntries() element covers duplicates
+                # TODO: decide what to do with this (at the moment it always returns None)
                 vp = self.value_property(prop)
                 if vp:
                     rval.add(ModifierDimension(vp, self._name_base))
                 else:
                     rval.add(ModifierDimension(prop, self._name_base))
-                    for range_ in self.g.objects(prop, RDFS.range):
-                        if not self.is_primitive(range_):
-                            for mod_path in self.extend_modifier_path(prop, range_):
-                                rval.add(mod_path)
 
         # Add the special Narrative.text DatatypeProperty
         if not domain:
