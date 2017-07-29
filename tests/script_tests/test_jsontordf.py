@@ -31,25 +31,23 @@ import unittest
 import sys
 from rdflib import Graph
 
-from i2fhirb2.jsontordf import jsontordf
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
-from tests.utils.base_test_case import test_data_directory
 
 # If true, we're updating the target. Will always return a fail
-save_output = True
+save_output = False
 
 
 class JSONToRDFTestCase(unittest.TestCase):
 
     def test_patient_dimension(self):
         from i2fhirb2.jsontordf import jsontordf
-        os.path.join(test_data_directory, "patient_dimension_test", "patient-example.json")
-        argstr = "../data/patient_dimension_test/patient-example.json"
-        rdf = jsontordf(argstr.split())
-        testfname = os.path.join(test_data_directory, "patient_dimension_test", "patient-example.ttl")
+
+        test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
+        infile = os.path.join(test_directory, "patient-example.json")
+        rdf = jsontordf([infile])
+        testfname = os.path.join(test_directory, "patient-example.ttl")
 
         if save_output:
-            outfname = os.path.join(test_data_directory, "patient_dimension_test", "patient-example.ttl")
             with open(testfname, "w") as outf:
                 outf.write(str(rdf))
             print("---> RDF written to {}".format(testfname))

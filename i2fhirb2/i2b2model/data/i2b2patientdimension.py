@@ -63,6 +63,11 @@ from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
 
 
 class VitalStatusCd:
+    def __setattr__(self, key, value):
+        if key not in ["birthcode", "deathcode"]:
+            raise ValueError("New elements not allowed")
+        super().__setattr__(key, value)
+
     class BirthDateCode:
         def __init__(self, code: str):
             self.code = code
@@ -89,27 +94,12 @@ class VitalStatusCd:
     dd_second = DeathDateCode('S')
 
     def __init__(self, birth: BirthDateCode, death: DeathDateCode):
-        self._birth = birth
-        self._death = death
-        self.code = death.code + birth.code
+        self.birthcode = birth
+        self.deathcode = death
 
     @property
-    def birthcode(self) -> BirthDateCode:
-        return self._birth
-
-    @birthcode.setter
-    def birthcode(self, bd: BirthDateCode) -> None:
-        self._birth = bd
-        self.code = self._death.code + bd.code
-
-    @property
-    def deathcode(self) -> DeathDateCode:
-        return self._death
-
-    @deathcode.setter
-    def deathcode(self, dd: DeathDateCode) -> None:
-        self._death = dd
-        self.code = dd.code + self._birth.code
+    def code(self):
+        return self.deathcode.code + self.birthcode.code
 
 
 # TODO: should age be computed from birthdate / deathdate
@@ -216,9 +206,21 @@ class PatientDimension(I2B2_Core_With_Upload_Id):
 
     @classmethod
     def delete_upload_id(cls, tables: I2B2Tables, upload_id: int) -> int:
+        """
+        Delete all patient_dimension records with the supplied upload_id
+        :param tables: i2b2 sql connection
+        :param upload_id: upload identifier to remove
+        :return: number or records that were deleted
+        """
         return cls._delete_upload_id(tables.crc_connection, tables.patient_dimension, upload_id)
 
     @classmethod
     def add_or_update_records(cls, tables: I2B2Tables, records: List["PatientDimension"]) -> Tuple[int, int]:
+        """
+        Add or update the patient_dimension table as needed to reflect the contents of records
+        :param tables: i2b2 sql connection
+        :param records: records to apply
+        :return: number of records added / modified
+        """
         return cls._add_or_update_records(tables.crc_connection, tables.patient_dimension, records)
 

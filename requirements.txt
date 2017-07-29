@@ -2,3 +2,4 @@ jsonasobj
 SQLAlchemy
 python-dateutil
 rdflib
+psycopg2

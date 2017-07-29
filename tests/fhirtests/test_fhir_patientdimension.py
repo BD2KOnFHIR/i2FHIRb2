@@ -47,10 +47,12 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         PatientMapping._clear()
         PatientMapping.update_date = datetime.datetime(2017, 5, 25)
         PatientMapping.sourcesystem_cd = "FHIR"
+        PatientMapping.upload_id = 12345
 
         PatientDimension._clear()
         PatientDimension.update_date = datetime.datetime(2017, 5, 25)
         PatientDimension.sourcesystem_cd = "FHIR"
+        PatientDimension.upload_id = 12345
 
         g = Graph()
         g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example.ttl"), format="turtle")
@@ -77,7 +79,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 72449255)]), pd_entry.patient_dimension_entry._freeze())
+             ('upload_id', 12345)]), pd_entry.patient_dimension_entry._freeze())
 
         self.assertEqual(2, len(pd_entry.patient_mappings.patient_mapping_entries))
         self.assertEqual(OrderedDict([
@@ -90,7 +92,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 72449255)]), pd_entry.patient_mappings.patient_mapping_entries[0]._freeze())
+             ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[0]._freeze())
         self.assertEqual(OrderedDict([
             ('patient_ide', '100000001'),
              ('patient_ide_source', 'HIVE'),
@@ -101,7 +103,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 72449255)]), pd_entry.patient_mappings.patient_mapping_entries[1]._freeze())
+             ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[1]._freeze())
 
 
 if __name__ == '__main__':

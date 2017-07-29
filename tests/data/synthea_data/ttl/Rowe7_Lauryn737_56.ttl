@@ -1,0 +1,35 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://hl7.org/fhir/Bundle/1cbc5ae0-92e3-4425-9baa-e02ff0f6964e> a fhir:Bundle ;
+    fhir:Bundle.entry [
+            [fhir:Bundle.entry.fullUrl [
+                    [fhir:value "urn:uuid:67635842-888d-4f8a-9924-f67afe2178ac"
+                ] ;
+                fhir:Bundle.entry.resource [
+                        [fhir:Resource.id [
+                                [fhir:value "67635842-888d-4f8a-9924-f67afe2178ac"
+                            ] ;
+                            fhir:Resource.meta [
+                                    [fhir:Meta.profile [
+                                            [fhir:index 0
+                                        ]
+                                    ]
+                                ] ;
+                                fhir:index 0
+                            ] ;
+                            fhir:Bundle.type [
+                                    [fhir:value "collection"
+                                ] ;
+                                fhir:Resource.id [
+                                        [fhir:value "1cbc5ae0-92e3-4425-9baa-e02ff0f6964e"
+                                    ] ;
+                                    fhir:nodeRole fhir:treeRoot .
+
+                                <http://hl7.org/fhir/Bundle/1cbc5ae0-92e3-4425-9baa-e02ff0f6964e.ttl> a owl:Ontology ;
+                                    owl:imports fhir:fhir.ttl .
+

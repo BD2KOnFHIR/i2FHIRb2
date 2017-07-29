@@ -87,7 +87,7 @@ class FHIRModifierDimension(FHIRMetadata):
         :param range_type: URI of range
         :return:
         """
-        return [ModifierDimension(p.predicate, self._name_base) for p in self.generate_modifier_path(prop, range_type)]
+        return [ModifierDimension(p.fullname, self._name_base) for p in self.generate_modifier_path(prop, range_type)]
 
     @staticmethod
     def tsv_header() -> str:

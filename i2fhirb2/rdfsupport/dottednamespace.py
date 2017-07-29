@@ -37,6 +37,12 @@ class DottedNamespace(Namespace):
     def __new__(cls, value):
         return Namespace.__new__(cls, value)
 
+    def __getattribute__(self, item):
+        if item == 'index':
+            return DottedURIRef(str(self) + item)
+        else:
+            return super().__getattribute__(item)
+
     def __getattr__(self, item: str) -> "DottedURIRef":
         return DottedURIRef(str(self) + item)
 

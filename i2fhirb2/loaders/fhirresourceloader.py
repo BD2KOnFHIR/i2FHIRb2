@@ -220,7 +220,7 @@ class FHIRResource:
             list_idx = 0
             for lv in val:
                 entry_bnode = BNode()
-                self.add(entry_bnode, FHIR['index'], Literal(list_idx))
+                self.add(entry_bnode, FHIR.index, Literal(list_idx))
                 self.add_value_node(entry_bnode, pred, lv, valuetype)
                 self.add(subj, pred, entry_bnode)
                 list_idx += 1

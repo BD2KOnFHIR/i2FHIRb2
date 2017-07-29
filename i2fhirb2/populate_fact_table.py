@@ -33,12 +33,13 @@ from typing import List, Optional
 
 from rdflib import Graph
 
-from i2fhirb2.fhir.fhirspecific import DEFAULT_FMV, FHIR, DEFAULT_PROVIDER_ID, DEFAULT_ENCOUNTER_NUM
+from i2fhirb2.fhir.fhirspecific import DEFAULT_FMV, FHIR, DEFAULT_PROVIDER_ID
 from i2fhirb2.generate_i2b2 import Default_Sourcesystem_Code, Default_Path_Base
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
 
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.loaders.fhirjsonloader import fhir_json_to_rdf
 
 
@@ -106,9 +107,6 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("-p", "--providerid", metavar="Default provider id",
                         help="Default provider id (default: {})".format(DEFAULT_PROVIDER_ID),
                         default=DEFAULT_PROVIDER_ID)
-    parser.add_argument("-e", "--encounternum", metavar="Default encounter number",
-                        help="Default provider id (default: {})".format(DEFAULT_ENCOUNTER_NUM),
-                        default=DEFAULT_ENCOUNTER_NUM, type=int)
     return parser
 
 
@@ -153,12 +151,19 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
         process_parsed_args(opts)
 
     if opts.sourcesystem:
-        PatientDimension.sourcesystem_cd = opts.sourcesystem
-        PatientMapping.sourcesystem_cd = opts.sourcesystem
-        ObservationFact.sourcesystem_cd = opts.sourcesystem
-    PatientMapping.upload_id = opts.uploadid
-    PatientDimension.upload_id = opts.uploadid
-    ObservationFact.upload_id = opts.uploadid
+        I2B2_Core_With_Upload_Id.sourcesystem_cd = opts.sourcesystem
+        # TODO: make sure this works
+        # PatientDimension.sourcesystem_cd = opts.sourcesystem
+        # PatientMapping.sourcesystem_cd = opts.sourcesystem
+        # ObservationFact.sourcesystem_cd = opts.sourcesystem
+        # VisitDimension.sourcesystem_cd = opts.sourcesystem
+        # EncounterMapping.sourcesystem_cd = opts.sourcesystem
+    I2B2_Core_With_Upload_Id.upload_id = opts.uploadid
+    # PatientMapping.upload_id = opts.uploadid
+    # PatientDimension.upload_id = opts.uploadid
+    # ObservationFact.upload_id = opts.uploadid
+    # VisitDimension.upload_id = opts.uploadid
+    # EncounterMapping.upload_id = opts.uploadid
 
     return opts
 

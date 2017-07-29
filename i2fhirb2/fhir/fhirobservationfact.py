@@ -92,15 +92,17 @@ literal_conversions = {
 class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
 
-    def __init__(self, g: Graph, ofk: ObservationFactKey, predicate: URIRef, object: Node):
+    def __init__(self, g: Graph, ofk: ObservationFactKey, predicate: URIRef, object: Node, instance_num: int=1):
         """
         Construct an observation fact entry
         :param g: Graph containing information about the object
         :param ofk: Observation fact key - patient, encounter, etc
         :param predicate: predicate of concept_code
         :param object: object of concept_code
+        :param instance_num: instance identifier
         """
         super().__init__(ofk, concept_code(predicate))
+        self._instance_num = instance_num
         self.fhir_primitive(g, object)
 
     @staticmethod
@@ -147,7 +149,7 @@ class FHIRObservationFactFactory:
     visit_dimension, provider_dimension, patient_mapping and provider_mapping entries
     """
 
-    special_processing_list = {RDF.type: None, FHIR.nodeRole: None}
+    special_processing_list = {RDF.type: None, FHIR.nodeRole: None, FHIR.index: None}
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]):
         self.g = g
@@ -161,14 +163,22 @@ class FHIRObservationFactFactory:
 
         # TODO: look at DomainResource embedded entries (claim-example-oral-bridge).  Perhaps we should change the
         # RDF generator to add type arcs to all resources?
+        self._instance_generator = FHIRObservationFactFactory.InstanceNumFactory()
         for s in {subject} if subject else self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
             self.observation_facts += self.generate_facts(s)
 
-    def generate_facts(self, subject: URIRef) -> None:
+    def generate_facts(self, subject: URIRef) -> List[FHIRObservationFact]:
+        """
+        Generate an observation fact entry for each predicate object associated with subject.  If the predicate
+        is not primitive (i.e. it has a non-value BNode as a target), generate a series of modifiers for each element
+        in the BNode.  Note -- this generation sorts the inputs because the order is indirectly preserved in the output
+        instance numbers.
+        :param subject: Subject of the observation (Patient)
+        :return:
+        """
         rval = []               # type: List[FHIRObservationFact]
 
-        # Concept codes
-        for conc, obj in self.g.predicate_objects(subject):
+        for conc, obj in sorted(self.g.predicate_objects(subject)):
             if conc not in self.special_processing_list:
                 if FHIRObservationFact.is_primitive(self.g, obj):
                     rval.append(FHIRObservationFact(self.g, self.ofk, conc, obj))
@@ -177,14 +187,30 @@ class FHIRObservationFactFactory:
         return rval
 
     def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: URIRef,
-                           modifier_root: Optional[URIRef] = None) -> List[FHIRObservationFact]:
+                           modifier_root: Optional[URIRef] = None, ) -> List[FHIRObservationFact]:
         rval = []               # type: List[FHIRObservationFact]
-        for modifier, modifier_object in self.g.predicate_objects(obj):
+        inst_num = self._instance_generator.instance_num
+        for modifier, modifier_object in sorted(self.g.predicate_objects(obj)):
             if FHIRObservationFact.is_primitive(self.g, modifier_object):
-                obsfact = FHIRObservationFact(self.g, self.ofk, concept, modifier_object)
-                obsfact._modifier_cd = concept_code(FHIRMetadata.composite_uri(modifier_root, modifier)
-                                                    if modifier_root else modifier)
+                self._instance_generator.mark_used()
+                obsfact = FHIRObservationFact(self.g, self.ofk, concept, modifier_object, inst_num)
+                obsfact._modifier_cd = concept_code(modifier)
                 rval.append(obsfact)
             elif modifier not in self.special_processing_list:
                 rval += self.generate_modifiers(subject, concept, modifier_object, modifier)
         return rval
+
+    class InstanceNumFactory:
+        def __init__(self):
+            self._instance_num = 1
+            self._used = True           # Instance 1 is reserved for non-modifiers
+
+        def mark_used(self):
+            self._used = True
+
+        @property
+        def instance_num(self) -> int:
+            if self._used:
+                self._instance_num += 1
+                self._used = False
+            return self._instance_num

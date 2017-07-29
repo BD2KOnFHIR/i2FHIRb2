@@ -87,20 +87,22 @@ class FHIROntologyTable(FHIRMetadata):
         rval = []
         value_added = False
         for range_obj in self.g.objects(prop, RDFS.range):
-            vp = self.value_property(prop)
-            if vp:
-                if not value_added:
-                    rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
-                                                      vp))
-                    value_added = True
-            elif self.is_primitive(range_obj):
+            # TODO: vp always returns none.  Reconcile this
+            # vp = self.value_property(prop)
+            # if vp:
+            #     if not value_added:
+            #         rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
+            #                                           vp))
+            #         value_added = True
+            # elif self.is_primitive(range_obj):
+            if self.is_primitive(range_obj):
                 rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
-                                                  range_obj))
+                                                  prop, range_obj))
             else:
                 recursive_modifiers = self.generate_modifier_path(prop, range_obj)
                 for rm in recursive_modifiers:
-                    rval.append(ModifierOntologyEntry(rm.depth, subj, rm.predicate, full_concept_path,
-                                                      modifier_base_path, self.is_primitive(rm.type), rm.type))
+                    rval.append(ModifierOntologyEntry(rm.hlevel, subj, rm.fullname, full_concept_path,
+                                                      modifier_base_path, self.is_primitive(rm.type), rm.dimcode, rm.type))
         return rval
 
     def i2b2_paths(self, base: str, subject: URIRef, predicate: URIRef,

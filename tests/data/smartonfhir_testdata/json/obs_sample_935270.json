@@ -1,0 +1,186 @@
+{
+  "entry": [
+    {
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http:\/\/loinc.org",
+                  "code": "8480-6",
+                  "display": "Systolic blood pressure"
+                }
+              ],
+              "text": "Systolic blood pressure"
+            },
+            "valueQuantity": {
+              "unit": "mmHg",
+              "system": "http:\/\/unitsofmeasure.org",
+              "code": "mm[Hg]",
+              "value": 128
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http:\/\/loinc.org",
+                  "code": "8462-4",
+                  "display": "Diastolic blood pressure"
+                }
+              ],
+              "text": "Diastolic blood pressure"
+            },
+            "valueQuantity": {
+              "unit": "mmHg",
+              "system": "http:\/\/unitsofmeasure.org",
+              "code": "mm[Hg]",
+              "value": 80
+            }
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http:\/\/loinc.org",
+              "code": "55284-4",
+              "display": "Blood pressure systolic and diastolic"
+            }
+          ],
+          "text": "Blood pressure systolic and diastolic"
+        },
+        "effectiveDateTime": "1997-04-10",
+        "meta": {
+          "lastUpdated": "2017-03-23T15:47:42.000+00:00",
+          "versionId": "3"
+        },
+        "subject": {
+          "reference": "Patient\/SMART-935270"
+        },
+        "id": "SMART-Observation-653-bp",
+        "text": {
+          "div": "<div xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\">1997-04-10: Blood pressure 128\/80 mmHg<\/div>",
+          "status": "generated"
+        },
+        "encounter": {
+          "reference": "Encounter\/SMART-Encounter-653"
+        },
+        "category": {
+          "coding": [
+            {
+              "system": "http:\/\/hl7.org\/fhir\/observation-category",
+              "code": "vital-signs",
+              "display": "Vital Signs"
+            }
+          ],
+          "text": "Vital Signs"
+        },
+        "resourceType": "Observation",
+        "status": "final"
+      },
+      "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/SMART-Observation-653-bp"
+    },
+    {
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "code": {
+          "coding": [
+            {
+              "system": "http:\/\/loinc.org",
+              "code": "8480-6",
+              "display": "Systolic blood pressure"
+            }
+          ],
+          "text": "Systolic blood pressure"
+        },
+        "effectiveDateTime": "1997-04-10",
+        "meta": {
+          "lastUpdated": "2017-03-23T15:47:42.000+00:00",
+          "versionId": "3"
+        },
+        "subject": {
+          "reference": "Patient\/SMART-935270"
+        },
+        "id": "SMART-Observation-653-systolic",
+        "text": {
+          "div": "<div xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\">1997-04-10: Systolic blood pressure = 128 mm[Hg]<\/div>",
+          "status": "generated"
+        },
+        "category": {
+          "coding": [
+            {
+              "system": "http:\/\/hl7.org\/fhir\/observation-category",
+              "code": "vital-signs",
+              "display": "Vital Signs"
+            }
+          ],
+          "text": "Vital Signs"
+        },
+        "resourceType": "Observation",
+        "status": "final",
+        "valueQuantity": {
+          "unit": "mm[Hg]",
+          "system": "http:\/\/unitsofmeasure.org",
+          "code": "mm[Hg]",
+          "value": 128.0
+        }
+      },
+      "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/SMART-Observation-653-systolic"
+    },
+    {
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "code": {
+          "coding": [
+            {
+              "system": "http:\/\/loinc.org",
+              "code": "8462-4",
+              "display": "Diastolic blood pressure"
+            }
+          ],
+          "text": "Diastolic blood pressure"
+        },
+        "effectiveDateTime": "1997-04-10",
+        "meta": {
+          "lastUpdated": "2017-03-23T15:47:42.000+00:00",
+          "versionId": "3"
+        },
+        "subject": {
+          "reference": "Patient\/SMART-935270"
+        },
+        "id": "SMART-Observation-653-diastolic",
+        "text": {
+          "div": "<div xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\">1997-04-10: Diastolic blood pressure = 80 mm[Hg]<\/div>",
+          "status": "generated"
+        },
+        "category": {
+          "coding": [
+            {
+              "system": "http:\/\/hl7.org\/fhir\/observation-category",
+              "code": "vital-signs",
+              "display": "Vital Signs"
+            }
+          ],
+          "text": "Vital Signs"
+        },
+        "resourceType": "Observation",
+        "status": "final",
+        "valueQuantity": {
+          "unit": "mm[Hg]",
+          "system": "http:\/\/unitsofmeasure.org",
+          "code": "mm[Hg]",
+          "value": 80.0
+        }
+      },
+      "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/SMART-Observation-653-diastolic"
+    }
+  ]
+}

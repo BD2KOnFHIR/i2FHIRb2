@@ -1,0 +1,266 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://hl7.org/fhir/Bundle/cf61972c-8dcc-4352-b8a2-8ddf22709e59> a fhir:Bundle ;
+    fhir:Bundle.entry [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:d10b4e05-0feb-4fcd-87b5-a4c48a29abc5"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "d10b4e05-0feb-4fcd-87b5-a4c48a29abc5"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 8
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 20
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:f8ee114a-d9d8-4141-89ba-5c9f13fc5a3e"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "f8ee114a-d9d8-4141-89ba-5c9f13fc5a3e"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 7
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 19
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:8fc4bc39-63b4-4504-87ab-ec3c7998bf4c"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "8fc4bc39-63b4-4504-87ab-ec3c7998bf4c"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 4
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 10
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:8bb67e97-74c1-42ac-ae8b-c2c22c764bf6"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "8bb67e97-74c1-42ac-ae8b-c2c22c764bf6"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 6
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 16
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 22
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:8d514a1f-e2a5-4db0-8078-7b45c92db359"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "8d514a1f-e2a5-4db0-8078-7b45c92db359"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 0
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 9
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:6c80ddcf-d049-43f1-ae49-d702e881aa6b"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "6c80ddcf-d049-43f1-ae49-d702e881aa6b"
+            ]
+        ] ;
+        fhir:index 1
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:78a6f252-dc29-4d61-acc5-f5f9cf816a7f"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "78a6f252-dc29-4d61-acc5-f5f9cf816a7f"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 5
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:2af5473d-e5fc-41d8-b0e3-1dc91ba0a5d7"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "2af5473d-e5fc-41d8-b0e3-1dc91ba0a5d7"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 2
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 12
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 17
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 18
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 14
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 15
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 13
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:79314504-7ebf-4a87-b4da-7dcc313f3ee2"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "79314504-7ebf-4a87-b4da-7dcc313f3ee2"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 3
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 11
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 21
+    ] ;
+    fhir:Bundle.type [
+        fhir:value "collection"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "cf61972c-8dcc-4352-b8a2-8ddf22709e59"
+    ] ;
+    fhir:nodeRole fhir:treeRoot .
+
+<http://hl7.org/fhir/Bundle/cf61972c-8dcc-4352-b8a2-8ddf22709e59.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+

@@ -35,6 +35,7 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, Vital
 
 class PatientDimensionTestCase(unittest.TestCase):
     def test_basics(self):
+        PatientDimension._clear()
         PatientDimension.update_date = datetime(2017, 1, 3)
         x = PatientDimension(12345, VitalStatusCd(VitalStatusCd.bd_unknown, VitalStatusCd.dd_unknown))
         self.assertEqual('patient_num\tvital_status_cd\tbirth_date\tdeath_date\tsex_cd\tage_in_years_num\tlanguage_cd\t'

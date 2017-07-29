@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
 from operator import or_
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Callable, Dict
 
 from sqlalchemy import Table, and_, update, delete, select
 from sqlalchemy.engine import Connection
@@ -85,15 +85,49 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
 
     @staticmethod
     def _delete_upload_id(conn: Connection, table: Table, upload_id: int) -> int:
-        if not upload_id:
-            return 0
-        else:
-            q = delete(table).where(table.c.upload_id == upload_id)
-            return conn.execute(q).rowcount
+        """
+        Remove all table records with the supplied upload_id
+        :param conn: sql connection
+        :param table: table to modify
+        :param upload_id: target upload_id
+        :return: number of records removed
+        """
+        return conn.execute(delete(table).where(table.c.upload_id == upload_id)).rowcount if upload_id else 0
+
+    @staticmethod
+    def _nested_fcn(f: Callable, filters: List):
+        """
+        Distribute binary function f across list L
+        :param f: Binary function
+        :param filters: function arguments
+        :return: chain of binary filters
+        """
+        return None if len(filters) == 0 \
+            else filters[0] if len(filters) == 1 \
+            else f(filters[0], I2B2_Core_With_Upload_Id._nested_fcn(f, filters[1:]))
+
+    @classmethod
+    def _check_for_dups(cls, records: List["I2B2_Core_With_Upload_Id"]) -> \
+            Dict[Tuple, List["I2B2_Core_With_Upload_Id"]]:
+        key_map = dict()    # type: Dict[Tuple, I2B2_Core_With_Upload_Id]
+        dups = dict()       # type: Dict[Tuple, List[I2B2_Core_With_Upload_Id]]
+        for record in records:
+            key = tuple(record.get(k) for k in cls.key_fields)
+            if key in key_map:
+                dups.setdefault(key, [key_map[key]]).append(record)
+            else:
+                key_map[key] = record
+        return dups
 
     @classmethod
     def _add_or_update_records(cls, conn: Connection, table: Table,
                                records: List["I2B2_Core_With_Upload_Id"]) -> Tuple[int, int]:
+        """
+        Add or update the supplied table as needed to reflect the contents of records
+        :param tables: i2b2 sql connection
+        :param records: records to apply
+        :return: number of records added / modified
+        """
         num_updates = 0
         num_inserts = 0
         inserts = []
@@ -102,19 +136,27 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
         #    thousands to tens of thousands of records.  May want to move to ORM model if this gets to be an issue
         for record in records:
             keys = [(table.c[k] == getattr(record, k)) for k in cls.key_fields]
-            key_filter = and_(*keys) if len(keys) > 1 else keys[0]
+            key_filter = I2B2_Core_With_Upload_Id._nested_fcn(and_, keys)
             rec_exists = conn.execute(select([table.c.upload_id]).where(key_filter)).rowcount
             if rec_exists:
                 known_values = {k: v for k, v in record._freeze().items()
                                 if v is not None and k not in cls.no_update_fields and
                                 k not in cls.key_fields}
                 vals = [table.c[k] != v for k, v in known_values.items()]
-                val_filter = or_(*vals) if len(vals) > 1 else vals[0]
+                val_filter = I2B2_Core_With_Upload_Id._nested_fcn(or_, vals)
                 known_values['update_date'] = record.update_date
                 upd = update(table).where(and_(key_filter, val_filter)).values(known_values)
                 num_updates += conn.execute(upd).rowcount
             else:
                 inserts.append(record._freeze())
         if inserts:
+            dups = cls._check_for_dups(inserts)
+            if dups:
+                print("{} duplicate records encountered".format(len(dups)))
+                for k, vals in dups.items():
+                    if len(vals) == 2 and vals[0] == vals[1]:
+                        inserts.remove(vals[1])
+                    else:
+                        print("Key: {} has a non-identical dup".format(k))
             num_inserts = conn.execute(table.insert(), inserts).rowcount
-        return num_updates, num_inserts
+        return num_inserts, num_updates

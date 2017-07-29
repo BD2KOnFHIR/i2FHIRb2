@@ -133,7 +133,9 @@ class OntologyTestCase(unittest.TestCase):
                                   mod,
                                   navigational_path + 'Patient\\',
                                   ontology_path,
-                                  True)
+                                  True,
+                                  mod,
+                                  FHIR.boolean)
 
         self.assertEqual(OrderedDict([
              ('c_hlevel', 1),
@@ -143,7 +145,22 @@ class OntologyTestCase(unittest.TestCase):
              ('c_visualattributes', 'RA '),
              ('c_totalnum', None),
              ('c_basecode', 'FHIR:Patient.active'),
-             ('c_metadataxml', None),
+             ('c_metadataxml',
+              '<?xml version="1.0"?>\n'
+              '<ValueMetadata>\n'
+              '    <Version>3.02</Version>\n'
+              '    <CreationDateTime>2017-05-25 13:00:00</CreationDateTime>\n'
+              '    <TestID>FHIR:Patient.active</TestID>\n'
+              '    <TestName>active</TestName>\n'
+              '    <DataType>Enum</DataType>\n'
+              '    <Flagstouse/>\n'
+              '    <Oktousevalues>Y</Oktousevalues>\n'
+              '    <EnumValues>\n'
+              '        <Val description="True value">True</Val>\n'
+              '        <Val description="False value">False</Val>\n'
+              '    </EnumValues>\n'
+              '    <UnitValues/>\n'
+              '</ValueMetadata>'),
              ('c_facttablecolumn', 'modifier_cd'),
              ('c_tablename', 'modifier_dimension'),
              ('c_columnname', 'modifier_path'),

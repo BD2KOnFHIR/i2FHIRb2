@@ -25,7 +25,21 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+from datetime import datetime
 
-# TODO: Implement me
+from rdflib import URIRef
+
+from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
+from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension, ActiveStatusCd
+
+
 class FHIRVisitDimension:
-    pass
+    """
+    For the short term, we are using the FHIR resource instance URI to uniquely identify a 'visit'
+    """
+    def __init__(self, resourceURI: URIRef, patient_num: int, patient_ide: str,
+                 patient_ide_source: str, start_date: datetime):
+        self.encounter_mappings = FHIREncounterMapping(resourceURI, patient_ide, patient_ide_source)
+        self.visit_dimension_entry = \
+            VisitDimension(self.encounter_mappings.encounter_num, patient_num,
+                           ActiveStatusCd(ActiveStatusCd.sd_ongoing, ActiveStatusCd.ed_ongoing), start_date)

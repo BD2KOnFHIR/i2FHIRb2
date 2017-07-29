@@ -62,6 +62,7 @@ id_type = "String"
 bool_type = "Bool"
 value_type = "String"
 
+# TODO: implement enum
 fhir_type_map = {
     FHIR.decimal: "Float",
     FHIR.nodeRole: None,
@@ -69,7 +70,10 @@ fhir_type_map = {
     FHIR.positiveInt: "PosInteger",
     FHIR.dateTime: datetime_type,
     FHIR.boolean: bool_type,
-    FHIR.code: "Enum",
+    # TODO: merge these once we add value set access
+    # FHIR.code: "Enum",
+    FHIR.realcode: "Enum",
+    FHIR.code: "String",
     FHIR.base64Binary: None,
     FHIR.markdown: "largestring",
     FHIR.date: date_type,
@@ -90,17 +94,16 @@ fhir_type_map = {
 
 enum_bool_values = [("True value", "True"), ("False value", "False")]
 
-# Override for testing and and single create date needs
-creation_date = None
 
-
-def metadata_xml(typ: URIRef, c_basecode: str, c_name: str, pos_values: Optional[List[Tuple[str, str]]] = None) -> \
+def metadata_xml(typ: URIRef, c_basecode: str, c_name: str, creation_date: datetime,
+                 pos_values: Optional[List[Tuple[str, str]]] = None) -> \
         Optional[str]:
     """
     Return the metadata xml for the given data type
     :param typ: FHIR primitive type
     :param c_basecode: i2b2 code
     :param c_name: i2b2 name
+    :param creation_date: date to put into the metaxml field
     :param pos_values: list of possible values if code type
     :return: XML representation of element or None if the type is not to be realized
     """
@@ -108,7 +111,7 @@ def metadata_xml(typ: URIRef, c_basecode: str, c_name: str, pos_values: Optional
     if datatype is None:
         return None
 
-    creation_date_time = (creation_date if creation_date else datetime.now()).strftime("%m/%d/%Y %H:%M:%S")
+    creation_date_time = creation_date
     if datatype == "Bool":
         pos_values = enum_bool_values
         datatype = "Enum"

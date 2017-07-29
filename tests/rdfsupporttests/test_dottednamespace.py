@@ -51,9 +51,13 @@ class DottedNamespaceTestCase(unittest.TestCase):
         self.assertEqual(URIRef("http://hl7.org/fhir/nodeRole"), FHIR.nodeRole)
 
         self.assertTrue(FHIR.nodeRole in {FHIR['index'], URIRef("http://hl7.org/fhir/nodeRole"), FHIR['id']})
-        self.assertTrue(URIRef("http://hl7.org/fhir/nodeRole") in {FHIR['index'], FHIR.nodeRole, FHIR['id']})
+        self.assertTrue(URIRef("http://hl7.org/fhir/nodeRole") in {FHIR.index, FHIR.nodeRole, FHIR['id']})
         self.assertTrue(FHIR.nodeRole in {FHIR['index'], FHIR.nodeRole, FHIR['id']})
 
+    def test_index_failure(self):
+        from i2fhirb2.fhir.fhirspecific import FHIR
+        self.assertEqual(str(FHIR.index), "http://hl7.org/fhir/index")
+        self.assertEqual(str(FHIR.id), "http://hl7.org/fhir/id")
 
 if __name__ == '__main__':
     unittest.main()

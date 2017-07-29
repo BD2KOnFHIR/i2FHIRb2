@@ -40,6 +40,7 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, Vital
 # TODO: what of foreign addresses
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
 from i2fhirb2.rdfsupport.fhirgraphutils import value, extension, concept_uri, code
+from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
 
 
 class FHIRPatientDimension:
@@ -67,16 +68,7 @@ class FHIRPatientDimension:
         :param patient: patient URI
         :return: patient_id, patient_ide_source
         """
-        patient_str = str(patient)
-        m = FHIR_RESOURCE_RE.match(patient_str)
-        if m:
-            patient_id = m.group(FHIR_RE_ID)
-            patient_ide_source = m.group(FHIR_RE_BASE)
-        else:
-            # Assume no history entry if not FHIR format...
-            patient_ide_source, patient_id = patient_str.rsplit('#', 1) if '#' in patient_str \
-                else patient_str.rsplit('/', 1) if '/' in patient_str else ('UNKNOWN', patient_str)
-        return patient_id, patient_ide_source
+        return uri_to_ide_and_source(patient)
 
     def add_patient_information(self, g: Graph, patient: URIRef) -> None:
         """

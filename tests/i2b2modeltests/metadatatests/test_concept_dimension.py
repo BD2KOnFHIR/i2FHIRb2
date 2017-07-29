@@ -44,6 +44,7 @@ class ConceptDimensionTestCase(BaseTestCase):
     def test_basics(self):
         from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 
+        ConceptDimension._clear()
         ConceptDimension.graph = shared_graph
         ConceptDimension.download_date = datetime(2017, 5, 25)
         ConceptDimension.sourcesystem_cd = "FHIR"

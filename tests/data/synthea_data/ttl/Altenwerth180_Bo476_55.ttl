@@ -1,0 +1,491 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://hl7.org/fhir/Bundle/8a432296-c437-407d-8e10-1b51c8005b09> a fhir:Bundle ;
+    fhir:Bundle.entry [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:e1d79ef1-29e6-47ae-8443-19ee2ac01d2d"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "e1d79ef1-29e6-47ae-8443-19ee2ac01d2d"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 18
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:4fb195c9-fccc-4a2f-9bf4-1bceca1a482b"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "4fb195c9-fccc-4a2f-9bf4-1bceca1a482b"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 22
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 28
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:87408ac7-f45e-4df0-8d20-92dee0e29ffd"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "87408ac7-f45e-4df0-8d20-92dee0e29ffd"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 15
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:ce22cae2-82d1-46a0-b275-9852214e5b6a"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "ce22cae2-82d1-46a0-b275-9852214e5b6a"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 27
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 14
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:7b72babe-b1d2-4c8b-884a-af0eb74c2fbb"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "7b72babe-b1d2-4c8b-884a-af0eb74c2fbb"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 7
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 6
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:44a8956d-0c69-4bc6-bdeb-e572ab85b674"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "44a8956d-0c69-4bc6-bdeb-e572ab85b674"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 16
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:511a92cc-b6a3-43ce-bccd-5eaac8a964f8"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "511a92cc-b6a3-43ce-bccd-5eaac8a964f8"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 30
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:42d4c47b-bfb4-4936-99a0-4dd9079e646f"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "42d4c47b-bfb4-4936-99a0-4dd9079e646f"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 25
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:5ae9f706-046d-457f-b1d5-80b17565b385"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "5ae9f706-046d-457f-b1d5-80b17565b385"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 3
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:84e43338-ffeb-4830-8773-598bb70ddb38"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "84e43338-ffeb-4830-8773-598bb70ddb38"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 12
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            
+        ] ;
+        fhir:index 5
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:a404e342-c708-4736-b80f-5ada88cfc8a3"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "a404e342-c708-4736-b80f-5ada88cfc8a3"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 24
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:5933ba9d-2ddb-425e-8a74-f31bd4e2dd43"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "5933ba9d-2ddb-425e-8a74-f31bd4e2dd43"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 23
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 29
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:d78fdebd-28e3-4f0b-8f95-95201d616063"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "d78fdebd-28e3-4f0b-8f95-95201d616063"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 2
+                ],
+                    [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 19
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:37b6205b-5e0d-41d7-9915-efb28796755a"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "37b6205b-5e0d-41d7-9915-efb28796755a"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 0
+                ],
+                    [
+                    fhir:index 2
+                ]
+            ]
+        ] ;
+        fhir:index 21
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 4
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:e9821f91-bc89-4144-aadc-130649a0f566"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "e9821f91-bc89-4144-aadc-130649a0f566"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 11
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:dd60a357-03d2-4123-8a3c-0754bdaf4ef7"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "dd60a357-03d2-4123-8a3c-0754bdaf4ef7"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 26
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:b244da3c-1400-4d5f-81ea-449a709d6ede"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "b244da3c-1400-4d5f-81ea-449a709d6ede"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 17
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:6f70271d-41ee-4007-bc09-b6b147d4e5d4"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "6f70271d-41ee-4007-bc09-b6b147d4e5d4"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 2
+                ],
+                    [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 20
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:878ecd0a-c2a7-497d-8b0d-23480f7d7e23"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "878ecd0a-c2a7-497d-8b0d-23480f7d7e23"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 10
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:04b7f0f8-72a6-4497-8867-694e340bc39c"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "04b7f0f8-72a6-4497-8867-694e340bc39c"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 1
+                ],
+                    [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 9
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:9868529a-c472-44ce-8b7a-b7bd3cb32dc5"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "9868529a-c472-44ce-8b7a-b7bd3cb32dc5"
+            ]
+        ] ;
+        fhir:index 1
+    ],
+        [
+        fhir:Bundle.entry.resource [
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 13
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:5d050244-af7a-4ece-bf80-0218e0dd173c"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "5d050244-af7a-4ece-bf80-0218e0dd173c"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 8
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:367ed216-7478-4e62-a103-083d0a7dacb4"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "367ed216-7478-4e62-a103-083d0a7dacb4"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 2
+    ],
+        [
+        fhir:Bundle.entry.fullUrl [
+            fhir:value "urn:uuid:b8230a83-7b44-4ae4-89f1-0f5196881f94"
+        ] ;
+        fhir:Bundle.entry.resource [
+            fhir:Resource.id [
+                fhir:value "b8230a83-7b44-4ae4-89f1-0f5196881f94"
+            ] ;
+            fhir:Resource.meta [
+                fhir:Meta.profile [
+                    fhir:index 0
+                ]
+            ]
+        ] ;
+        fhir:index 0
+    ] ;
+    fhir:Bundle.type [
+        fhir:value "collection"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "8a432296-c437-407d-8e10-1b51c8005b09"
+    ] ;
+    fhir:nodeRole fhir:treeRoot .
+
+<http://hl7.org/fhir/Bundle/8a432296-c437-407d-8e10-1b51c8005b09.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+

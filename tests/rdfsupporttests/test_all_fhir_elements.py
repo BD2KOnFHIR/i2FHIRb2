@@ -33,19 +33,20 @@ from rdflib import Graph
 
 from i2fhirb2.loaders.fhirmetatavocabularyloader import FHIRMetaVoc
 from i2fhirb2.loaders.fhirresourceloader import FHIRResource
-from i2fhirb2.rdfsupport.prettygraph import PrettyGraph
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
 from tests.rdfsupporttests.build_test_harness import ValidationTestCase
-from tests.utils.base_test_case import FHIRGraph, test_output_directory, test_data_directory
+from tests.utils.base_test_case import make_and_clear_directory
 
 
 class FHIRInstanceTestCase(ValidationTestCase):
     @classmethod
     def setUpClass(cls):
+        from tests.utils.base_test_case import FHIRGraph
         cls.fhir_ontology = FHIRGraph()
 
 FHIRInstanceTestCase.input_directory = "/Users/mrf7578/Development/fhir/build/publish"
-FHIRInstanceTestCase.output_directory =  os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data', 'all_fhir_elements_failures')
+FHIRInstanceTestCase.output_directory = \
+    os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data', 'all_fhir_elements_failures')
 FHIRInstanceTestCase.file_suffix = ".json"
 FHIRInstanceTestCase.skip = ['valuesets.json', 'xds-example.json']
 FHIRInstanceTestCase.file_filter = lambda dp, fn: ".cs." not in fn and '.vs.' not in fn and '.profile.' not in fn \
@@ -58,14 +59,7 @@ FHIRInstanceTestCase.single_file = False
 # Comparing to FHIR, so make certain we're doing FHIR dates
 FHIRMetaVoc.fhir_dates = True
 
-
-def clear_failures_directory():
-    import shutil, os
-    os.makedirs(FHIRInstanceTestCase.output_directory, exist_ok=True)
-    for fn in os.listdir(FHIRInstanceTestCase.output_directory):
-        shutil.rmtree(fn)
-
-
+make_and_clear_directory(FHIRInstanceTestCase.output_directory)
 
 
 def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
@@ -87,8 +81,9 @@ def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
 
 
 FHIRInstanceTestCase.validation_function = json_to_ttl
-FHIRInstanceTestCase.build_test_harness()
-clear_failures_directory()
+# TODO: Finish all the FHIR test issues
+# FHIRInstanceTestCase.build_test_harness()
+# clear_failures_directory()
 
 
 if __name__ == '__main__':

@@ -12,7 +12,6 @@
 
 <http://standardhealthrecord.org/fhir/Patient/526238ef-dec3-401d-a1c1-2974962df23f> a fhir:Patient ;
     fhir:nodeRole fhir:treeRoot ;
-    fhir:resourceType "Patient" ;
     fhir:DomainResource.extension [
         fhir:Extension.url [
             fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"

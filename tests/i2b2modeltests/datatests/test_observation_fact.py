@@ -34,7 +34,7 @@ from rdflib import Graph
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.fhir.fhirspecific import FHIR
-from tests.utils.base_test_case import FHIRGraph, test_output_directory
+from tests.utils.base_test_case import FHIRGraph
 
 bmi_graph = "http://build.fhir.org/observation-example-bmi.ttl"
 
@@ -49,6 +49,7 @@ class ObservationFactTestCase(unittest.TestCase):
 
     def test_basics(self):
         from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+        ObservationFact._clear()
         ObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
         ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
         x = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR STU3")
@@ -85,8 +86,10 @@ class ObservationFactTestCase(unittest.TestCase):
         from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
 
         ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
+        FHIRObservationFact._clear()
         FHIRObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
         FHIRObservationFact.sourcesystem_cd = "FHIR STU3"
+        FHIRObservationFact.upload_id = 12345
 
         for subj in self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
             obj = self.g.value(subj, FHIR.Observation.status)
@@ -123,6 +126,7 @@ class ObservationFactTestCase(unittest.TestCase):
         # Set this to true when generating new test data
         write_test_data = False
         ofk = ObservationFactKey(1000000133, 471882, 'LCS-I2B2:D000109100', datetime(2017, 5, 23, 11, 17))
+        FHIRObservationFact._clear()
         FHIRObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
         FHIRObservationFact.sourcesystem_cd = "FHIR STU3"
         oflist = FHIRObservationFactFactory(self.g, ofk, None)
@@ -133,16 +137,16 @@ class ObservationFactTestCase(unittest.TestCase):
                 outf.write(FHIRObservationFact._header() + '\n')
                 for e in sorted(oflist.observation_facts):
                     outf.write(repr(e) + '\n')
-            self.assertTrue(False, "Creating a new test file always fails")
         else:
             with open(test_fname) as inf:
                 line_no = 1
                 self.assertEqual(FHIRObservationFact._header(), inf.readline().strip(), "Header mismatch")
                 for e in sorted(oflist.observation_facts):
                     line_no += 1
-                    self.assertEqual(repr(e), inf.readline().strip(), "Line number {}".format(line_no))
+                    self.assertEqual(repr(e), inf.readline()[:-1], "Line number {}".format(line_no))
                 self.assertEqual('', inf.read(1))
-
+        if write_test_data:
+            self.assertTrue(False, "Creating a new test file always fails")
 
 
 if __name__ == '__main__':

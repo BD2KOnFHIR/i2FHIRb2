@@ -51,6 +51,7 @@ class CommonDimension(I2B2_Core_With_Upload_Id):
         self._base_path = base_path
         self._name_prefix = nsmap.get(split_uri(subject)[0], "base").upper()
 
+
     def path(self) -> str:
         return self._base_path + concept_path(self._subject)
 

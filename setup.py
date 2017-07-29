@@ -4,7 +4,7 @@ import sys
 
 from i2fhirb2 import __version__
 
-requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2']
+requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2', 'jsonasobj']
 if sys.version_info < (3, 5):
     requires.append('typing')
 
@@ -19,7 +19,7 @@ setup(
     description='FHIR in i2b2 model conversion tools',
     long_description='Toolkit to represent the "FHIR Ontology" in i2b2',
     install_requires=requires,
-    scripts=['scripts/generate_i2b2'],
+    scripts=['scripts/generate_i2b2', 'scripts/loadfacts', 'scripts/jsontordf'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

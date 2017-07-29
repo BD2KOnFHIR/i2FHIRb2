@@ -35,6 +35,7 @@ from rdflib import Graph
 
 test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
 test_conf_directory = os.path.join(test_directory, 'conf')
+test_data_directory = os.path.join(test_directory, 'data')
 
 
 class FHIRGraph(Graph):
@@ -66,3 +67,14 @@ class BaseTestCase(unittest.TestCase):
 
     def assertDatesAlmostEqual(self, d1: str, d2: str):
         self.assertTrue(self.almostequal(d1, d2))
+
+
+def make_and_clear_directory(dirbase: str):
+    import shutil
+    safety_file = os.path.join(dirbase, "generated")
+    if not os.path.exists(safety_file):
+        raise FileExistsError("{} not found in test directory".format(safety_file))
+    shutil.rmtree(dirbase)
+    os.makedirs(dirbase)
+    with open(os.path.join(dirbase,"generated"), "w") as f:
+        f.write("Generated for safety.  Must be present for test to remove this directory.")

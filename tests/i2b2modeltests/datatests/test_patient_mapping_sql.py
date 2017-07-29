@@ -37,18 +37,18 @@ class PatientMappingSQLTestCase(unittest.TestCase):
     def test_insert(self):
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping, PatientIDEStatus
 
-        print("{} records deleted".format(PatientMapping.delete_upload_id(self.opts.tables, self.opts.uploadid)))
+        PatientMapping.delete_upload_id(self.opts.tables, self.opts.uploadid)
         PatientMapping.upload_id = self.opts.uploadid
         pm = PatientMapping(10000001, "12345", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
 
-        n_upd, n_ins = PatientMapping.add_or_update_records(self.opts.tables, [pm])
+        n_ins, n_upd = PatientMapping.add_or_update_records(self.opts.tables, [pm])
         self.assertEqual((0, 1), (n_upd, n_ins))
-        n_upd, n_ins = PatientMapping.add_or_update_records(self.opts.tables, [pm])
+        n_ins, n_upd = PatientMapping.add_or_update_records(self.opts.tables, [pm])
         self.assertEqual((0, 0), (n_upd, n_ins))
         pm._project_id = "TEST"
 
         pm2 = PatientMapping(10000001, "12346", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
-        n_upd, n_ins = PatientMapping.add_or_update_records(self.opts.tables, [pm, pm2])
+        n_ins, n_upd = PatientMapping.add_or_update_records(self.opts.tables, [pm, pm2])
         self.assertEqual((0, 2), (n_upd, n_ins))
         self.assertEqual(3, PatientMapping.delete_upload_id(self.opts.tables, self.opts.uploadid))
 

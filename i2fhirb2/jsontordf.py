@@ -29,6 +29,9 @@ import os
 from argparse import Namespace, ArgumentParser
 from typing import List, Union
 
+import sys
+
+import dirlistproc
 from rdflib import Graph
 
 from i2fhirb2.loaders.fhircollectionloader import FHIRCollection
@@ -43,8 +46,7 @@ DEFAULT_FHIR_MV = os.path.join(dirname, '..', 'tests', 'data', 'fhir_metadata_vo
 
 def load_fhir_ontology(opts: Namespace) -> Graph:
     g = Graph()
-    if opts.outdir:
-        print("Loading FHIR metadata vocabulary")
+    print("Loading FHIR metadata vocabulary")
     g.load(opts.metadatavoc, format="turtle")
     return g
 
@@ -60,49 +62,81 @@ class ArgParser(ArgumentParser):
                                         default=default, **kwargs)
 
 
-def create_parser() -> ArgumentParser:
+def proc_file(infile: str, outfile: str, opts: Namespace) -> bool:
+    json_obj = FHIRResource.load_file_or_uri(infile)
+
+    if 'resourceType' not in json_obj:
+        if 'entry' in json_obj:
+            coll = FHIRCollection(opts.fhir_metavoc,
+                                  None,
+                                  opts.uribase,
+                                  data=json_obj,
+                                  add_ontology_header=not opts.noontology,
+                                  replace_narrative_text=opts.nonarrative)
+    else:
+        res = FHIRResource(opts.fhir_metavoc,
+                           opts.jsonuri,
+                           opts.uribase,
+                           add_ontology_header=not opts.noontology,
+                           replace_narrative_text=opts.nonarrative)
+        res.
+
+    return None
+
+skip_dir_names = ['/v2/', '/v3/']
+skip_file_names = ['.cs.', '.vs.', '.profile.', '.canonical.', '.schema.', '.diff.']
+
+
+def file_filter(ifn: str, indir: str, opts: Namespace) -> bool:
     """
-    Create a command line parser
-    :return: parser
+    Determine whether to process ifn.  We con't process:
+        1) Anything in a directory having a path element that begins with "_"
+        2) Really, really big files
+        3) Temporary lists of know errors
+    :param ifn: input file name
+    :param indir: input directory
+    :param opts: argparse options
+    :return: True if to be processed, false if to be skipped
     """
-    parser = ArgParser(description="Convert FHIR JSON into RDF", fromfile_prefix_chars='@')
-    parser.add_argument("jsonuri", help="URI or name of JSON source file")
+    if indir.startswith("_") or "/_" in indir or any(dn in indir for dn in skip_dir_names):
+        return False
+
+    if any(sfn in ifn for sfn in skip_file_names):
+        return False
+
+    infile = os.path.join(indir, ifn)
+    if os.path.getsize(infile) > (opts.maxsize * 1000):
+        return False
+
+    return True
+
+
+def addargs(parser: ArgumentParser) -> None:
     parser.add_argument("-u", "--uribase", help="Base URI for RDF identifiers", default=DEFAULT_FHIR_URI)
-    parser.add_argument("-od", "--outdir", help="RDF output directory.  If omitted, use sys.stdout")
     parser.add_argument("-mv", "--metadatavoc", help="FHIR metadata vocabulary", default=DEFAULT_FHIR_MV)
     parser.add_argument("-no", "--noontology", help="Omit owl ontology header", action="store_true")
     parser.add_argument("-nn", "--nonarrative", help="Omit narrative text on output", action="store_true")
-    return parser
+    parser.add_argument("--maxsize", help="Maximum sensible file size in KB", type=int, default=800)
+    parser.fromfile_prefix_chars = "@"
 
 
-def jsontordf(argv: List[str]) -> Union[None, FHIRCollection, FHIRResource]:
-    parser = create_parser()
-    opts = parser.parse_args(argv)
-    if opts:
-        mvg = load_fhir_ontology(opts)
-        json_obj = FHIRResource.load_file_or_uri(opts.jsonuri)
-        # Try to guess how the JSON is assembled
-        if 'resourceType' not in json_obj:
-            if 'entry' in json_obj:
-                return FHIRCollection(mvg,
-                                      None,
-                                      opts.uribase,
-                                      data=json_obj,
-                                      add_ontology_header=not opts.noontology,
-                                      replace_narrative_text=opts.nonarrative)
-        else:
-            return FHIRResource(mvg,
-                                opts.jsonuri,
-                                opts.uribase,
-                                add_ontology_header=not opts.noontology,
-                                replace_narrative_text=opts.nonarrative)
-
-    return None
+def postparse(opts: Namespace) -> None:
+    opts.graph = Graph()
+    opts.fhir_metavoc = load_fhir_ontology(opts)
 
 
 def printjsontordf(argv: List[str]) -> bool:
     """ Entry point for command line utility """
-    rdf = jsontordf(argv)
-    if rdf is not None:
-        print(str(jsontordf(argv)))
-    return rdf is not None
+    dlp = dirlistproc.DirectoryListProcessor(argv, description="Convert FHIR JSON into RDF", infile_suffix=".json",
+                                             outfile_suffix=".ttl", addargs=addargs, postparse=postparse)
+    dlp.run(file_filter=file_filter)
+
+    # rdf = jsontordf(argv)
+    # if rdf is not None:
+    #     print(str(rdf))
+    # return rdf is not None
+
+
+if __name__ == "__main__":
+    sys.path.append(os.path.join(os.path.join(os.getcwd(), os.path.dirname(__file__)), '..'))
+    printjsontordf(sys.argv[1:])

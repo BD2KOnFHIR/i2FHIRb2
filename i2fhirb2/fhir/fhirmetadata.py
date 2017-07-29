@@ -41,10 +41,18 @@ class ModifierPath:
     """
     Structure for carrying information about a modifier and its depth
     """
-    def __init__(self, predicate: URIRef, depth: int, typ: URIRef):
-        self.predicate = predicate
-        self.depth = depth
-        self.type = typ
+    def __init__(self, hlevel: int, fullname: URIRef, dimcode: URIRef, type_: URIRef):
+        """
+        Ontology c_hlevel, c_fullnmae, c_dimcode combination for modifier entry
+        :param hlevel:  depth
+        :param fullname: URI of full path
+        :param dimcode:  URI for type
+        :param type_: target type
+        """
+        self.hlevel = hlevel
+        self.fullname = fullname
+        self.dimcode = dimcode
+        self.type = type_
 
 
 class FHIRMetadata(metaclass=ABCMeta):
@@ -170,7 +178,7 @@ class FHIRMetadata(metaclass=ABCMeta):
                 for rng in self.g.objects(pred, RDFS.range):
                     if rng not in seen:
                         seen.add(rng)
-                        rval.append(ModifierPath(extended_prop, depth, rng))
+                        rval.append(ModifierPath(depth, extended_prop, pred, rng))
                         if not self.is_primitive(rng):
                             rval += self.generate_modifier_path(extended_prop, rng, depth+1, seen)
                         seen.discard(rng)

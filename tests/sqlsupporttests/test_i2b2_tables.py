@@ -25,23 +25,22 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
+import os
 import unittest
-from argparse import ArgumentParser
-
 from sqlalchemy import select
 
 
 def caught_error(message):
     raise ValueError(message)  # reraise an error
 
+
 # NOTE: if you get a "no tests" error, it is because parse_args does an exit(1).  Chances are
 # the issue is in the location of the db_conf file
 class I2B2TablesTestCase(unittest.TestCase):
     from i2fhirb2.generate_i2b2 import genargs
-    from tests.utils.base_test_case import test_data_directory
+    conf_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..', 'conf')
 
-    opts = genargs(['x', '@' + test_data_directory + '/db_conf'])
+    opts = genargs(['x', '@' + conf_directory + '/db_conf'])
 
     def test_basics(self):
         from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables

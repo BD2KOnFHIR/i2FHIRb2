@@ -44,7 +44,7 @@ def map_node(s: BNode, sk_s: URIRef, gin: Graph, gout: Graph, iter_idx: int) -> 
         if not isinstance(o, BNode):
             gout.add((sk_s, p, o))
         else:
-            idx = gin.value(o, FHIR['index'])
+            idx = gin.value(o, FHIR.index)
             if idx is None:
                 if len([o for o in gin.objects(s, p) if isinstance(o, BNode)]) == 1:
                     idx = 0
@@ -65,7 +65,7 @@ def skolemize(gin: Graph) -> Graph:
             if not isinstance(o, BNode):
                 gout.add((s, p, o))
             else:
-                idx = gin.value(o, FHIR['index'])
+                idx = gin.value(o, FHIR.index)
                 if idx is None:
                     if len([o for o in gin.objects(s, p) if isinstance(o, BNode)]) == 1:
                         idx = 0

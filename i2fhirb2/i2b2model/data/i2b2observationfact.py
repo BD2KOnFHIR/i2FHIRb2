@@ -28,7 +28,6 @@
 from datetime import datetime
 from typing import Optional, Tuple, List
 
-from sqlalchemy import delete
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
@@ -268,16 +267,27 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
     #     return None
     @property
     def pk(self) -> Tuple:
-        return self.patient_num, self.encounter_num, self.instance_num, self.concept_cd, self.modifier_cd
+        return self.patient_num, self.encounter_num, self.instance_num,  self.concept_cd, self.modifier_cd
 
     def __lt__(self, other: "ObservationFact") -> bool:
         return self.pk < other.pk
 
     @classmethod
     def delete_upload_id(cls, tables: I2B2Tables, upload_id: int) -> int:
+        """
+        Delete all observation_fact records with the supplied upload_id
+        :param tables: i2b2 sql connection
+        :param upload_id: upload identifier to remove
+        :return: number or records that were deleted
+        """
         return cls._delete_upload_id(tables.crc_connection, tables.observation_fact, upload_id)
 
     @classmethod
     def add_or_update_records(cls, tables: I2B2Tables, records: List["ObservationFact"]) -> Tuple[int, int]:
+        """
+        Add or update the observation_fact table as needed to reflect the contents of records
+        :param tables: i2b2 sql connection
+        :param records: records to apply
+        :return: number of records added / modified
+        """
         return cls._add_or_update_records(tables.crc_connection, tables.observation_fact, records)
-

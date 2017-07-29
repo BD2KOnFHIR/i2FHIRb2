@@ -26,19 +26,27 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace
+from datetime import datetime
 from typing import List, Callable
 
 from rdflib import Graph, RDF
 
+from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from i2fhirb2.fhir.fhirresourcemap import FHIR_RESOURCE_MAP, FHIR_Infrastructure_type, FHIR_Observation_type, \
     FHIR_Visit_Dimension_type, FHIR_Provider_Dimension_type, FHIR_Patient_Dimension_type, FHIR_Bundle_type
+from i2fhirb2.fhir.fhirspecific import FHIR
+from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
+from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
+from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
+from i2fhirb2.rdfsupport.fhirgraphutils import value
+from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
 
@@ -58,6 +66,8 @@ class I2B2GraphMap:
         self.observation_facts = []         # type: List[ObservationFact]
         self.patient_dimensions = []        # type: List[PatientDimension]
         self.patient_mappings = []          # type: List[PatientMapping]
+        self.visit_dimensions = []          # type: List[VisitDimension]
+        self.encounter_mappings = []        # type: List[EncounterMapping]
 
         for subj in set(g.subjects()):
             subj_type = g.value(subj, RDF.type)
@@ -66,13 +76,20 @@ class I2B2GraphMap:
                 if isinstance(mapped_type, FHIR_Infrastructure_type):
                     self.num_infrastructure += 1
                 elif isinstance(mapped_type, FHIR_Observation_type):
-                    patient_id, encounter_id, provider_id = mapped_type.fact_key_for(g, subj)
-                    # TODO: implement encounter mapping
-                    pm = FHIRPatientMapping(*FHIRPatientDimension.uri_to_patient_id(patient_id))
-
+                    patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(g, subj)
+                    patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
+                    pm = FHIRPatientMapping(patient_id, patient_ide_source)
                     self.patient_mappings += pm.patient_mapping_entries
-                    obsfactory = FHIRObservationFactFactory(g, ObservationFactKey(pm.patient_num, opts.encounternum,
-                                                                                  opts.providerid), subj)
+                    start_date = value(g, subj, FHIR.Observation.effectiveDateTime)
+                    if not start_date:
+                        start_date = datetime.now()
+                    vd = FHIRVisitDimension(subj, pm.patient_num, patient_id, patient_ide_source, start_date)
+                    self.visit_dimensions.append(vd.visit_dimension_entry)
+                    self.encounter_mappings += vd.encounter_mappings.encounter_mapping_entries
+                    obsfactory = \
+                        FHIRObservationFactFactory(g, ObservationFactKey(pm.patient_num,
+                                                                         vd.visit_dimension_entry.encounter_num,
+                                                                         opts.providerid, start_date), subj)
                     # TODO: Decide what do do with the other mappings in the observation factory
                     self.observation_facts += obsfactory.observation_facts
                 elif isinstance(mapped_type, FHIR_Visit_Dimension_type):
@@ -92,6 +109,8 @@ class I2B2GraphMap:
         self.generate_tsv_file("observation_fact.tsv", ObservationFact, self.observation_facts)
         self.generate_tsv_file("patient_dimension.tsv", PatientDimension, self.patient_dimensions)
         self.generate_tsv_file("patient_mapping.tsv", PatientMapping, self.patient_mappings)
+        self.generate_tsv_file("visit_dimension.tsv", VisitDimension, self.visit_dimensions)
+        self.generate_tsv_file("encounter_mapping.tsv", EncounterMapping, self.encounter_mappings)
 
     def generate_tsv_file(self, fname: str, cls: type, values: List[I2B2_Core]) -> None:
         write_tsv(self._opts.outdir, fname, cls._header(), values)
@@ -105,10 +124,18 @@ class I2B2GraphMap:
                   .format(PatientMapping.delete_upload_id(self._opts.tables, self._opts.uploadid)))
             print("Deleted {} observation_fact records"
                   .format(ObservationFact.delete_upload_id(self._opts.tables, self._opts.uploadid)))
+            print("Deleted {} visit_dimension records"
+                  .format(VisitDimension.delete_upload_id(self._opts.tables, self._opts.uploadid)))
+            print("Deleted {} encounter_mapping records"
+                  .format(EncounterMapping.delete_upload_id(self._opts.tables, self._opts.uploadid)))
         print("{} / {} patient_dimension records added / modified"
               .format(*PatientDimension.add_or_update_records(self._opts.tables, self.patient_dimensions)))
         print("{} / {} patient_mapping records added / modified"
               .format(*PatientMapping.add_or_update_records(self._opts.tables, self.patient_mappings)))
+        print("{} / {} visit_dimension records added / modified"
+              .format(*VisitDimension.add_or_update_records(self._opts.tables, self.visit_dimensions)))
+        print("{} / {} encounter_mapping records added / modified"
+              .format(*EncounterMapping.add_or_update_records(self._opts.tables, self.encounter_mappings)))
         print("{} / {} observation_fact records added / modified"
               .format(*ObservationFact.add_or_update_records(self._opts.tables, self.observation_facts)))
 

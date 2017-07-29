@@ -35,7 +35,6 @@ from i2fhirb2.rdfsupport.dottednamespace import DottedNamespace
 # TODO: move this to a stable version when R4 is adopted
 DEFAULT_FMV = "http://build.fhir.org/fhir.ttl"
 DEFAULT_PROVIDER_ID = "FHIR:DefaultProvider"
-DEFAULT_ENCOUNTER_NUM = 471185
 
 W5 = DottedNamespace("http://hl7.org/fhir/w5#")
 FHIR = DottedNamespace("http://hl7.org/fhir/")
@@ -53,7 +52,7 @@ nsmap = {str(W5): "W5",
 w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
 
 # List of predicates that aren't a direct part of the i2b2 structure
-skip_fhir_predicates = {FHIR['index'], FHIR.nodeRole, FHIR['id']}
+skip_fhir_predicates = {FHIR.index, FHIR.nodeRole, FHIR['id']}
 
 # List of FHIR 'primitive' types, not to be further expanded
 fhir_primitives = {FHIR.Reference}

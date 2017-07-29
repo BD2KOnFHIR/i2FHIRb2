@@ -100,7 +100,8 @@ class OntologyEntry(I2B2_Core):
 
     @DynObject.entry(_t)
     def c_metadataxml(self) -> Optional[str]:
-        return metadata_xml(self._primitive_type, self.c_basecode, self.c_name) if self._primitive_type else None
+        return metadata_xml(self._primitive_type, self.c_basecode, self.c_name, self.update_date) \
+            if self._primitive_type else None
 
     @DynObject.entry(_t)
     def c_facttablecolumn(self) -> str:
@@ -200,7 +201,8 @@ class ModifierOntologyEntry(OntologyEntry):
                  full_concept_path: str,
                  modifier_base_path: str,
                  is_leaf: bool,
-                 primitive_type: Optional[URIRef] = None):
+                 mod_pred: URIRef,
+                 mod_type: URIRef):
         """
         Construct a concept entry in the ontology space
         :param depth: Relative one-based depth of entry
@@ -209,12 +211,12 @@ class ModifierOntologyEntry(OntologyEntry):
         :param full_concept_path: concept path to which this modifier applies.  Unchanged.
         :param modifier_base_path: base path for the modifier dimension query.
         :param is_leaf: true if there are no additional children
-        :param primitive_type: true means generate metadata xml entry
+        :param mod_pred: real modifier predicate (for dimcode)
+        :param mod_type: Actual type of path
         """
         assert(depth > 0)
 
-        full_path = '\\' + concept_path(subject) + (modifier_path(mod) if subject != mod else '')
-        query = ModifierQuery(modifier_base_path + full_path[1:])
+        query = ModifierQuery(modifier_base_path + concept_path(mod_pred))
 
         visattr = VisualAttributes()
         visattr.leaf = is_leaf
@@ -222,12 +224,14 @@ class ModifierOntologyEntry(OntologyEntry):
         visattr.draggable = True
         visattr.editable = False
 
-        super().__init__(full_path, query, visattr, modifier_code(mod), primitive_type)
+        full_path = '\\' + concept_path(subject) + (modifier_path(mod) if subject != mod else '')
+        super().__init__(full_path, query, visattr, modifier_code(mod), mod_type)
 
         self._subject = subject
         self._mod = mod
         self._depth = depth
         self._m_applied_path = full_concept_path
+        self._mod_pred = mod_pred
 
     # Levels in ontology modifier references start at 1
     @DynObject.entry(_t)
@@ -241,11 +245,15 @@ class ModifierOntologyEntry(OntologyEntry):
     @DynObject.entry(_t)
     def c_comment(self) -> Optional[str]:
         rval = self.graph.comment(self._mod)
+        if not rval and self._primitive_type:
+            rval = self.graph.comment(self._primitive_type)
         return str(rval) if rval else None
 
     @DynObject.entry(_t)
     def c_tooltip(self) -> Optional[str]:
         rval = self.graph.value(self._mod, DC.title, None, self.graph.comment(self._mod))
+        if not rval and self._primitive_type:
+            rval = self.graph.value(self._primitive_type, DC.title, None, self.graph.comment(self._primitive_type))
         return str(rval) if rval else None
 
     @DynObject.entry(_t)

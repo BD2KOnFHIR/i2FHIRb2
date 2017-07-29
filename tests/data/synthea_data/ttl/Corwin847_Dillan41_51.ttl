@@ -1,0 +1,136 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://hl7.org/fhir/Bundle/54e59e9b-9f8d-4f4a-a8da-23e20f2a50be> a fhir:Bundle ;
+    fhir:Bundle.entry [
+            [fhir:Bundle.entry.fullUrl [
+                    [fhir:value "urn:uuid:7b36cded-8a39-4ef9-9e47-05f4217bb842"
+                ] ;
+                fhir:Bundle.entry.resource [
+                        [fhir:Resource.id [
+                                [fhir:value "7b36cded-8a39-4ef9-9e47-05f4217bb842"
+                            ] ;
+                            fhir:Resource.meta [
+                                    [fhir:Meta.profile [
+                                            [fhir:index 0
+                                        ]
+                                    ]
+                                ] ;
+                                fhir:index 4
+                            ],
+                                [
+                                    [fhir:Bundle.entry.resource [
+                                            [fhir:Resource.meta [
+                                                    [fhir:Meta.profile [
+                                                            [fhir:index 0
+                                                        ]
+                                                    ]
+                                                ] ;
+                                                fhir:index 7
+                                            ],
+                                                [
+                                                    [fhir:Bundle.entry.resource [
+                                                            [
+                                                        ] ;
+                                                        fhir:index 6
+                                                    ],
+                                                        [
+                                                            [fhir:Bundle.entry.fullUrl [
+                                                                    [fhir:value "urn:uuid:5cf71953-684c-4579-a1d7-4daf8cb44c47"
+                                                                ] ;
+                                                                fhir:Bundle.entry.resource [
+                                                                        [fhir:Resource.id [
+                                                                                [fhir:value "5cf71953-684c-4579-a1d7-4daf8cb44c47"
+                                                                            ] ;
+                                                                            fhir:Resource.meta [
+                                                                                    [fhir:Meta.profile [
+                                                                                            [fhir:index 0
+                                                                                        ]
+                                                                                    ]
+                                                                                ] ;
+                                                                                fhir:index 0
+                                                                            ],
+                                                                                [
+                                                                                    [fhir:Bundle.entry.fullUrl [
+                                                                                            [fhir:value "urn:uuid:30bef86c-ab26-4892-bf6c-4b3c0b821851"
+                                                                                        ] ;
+                                                                                        fhir:Bundle.entry.resource [
+                                                                                                [fhir:Resource.id [
+                                                                                                        [fhir:value "30bef86c-ab26-4892-bf6c-4b3c0b821851"
+                                                                                                    ] ;
+                                                                                                    fhir:Resource.meta [
+                                                                                                            [fhir:Meta.profile [
+                                                                                                                    [fhir:index 0
+                                                                                                                ]
+                                                                                                            ]
+                                                                                                        ] ;
+                                                                                                        fhir:index 5
+                                                                                                    ],
+                                                                                                        [
+                                                                                                            [fhir:Bundle.entry.fullUrl [
+                                                                                                                    [fhir:value "urn:uuid:73006165-174e-48a3-81c9-0a1ee7dc41d0"
+                                                                                                                ] ;
+                                                                                                                fhir:Bundle.entry.resource [
+                                                                                                                        [fhir:Resource.id [
+                                                                                                                                [fhir:value "73006165-174e-48a3-81c9-0a1ee7dc41d0"
+                                                                                                                            ]
+                                                                                                                        ] ;
+                                                                                                                        fhir:index 1
+                                                                                                                    ],
+                                                                                                                        [
+                                                                                                                            [fhir:Bundle.entry.fullUrl [
+                                                                                                                                    [fhir:value "urn:uuid:5fc6fd73-e5c6-4a3e-9369-82f503af16d2"
+                                                                                                                                ] ;
+                                                                                                                                fhir:Bundle.entry.resource [
+                                                                                                                                        [fhir:Resource.id [
+                                                                                                                                                [fhir:value "5fc6fd73-e5c6-4a3e-9369-82f503af16d2"
+                                                                                                                                            ] ;
+                                                                                                                                            fhir:Resource.meta [
+                                                                                                                                                    [fhir:Meta.profile [
+                                                                                                                                                            [fhir:index 0
+                                                                                                                                                        ]
+                                                                                                                                                    ]
+                                                                                                                                                ] ;
+                                                                                                                                                fhir:index 2
+                                                                                                                                            ],
+                                                                                                                                                [
+                                                                                                                                                    [fhir:Bundle.entry.resource [
+                                                                                                                                                            [fhir:Resource.meta [
+                                                                                                                                                                    [fhir:Meta.profile [
+                                                                                                                                                                            [fhir:index 0
+                                                                                                                                                                        ]
+                                                                                                                                                                    ]
+                                                                                                                                                                ] ;
+                                                                                                                                                                fhir:index 8
+                                                                                                                                                            ],
+                                                                                                                                                                [
+                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
+                                                                                                                                                                            [fhir:value "urn:uuid:553017e2-fc75-4c5d-a371-614ec255fdab"
+                                                                                                                                                                        ] ;
+                                                                                                                                                                        fhir:Bundle.entry.resource [
+                                                                                                                                                                                [fhir:Resource.id [
+                                                                                                                                                                                        [fhir:value "553017e2-fc75-4c5d-a371-614ec255fdab"
+                                                                                                                                                                                    ] ;
+                                                                                                                                                                                    fhir:Resource.meta [
+                                                                                                                                                                                            [fhir:Meta.profile [
+                                                                                                                                                                                                    [fhir:index 0
+                                                                                                                                                                                                ]
+                                                                                                                                                                                            ]
+                                                                                                                                                                                        ] ;
+                                                                                                                                                                                        fhir:index 3
+                                                                                                                                                                                    ] ;
+                                                                                                                                                                                    fhir:Bundle.type [
+                                                                                                                                                                                            [fhir:value "collection"
+                                                                                                                                                                                        ] ;
+                                                                                                                                                                                        fhir:Resource.id [
+                                                                                                                                                                                                [fhir:value "54e59e9b-9f8d-4f4a-a8da-23e20f2a50be"
+                                                                                                                                                                                            ] ;
+                                                                                                                                                                                            fhir:nodeRole fhir:treeRoot .
+
+                                                                                                                                                                                        <http://hl7.org/fhir/Bundle/54e59e9b-9f8d-4f4a-a8da-23e20f2a50be.ttl> a owl:Ontology ;
+                                                                                                                                                                                            owl:imports fhir:fhir.ttl .
+
