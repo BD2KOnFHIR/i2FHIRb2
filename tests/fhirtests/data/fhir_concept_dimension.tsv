@@ -26,6 +26,7 @@ concept_path	concept_cd	name_char	concept_blob	update_date	download_date	import_
 \FHIR\Observation\valueBoolean\	FHIR:Observation.valueBoolean	FHIR Observation valueBoolean		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\Observation\valueCodeableConcept\	FHIR:Observation.valueCodeableConcept	FHIR Observation valueCodeableConcept		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\Observation\valueDateTime\	FHIR:Observation.valueDateTime	FHIR Observation valueDateTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
+\FHIR\Observation\valueInteger\	FHIR:Observation.valueInteger	FHIR Observation valueInteger		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\Observation\valuePeriod\	FHIR:Observation.valuePeriod	FHIR Observation valuePeriod		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\Observation\valueQuantity\	FHIR:Observation.valueQuantity	FHIR Observation valueQuantity		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	
 \FHIR\Observation\valueRange\	FHIR:Observation.valueRange	FHIR Observation valueRange		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3	

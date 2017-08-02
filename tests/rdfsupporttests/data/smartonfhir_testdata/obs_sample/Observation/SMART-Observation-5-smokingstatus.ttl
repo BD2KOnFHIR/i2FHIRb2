@@ -19,7 +19,7 @@
     fhir:Observation.category [
         fhir:CodeableConcept.coding [
             a <http://hl7.org/fhir/observation-category/social-history> ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "social-history"
             ] ;
@@ -37,7 +37,7 @@
     fhir:Observation.code [
         fhir:CodeableConcept.coding [
             a loinc:72166-2 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "72166-2"
             ] ;
@@ -64,7 +64,7 @@
     fhir:Observation.valueCodeableConcept [
         fhir:CodeableConcept.coding [
             a sct:428041000124106 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "428041000124106"
             ] ;

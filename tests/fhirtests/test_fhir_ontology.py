@@ -57,11 +57,14 @@ class FHIROntologyTestCase(BaseTestCase):
                     outf.write(self.esc_output(repr(e)) + '\n')
         self.maxDiff = None
         with open(full_outfname, 'r') as outf:
-            self.assertEqual(outf.readline().strip(), o.tsv_header())
+            self.assertEqual(outf.readline().strip(), o.tsv_header(), "Header mismatch")
+            line_number = 1
             for e in sorted(v):
-                self.assertEqual(outf.readline().strip('\r\n'), self.esc_output(repr(e)))
+                line_number += 1
+                self.assertEqual(outf.readline().strip('\r\n'), self.esc_output(repr(e)),
+                                 "Mismatch on line {}".format(line_number))
             self.assertEqual(outf.read(), "")
-        self.assertEqual(False, create_output_files, "Test fails if generating the output file")
+        self.assertFalse(create_output_files, "Test fails if generating the output file")
 
     def test_concept_dimension(self):
         from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension

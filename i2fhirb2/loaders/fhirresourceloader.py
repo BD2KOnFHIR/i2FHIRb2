@@ -27,10 +27,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import re
 from typing import Union, List, Optional, Dict
-from urllib import request
 from uuid import uuid4
 
-from jsonasobj.jsonobj import JsonObj, loads
+from jsonasobj.jsonobj import JsonObj, load, JsonObjTypes
 from rdflib import Graph, OWL, RDFS, RDF, XSD, URIRef, Namespace
 from rdflib.term import Node, BNode, Literal
 
@@ -100,7 +99,7 @@ class FHIRResource:
         :param replace_narrative_text: Replace long narrative text section with boilerplate
         """
         if json_fname:
-            self.root = self.load_file_or_uri(json_fname)
+            self.root = load(json_fname)
         else:
             self.root = data
         self._base_uri = base_uri + ('/' if base_uri[-1] not in '/#' else '')
@@ -152,6 +151,13 @@ class FHIRResource:
         :param obj:
         :return: self for chaining
         """
+        # TODO: Debug code - remove
+        # if 'extension' in str(pred):
+        #     print("*** {} {} {}".format(subj, pred, obj))
+        #     for p, o in self.graph.predicate_objects(subj):
+        #         print("\t{} {} {}".format(subj, p, o))
+        #     for p, o in self.graph.predicate_objects(obj):
+        #         print("\t{} {} {}".format(obj, p, o))
         self._g.add((subj, pred, obj))
         return self
 
@@ -164,10 +170,15 @@ class FHIRResource:
         :param val: JSON representation of target object
         :param valuetype: predicate type if it can't be directly determined
         """
-        val_meta = FHIRMetaVoc(self._vocabulary, self._meta.predicate_type(pred) if not valuetype else valuetype)
+        pred_type = self._meta.predicate_type(pred) if not valuetype else valuetype
+        # Transform generic resources into specific types
+        if pred_type == FHIR.Resource:
+            pred_type = FHIR[val.resourceType]
+
+        val_meta = FHIRMetaVoc(self._vocabulary, pred_type)
         for k, p in val_meta.predicates().items():
             if k in val:
-                self.add_val(subj, p, val[k])
+                self.add_val(subj, p, val, k)
                 if pred == FHIR.CodeableConcept.coding:
                     self.add_type_arc(subj, val)
             elif k == "value" and val_meta.predicate_type(p) == FHIR.Element:
@@ -175,7 +186,10 @@ class FHIRResource:
                 # type comes from 'x'
                 for vk in val._as_dict.keys():
                     if vk.startswith(k):
-                        self.add_val(subj, FHIR[vk], val[vk], FHIR[vk[len(k):]])
+                        self.add_val(subj, FHIR['Extension.' + vk], val, vk, self._meta.value_predicate_to_type(vk))
+            else:
+                # Can have an extension only without a primary value
+                self.add_extension_val(subj, val, k, p)
 
     def add_reference(self, subj: Node, val: str) -> None:
         """
@@ -205,23 +219,30 @@ class FHIRResource:
                         self.add(subj, RDF.type, type_uri)
                     break
 
-    def add_val(self, subj: Node, pred: URIRef, val: Union[JsonObj, str, List],
+    def add_val(self, subj: Node, pred: URIRef, json_obj: JsonObj, json_key: str,
                 valuetype: Optional[URIRef] = None) -> Optional[BNode]:
         """
         Add the RDF representation of val to the graph as a target of subj, pred.  Note that FHIR lists are
         represented as a list of BNODE objects with a fhir:index discrimanant
         :param subj: graph subject
         :param pred: predicate
-        :param val: value to be expanded
+        :param json_obj: object containing json_key
+        :param json_key: name of the value in the JSON resource
         :param valuetype: value type if NOT determinable by predicate
         :return: value node if target is a BNode else None
         """
+        val = json_obj[json_key]
         if isinstance(val, List):
             list_idx = 0
             for lv in val:
                 entry_bnode = BNode()
-                self.add(entry_bnode, FHIR.index, Literal(list_idx))
-                self.add_value_node(entry_bnode, pred, lv, valuetype)
+                self.add(entry_bnode, FHIR.index, Literal(list_idx, datatype=XSD.integer))
+                if isinstance(lv, JsonObj):
+                    self.add_value_node(entry_bnode, pred, lv, valuetype)
+                else:
+                    vt = self._meta.predicate_type(pred)
+                    atom_type = self._meta.primitive_datatype_nostring(vt) if vt else None
+                    self.add(entry_bnode, FHIR.value, Literal(lv, datatype=atom_type))
                 self.add(subj, pred, entry_bnode)
                 list_idx += 1
         else:
@@ -239,59 +260,85 @@ class FHIRResource:
                 self.add(subj, pred, v)
                 if pred == FHIR.Reference.reference:
                     self.add_reference(subj, val)
+                self.add_extension_val(v, json_obj, json_key)
                 return v
         return None
 
-    def add_extension_val(self, subj: BNode, extendee: str) -> None:
+    def add_extension_val(self,
+                          subj: Node,
+                          json_obj:
+                          Union[JsonObj, List[JsonObjTypes]],
+                          key: str,
+                          pred: Optional[URIRef] = None) -> None:
         """
-        Add any extensions for the supplied
-        :param subj: Node containing subject root
-        :param extendee: name of element that is possibly extended (tested with '_' prefix)
+        Add any extensions for the supplied object. This can be called in following situations:
+        1) Single extended value 
+                "key" : (value),
+                "_key" : {
+                    "extension": [
+                       {
+                        "url": "http://...",
+                        "value[x]": "......" 
+                       }
+                    ]
+                }
+        2) Single extension only
+                "_key" : {
+                    "extension": [
+                       {
+                        "url": "http://...",
+                        "value[x]": "......" 
+                       }
+                    ]
+                }
+        3) Multiple extended values:
+                (TBD)
+                
+        4) Multiple extensions only
+                "_key" : [
+                  { 
+                    "extension": [
+                       {
+                        "url": "http://...",
+                        "value[x]": "......" 
+                       }
+                    ]
+                  }
+                ]
+                    
+        :param subj: Node containing subject
+        :param json_obj: Object (potentially) containing "_key"
+        :param key: name of element that is possibly extended (as indicated by "_" prefix)
+        :param pred: predicate for the contained elements. Only used in situations 3) (?) and 4 
         """
-        extendee_name = "_" + extendee
-        if extendee_name in self.root:
-            extension = self.root[extendee_name].extension
+        extendee_name = "_" + key
+        if extendee_name in json_obj:
             if not isinstance(subj, BNode):
                 raise NotImplementedError("Extension to something other than a simple BNode")
-            self.add_val(subj, FHIR.Element.exension, extension, FHIR.Extension)
-            # for extension_entry in extension.extension:
-            #
-            #     predicate = URIRef(extension_entry.url)
-            #     for val in [e for e in extension_entry._as_dict if e != 'url']:
-            #         if val.startswith("value"):
-            #             vt = val[len("value")].lower() + val[len("value") + 1:]
-            #             if self._meta.has_type(FHIR[vt]):
-            #                 self.add_val(subj, predicate, extension_entry[val], FHIR[vt])
-            #             else:
-            #                 print("Unknown extension type: {}".format(vt))
-            #         else:
-            #             print("Unknown extension element: {}".format(val))
+            if isinstance(json_obj[extendee_name], list):
+                if not pred:
+                    raise NotImplemented("Case 3 not implemented")
+                entry_idx = 0
+                for extension in json_obj[extendee_name]:
+                    entry = BNode()
+                    self.add(entry, FHIR.index, Literal(entry_idx))
+                    self.add_val(entry, FHIR.Element.extension, extension, 'extension')
+                    self.add(subj, pred, entry)
+                    entry_idx += 1
+            else:
+                self.add_val(subj, FHIR.Element.extension, json_obj[extendee_name], 'extension')
 
     def generate(self) -> Graph:
         self.add_prefixes(namespaces)
         if self._add_ontology_header:
             self.add_ontology_definition()
         self.add(self._resource_uri, RDF.type, FHIR[self.root.resourceType])
-        # TODO: Figure out why this isn't part of the FMV to begin with.
-        # self.add(self._resource_uri, FHIR.resourceType, Literal(self.root.resourceType))
         self.add(self._resource_uri, FHIR.nodeRole, FHIR.treeRoot)
         for k, p in self._meta.predicates().items():
             if k in self.root:
-                val_node = self.add_val(self._resource_uri, p, self.root[k])
-                self.add_extension_val(val_node, k)
+                self.add_val(self._resource_uri, p, self.root, k)
         self.add_prefixes(self._addl_namespaces)
         return self._g
-
-    @staticmethod
-    # TODO: move this capability back to jsonasobj package
-    def load_file_or_uri(name: str) -> JsonObj:
-        if '://' in name:
-            with request.urlopen(name) as response:
-                jsons = response.read()
-        else:
-            with open(name) as f:
-                jsons = f.read()
-        return loads(jsons)
 
     def __str__(self):
         return self._g.serialize().decode()

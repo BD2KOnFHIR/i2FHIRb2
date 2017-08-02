@@ -138,6 +138,7 @@ class ObservationFactTestCase(unittest.TestCase):
                 for e in sorted(oflist.observation_facts):
                     outf.write(repr(e) + '\n')
         else:
+            self.maxDiff = None
             with open(test_fname) as inf:
                 line_no = 1
                 self.assertEqual(FHIRObservationFact._header(), inf.readline().strip(), "Header mismatch")
@@ -145,8 +146,7 @@ class ObservationFactTestCase(unittest.TestCase):
                     line_no += 1
                     self.assertEqual(repr(e), inf.readline()[:-1], "Line number {}".format(line_no))
                 self.assertEqual('', inf.read(1))
-        if write_test_data:
-            self.assertTrue(False, "Creating a new test file always fails")
+        self.assertFalse(write_test_data, "Creating a new test file always fails")
 
 
 if __name__ == '__main__':

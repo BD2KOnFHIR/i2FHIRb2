@@ -83,7 +83,7 @@ class FHIRVisitDimensionTestCase(unittest.TestCase):
              ('upload_id', 1700043)]), pd_entry.visit_dimension_entry._freeze())
 
         self.assertEqual(OrderedDict([
-             ('encounter_ide', 'f202'),
+             ('encounter_ide', 'DiagnosticReport/f202'),
              ('encounter_ide_source', 'http://hl7.org/fhir/'),
              ('project_id', 'fhir'),
              ('encounter_num', 500000),

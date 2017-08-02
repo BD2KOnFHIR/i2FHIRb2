@@ -11,7 +11,7 @@
     fhir:DiagnosticReport.code [
         fhir:CodeableConcept.coding [
             a loinc:69409-1 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "69409-1"
             ] ;
@@ -30,13 +30,13 @@
         fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
     ] ;
     fhir:DiagnosticReport.performer [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:Reference.display [
             fhir:value "Hospital Lab"
         ]
     ] ;
     fhir:DiagnosticReport.result [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:1d52ae90-6721-476c-ad4c-ec978eac4a34> ;
         fhir:Reference.display [
             fhir:value "Cause of Death [US Standard Certificate of Death]"
@@ -59,7 +59,8 @@
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
         ]
     ] .
 

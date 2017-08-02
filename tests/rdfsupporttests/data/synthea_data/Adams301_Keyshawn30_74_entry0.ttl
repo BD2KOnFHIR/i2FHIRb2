@@ -13,51 +13,14 @@
 <http://standardhealthrecord.org/fhir/Patient/526238ef-dec3-401d-a1c1-2974962df23f> a fhir:Patient ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:DomainResource.extension [
-        fhir:Extension.url [
-            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"
-        ] ;
-        fhir:index 3 ;
-        fhir:valueString "Euna636 VonRueden575"
-    ],
-        [
-        fhir:Extension.url [
-            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-race"
-        ] ;
-        fhir:index 0 ;
-        fhir:valueCodeableConcept [
-            fhir:CodeableConcept.coding [
-                a <http://hl7.org/fhir/v3/Race/2131-1> ;
-                fhir:Coding.code [
-                    fhir:value "2131-1"
-                ] ;
-                fhir:Coding.display [
-                    fhir:value "Other"
-                ] ;
-                fhir:Coding.system [
-                    fhir:value "http://hl7.org/fhir/v3/Race"
-                ] ;
-                fhir:index 0
-            ] ;
-            fhir:CodeableConcept.text [
-                fhir:value "race"
-            ]
-        ]
-    ],
-        [
-        fhir:Extension.url [
-            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-SocialSecurityNumber-extension"
-        ] ;
-        fhir:index 8 ;
-        fhir:valueString "999-35-8029"
-    ],
-        [
+        fhir:index "1"^^xsd:integer ;
         fhir:Extension.url [
             fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-ethnicity"
         ] ;
-        fhir:index 1 ;
-        fhir:valueCodeableConcept [
+        fhir:Extension.valueCodeableConcept [
             fhir:CodeableConcept.coding [
                 a <http://hl7.org/fhir/v3/Ethnicity/2180-8> ;
+                fhir:index "0"^^xsd:integer ;
                 fhir:Coding.code [
                     fhir:value "2180-8"
                 ] ;
@@ -66,8 +29,7 @@
                 ] ;
                 fhir:Coding.system [
                     fhir:value "http://hl7.org/fhir/v3/Ethnicity"
-                ] ;
-                fhir:index 0
+                ]
             ] ;
             fhir:CodeableConcept.text [
                 fhir:value "ethnicity"
@@ -75,11 +37,22 @@
         ]
     ],
         [
+        fhir:index "7"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-FathersName-extension"
+        ] ;
+        fhir:Extension.valueHumanName [
+            fhir:HumanName.text [
+                fhir:value "Jamel944 Adams301"
+            ]
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
         fhir:Extension.url [
             fhir:value "http://hl7.org/fhir/StructureDefinition/birthPlace"
         ] ;
-        fhir:index 2 ;
-        fhir:valueAddress [
+        fhir:Extension.valueAddress [
             fhir:Address.city [
                 fhir:value "Worcester"
             ] ;
@@ -92,36 +65,73 @@
         ]
     ],
         [
+        fhir:index "8"^^xsd:integer ;
         fhir:Extension.url [
-            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-interpreterRequired"
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-SocialSecurityNumber-extension"
         ] ;
-        fhir:index 5 ;
-        fhir:valueBoolean false
+        fhir:Extension.valueString [
+            fhir:value "999-35-8029"
+        ]
     ],
         [
+        fhir:index "4"^^xsd:integer ;
         fhir:Extension.url [
-            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-FathersName-extension"
+            fhir:value "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
         ] ;
-        fhir:index 7 ;
-        fhir:valueHumanName [
-            fhir:HumanName.text [
-                fhir:value "Jamel944 Adams301"
+        fhir:Extension.valueCode [
+            fhir:value "M"
+        ]
+    ],
+        [
+        fhir:index "3"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "Euna636 VonRueden575"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-race"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Race/2131-1> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2131-1"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Other"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Race"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "race"
             ]
         ]
     ],
         [
+        fhir:index "5"^^xsd:integer ;
         fhir:Extension.url [
-            fhir:value "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-interpreterRequired"
         ] ;
-        fhir:index 4 ;
-        fhir:valueCode "M"
+        fhir:Extension.valueBoolean [
+            fhir:value "false"^^xsd:boolean
+        ]
     ],
         [
+        fhir:index "6"^^xsd:integer ;
         fhir:Extension.url [
             fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-actor-FictionalPerson-extension"
         ] ;
-        fhir:index 6 ;
-        fhir:valueBoolean true
+        fhir:Extension.valueBoolean [
+            fhir:value "true"^^xsd:boolean
+        ]
     ] ;
     fhir:DomainResource.text [
         fhir:Narrative.div "<div>Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>. Version identifier: 76199f3c40cd1daebe8563307048500f5a0a78ab</div>" ;
@@ -130,6 +140,7 @@
         ]
     ] ;
     fhir:Patient.address [
+        fhir:index "0"^^xsd:integer ;
         fhir:Address.city [
             fhir:value "Hudson"
         ] ;
@@ -137,10 +148,12 @@
             fhir:value "US"
         ] ;
         fhir:Address.line [
-            fhir:index 0
+            fhir:index "1"^^xsd:integer ;
+            fhir:value "Suite 830"
         ],
             [
-            fhir:index 1
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "87884 Caitlyn Springs"
         ] ;
         fhir:Address.postalCode [
             fhir:value "01749"
@@ -149,33 +162,38 @@
             fhir:value "MA"
         ] ;
         fhir:Element.extension [
+            fhir:index "0"^^xsd:integer ;
             fhir:Element.extension [
+                fhir:index "0"^^xsd:integer ;
                 fhir:Extension.url [
                     fhir:value "latitude"
                 ] ;
-                fhir:index 0 ;
-                fhir:valueDecimal 4.239304e+01
+                fhir:Extension.valueDecimal [
+                    fhir:value "42.3930359430747"^^xsd:decimal
+                ]
             ],
                 [
+                fhir:index "1"^^xsd:integer ;
                 fhir:Extension.url [
                     fhir:value "longitude"
                 ] ;
-                fhir:index 1 ;
-                fhir:valueDecimal -7.154203e+01
+                fhir:Extension.valueDecimal [
+                    fhir:value "-71.5420268302525"^^xsd:decimal
+                ]
             ] ;
             fhir:Extension.url [
                 fhir:value "http://hl7.org/fhir/StructureDefinition/geolocation"
-            ] ;
-            fhir:index 0
-        ] ;
-        fhir:index 0
+            ]
+        ]
     ] ;
     fhir:Patient.birthDate [
         fhir:value "1917-07-08"^^xsd:date
     ] ;
     fhir:Patient.communication [
+        fhir:index "0"^^xsd:integer ;
         fhir:Patient.communication.language [
             fhir:CodeableConcept.coding [
+                fhir:index "0"^^xsd:integer ;
                 fhir:Coding.code [
                     fhir:value "es"
                 ] ;
@@ -184,11 +202,9 @@
                 ] ;
                 fhir:Coding.system [
                     fhir:value "http://hl7.org/fhir/ValueSet/languages"
-                ] ;
-                fhir:index 0
+                ]
             ]
-        ] ;
-        fhir:index 0
+        ]
     ] ;
     fhir:Patient.deceasedDateTime [
         fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
@@ -197,90 +213,93 @@
         fhir:value "male"
     ] ;
     fhir:Patient.identifier [
-        fhir:Identifier.system [
-            fhir:value "http://hl7.org/fhir/sid/us-ssn"
-        ] ;
-        fhir:Identifier.type [
-            fhir:CodeableConcept.coding [
-                a <http://hl7.org/fhir/identifier-type/SB> ;
-                fhir:Coding.code [
-                    fhir:value "SB"
-                ] ;
-                fhir:Coding.system [
-                    fhir:value "http://hl7.org/fhir/identifier-type"
-                ] ;
-                fhir:index 0
-            ]
-        ] ;
-        fhir:Identifier.value [
-            fhir:value "999358029"
-        ] ;
-        fhir:index 1
-    ],
-        [
+        fhir:index "2"^^xsd:integer ;
         fhir:Identifier.system [
             fhir:value "urn:oid:2.16.840.1.113883.4.3.25"
         ] ;
         fhir:Identifier.type [
             fhir:CodeableConcept.coding [
                 a <http://hl7.org/fhir/v2/0203/DL> ;
+                fhir:index "0"^^xsd:integer ;
                 fhir:Coding.code [
                     fhir:value "DL"
                 ] ;
                 fhir:Coding.system [
                     fhir:value "http://hl7.org/fhir/v2/0203"
-                ] ;
-                fhir:index 0
+                ]
             ]
         ] ;
         fhir:Identifier.value [
             fhir:value "S99944908"
-        ] ;
-        fhir:index 2
+        ]
     ],
         [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "http://hl7.org/fhir/sid/us-ssn"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/identifier-type/SB> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "SB"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/identifier-type"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "999358029"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
         fhir:Identifier.system [
             fhir:value "https://github.com/synthetichealth/synthea"
         ] ;
         fhir:Identifier.value [
             fhir:value "a32d29bc-aac5-4e38-8470-bf2f26390ff6"
-        ] ;
-        fhir:index 0
+        ]
     ] ;
     fhir:Patient.maritalStatus [
         fhir:CodeableConcept.coding [
             a <http://hl7.org/fhir/v3/MaritalStatus/S> ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "S"
             ] ;
             fhir:Coding.system [
                 fhir:value "http://hl7.org/fhir/v3/MaritalStatus"
-            ] ;
-            fhir:index 0
+            ]
         ] ;
         fhir:CodeableConcept.text [
             fhir:value "S"
         ]
     ] ;
     fhir:Patient.multipleBirthBoolean [
-        fhir:value false
+        fhir:value "false"^^xsd:boolean
     ] ;
     fhir:Patient.name [
+        fhir:index "0"^^xsd:integer ;
         fhir:HumanName.family [
             fhir:value "Adams301"
         ] ;
         fhir:HumanName.given [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Keyshawn30"
         ] ;
         fhir:HumanName.prefix [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Mr."
         ] ;
         fhir:HumanName.use [
             fhir:value "official"
-        ] ;
-        fhir:index 0
+        ]
     ] ;
     fhir:Patient.photo [
+        fhir:index "0"^^xsd:integer ;
         fhir:Attachment.contentType [
             fhir:value "image/png"
         ] ;
@@ -289,10 +308,10 @@
         ] ;
         fhir:Attachment.title [
             fhir:value "Biometrics.Fingerprint"
-        ] ;
-        fhir:index 0
+        ]
     ] ;
     fhir:Patient.telecom [
+        fhir:index "0"^^xsd:integer ;
         fhir:ContactPoint.system [
             fhir:value "phone"
         ] ;
@@ -301,15 +320,15 @@
         ] ;
         fhir:ContactPoint.value [
             fhir:value "648.679.1218 x2166"
-        ] ;
-        fhir:index 0
+        ]
     ] ;
     fhir:Resource.id [
         fhir:value "526238ef-dec3-401d-a1c1-2974962df23f"
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-PersonOfRecord"
         ]
     ] .
 

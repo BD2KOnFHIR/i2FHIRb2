@@ -26,7 +26,6 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
-import sys
 import unittest
 
 from jsonasobj import load
@@ -54,7 +53,7 @@ class FhirDataLoaderTestCase(unittest.TestCase):
         turtle_fname = os.path.join(self.base_dir, turtle_file)
         target = PrettyGraph()
         target.load(turtle_fname, format="turtle")
-        self.assertTrue(rdf_compare(source.graph, target, sys.stdout, ignore_owl_version=False))
+        self.assertEqual('', rdf_compare(source.graph, target, ignore_owl_version=False))
 
     def test_observation_example_bmd(self):
         self.do_test('observation-example-bmd', "http://hl7.org/fhir/")
@@ -79,13 +78,11 @@ class FhirDataLoaderTestCase(unittest.TestCase):
         if save_output:
             with open(turtle_fname, 'w') as output:
                 output.write(str(source))
-            self.assertTrue(False, "Update output file always fails")
         target = PrettyGraph()
         target.load(turtle_fname, format="turtle")
-        # TODO: there are issues with decimal value resolution.  Probably has to do with some bit of cleverness
-        #       in the toPython() method for rdflib.  Not fatal, but it needs fixing
-        # self.assertTrue(rdf_compare(source.graph, target, sys.stdout, ignore_owl_version=True))
-        self.assertTrue(True)
+        # Note: This will fail if we use the pure turtle serializer (vs our changes in this package)
+        self.assertEqual('', rdf_compare(source.graph, target, ignore_owl_version=True))
+        self.assertFalse(save_output, "Update output file always fails")
 
 
 if __name__ == '__main__':

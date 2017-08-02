@@ -28,22 +28,16 @@
 
 import unittest
 
-from rdflib import Literal, XSD
+from i2fhirb2.fhir.fhirspecific import FHIR
 
 
-class DecimalDatatypeTestCase(unittest.TestCase):
-    def test_decimal_literal(self):
-        self.assertNotEqual(str(Literal("117.50", datatype=XSD.decimal)),
-                            str(Literal("117.5", datatype=XSD.decimal)))
-        self.assertEqual(Literal(117.50),
-                         Literal(117.5))
-        self.assertEqual(Literal(117.50, datatype=XSD.decimal),
-                         Literal(117.5, datatype=XSD.decimal))
-        self.assertNotEqual(Literal("117.50", datatype=XSD.decimal),
-                            Literal("117.5", datatype=XSD.decimal))
-        self.assertEqual(Literal("117.50", datatype=XSD.decimal).toPython(),
-                         Literal("117.5", datatype=XSD.decimal).toPython())
-
+class RDFCompareTestCase(unittest.TestCase):
+    def test_subj_pred_to_uri(self):
+        from i2fhirb2.rdfsupport.rdfcompare import subj_pred_idx_to_uri
+        self.assertEqual(FHIR['Patient/f001.Patient.identifier_0'],
+                         subj_pred_idx_to_uri(FHIR['Patient/f001'], FHIR.Patient.identifier, 0))
+        self.assertEqual(FHIR['Patient/f001.Patient.active'],
+                         subj_pred_idx_to_uri(FHIR['Patient/f001'], FHIR.Patient.active))
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,7 +5,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/7cb47b29-8376-4c92-a737-cd952934a2b9> a fhir:MedicationRequest ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/63d51317-9f0b-4760-bcd5-f77fffdfcc51> a fhir:MedicationRequest ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:MedicationRequest.context [
         fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> ;
@@ -14,11 +14,11 @@
         ]
     ] ;
     fhir:MedicationRequest.dosageInstruction [
-        fhir:index 0
+        fhir:index "0"^^xsd:integer
     ] ;
     fhir:MedicationRequest.medicationCodeableConcept [
         fhir:CodeableConcept.coding [
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "1803932"
             ] ;
@@ -34,15 +34,16 @@
         fhir:value "active"
     ] ;
     fhir:Resource.id [
-        fhir:value "7cb47b29-8376-4c92-a737-cd952934a2b9"
+        fhir:value "63d51317-9f0b-4760-bcd5-f77fffdfcc51"
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
         ]
     ] .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/7cb47b29-8376-4c92-a737-cd952934a2b9.ttl> a owl:Ontology ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/63d51317-9f0b-4760-bcd5-f77fffdfcc51.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
 
 <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> a fhir:Resource .

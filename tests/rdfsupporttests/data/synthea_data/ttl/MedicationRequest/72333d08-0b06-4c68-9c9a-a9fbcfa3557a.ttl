@@ -5,7 +5,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/99db3dd2-214f-4506-9bec-b1dd60ebd01d> a fhir:MedicationRequest ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/72333d08-0b06-4c68-9c9a-a9fbcfa3557a> a fhir:MedicationRequest ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:MedicationRequest.context [
         fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> ;
@@ -14,16 +14,16 @@
         ]
     ] ;
     fhir:MedicationRequest.dosageInstruction [
-        fhir:index 0
+        fhir:index "0"^^xsd:integer
     ] ;
     fhir:MedicationRequest.medicationCodeableConcept [
         fhir:CodeableConcept.coding [
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
-                fhir:value "575971"
+                fhir:value "1803932"
             ] ;
             fhir:Coding.display [
-                fhir:value "oxaliplatin 5 MG/ML [Eloxatin]"
+                fhir:value "Leucovorin 100 MG Injection"
             ] ;
             fhir:Coding.system [
                 fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
@@ -34,15 +34,16 @@
         fhir:value "active"
     ] ;
     fhir:Resource.id [
-        fhir:value "99db3dd2-214f-4506-9bec-b1dd60ebd01d"
+        fhir:value "72333d08-0b06-4c68-9c9a-a9fbcfa3557a"
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
         ]
     ] .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/99db3dd2-214f-4506-9bec-b1dd60ebd01d.ttl> a owl:Ontology ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/72333d08-0b06-4c68-9c9a-a9fbcfa3557a.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
 
 <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> a fhir:Resource .

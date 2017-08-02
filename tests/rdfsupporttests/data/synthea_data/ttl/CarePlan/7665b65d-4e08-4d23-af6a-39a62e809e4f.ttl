@@ -6,15 +6,15 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://standardhealthrecord.org/fhir/CarePlan/bdb70469-eeba-4e67-8536-c49830bd17a8> a fhir:CarePlan ;
+<http://standardhealthrecord.org/fhir/CarePlan/7665b65d-4e08-4d23-af6a-39a62e809e4f> a fhir:CarePlan ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:CarePlan.activity [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:CarePlan.activity.detail [
             fhir:CarePlan.activity.detail.code [
                 fhir:CodeableConcept.coding [
                     a sct:710081004 ;
-                    fhir:index 0 ;
+                    fhir:index "0"^^xsd:integer ;
                     fhir:Coding.code [
                         fhir:value "710081004"
                     ] ;
@@ -32,12 +32,12 @@
         ]
     ],
         [
-        fhir:index 1 ;
+        fhir:index "1"^^xsd:integer ;
         fhir:CarePlan.activity.detail [
             fhir:CarePlan.activity.detail.code [
                 fhir:CodeableConcept.coding [
                     a sct:426990007 ;
-                    fhir:index 0 ;
+                    fhir:index "0"^^xsd:integer ;
                     fhir:Coding.code [
                         fhir:value "426990007"
                     ] ;
@@ -55,17 +55,17 @@
         ]
     ] ;
     fhir:CarePlan.addresses [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:ccbc87d7-8439-4558-9672-7d58c56aa56c> ;
         fhir:Reference.reference [
             fhir:value "urn:uuid:ccbc87d7-8439-4558-9672-7d58c56aa56c"
         ]
     ] ;
     fhir:CarePlan.category [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:CodeableConcept.coding [
             a sct:412776001 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "412776001"
             ] ;
@@ -98,10 +98,10 @@
         ]
     ] ;
     fhir:Resource.id [
-        fhir:value "bdb70469-eeba-4e67-8536-c49830bd17a8"
+        fhir:value "7665b65d-4e08-4d23-af6a-39a62e809e4f"
     ] .
 
-<http://standardhealthrecord.org/fhir/CarePlan/bdb70469-eeba-4e67-8536-c49830bd17a8.ttl> a owl:Ontology ;
+<http://standardhealthrecord.org/fhir/CarePlan/7665b65d-4e08-4d23-af6a-39a62e809e4f.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
 
 <http://standardhealthrecord.org/fhir/urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f> a fhir:Resource .

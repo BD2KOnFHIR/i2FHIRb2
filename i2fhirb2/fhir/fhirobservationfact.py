@@ -127,6 +127,7 @@ class FHIRObservationFact(ObservationFact):
             if t == valuetype_text:
                 self._tval_char = val.toPython()
             elif t == valuetype_number:
+                self._tval_char = 'E'
                 self._nval_num = val.toPython()
             elif t == valuetype_blob:
                 self._observation_blob = val.toPython()

@@ -47,6 +47,7 @@ class ValidationTestCase(unittest.TestCase):
     skip = []                       # type: List[str]
     validation_function = None      # type: Callable[["ValidationTestCase", str, str, Optional[str]], bool]
     single_file = False             # type: bool
+    max_size = 0                    # type: int
 
     @classmethod
     def make_test_function(cls, directory: str, fname: str):
@@ -63,7 +64,8 @@ class ValidationTestCase(unittest.TestCase):
             for fname in filenames:
                 if fname.endswith(cls.file_suffix):
                     if fname not in cls.skip and (started or fname >= cls.start_at) and \
-                            (not cls.file_filter or cls.file_filter(dirpath, fname)):
+                            (not cls.file_filter or cls.file_filter(dirpath, fname)) and \
+                            (not cls.max_size or os.path.getsize(os.path.join(dirpath, fname)) <= (cls.max_size * 1000)):
                         print("--> {}/{}".format(dirpath, fname))
                         started = True
                         test_func = cls.make_test_function(dirpath, fname)

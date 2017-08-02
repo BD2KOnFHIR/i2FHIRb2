@@ -17,7 +17,7 @@
     fhir:Condition.code [
         fhir:CodeableConcept.coding [
             a sct:713197008 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "713197008"
             ] ;
@@ -52,7 +52,8 @@
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
         ]
     ] .
 

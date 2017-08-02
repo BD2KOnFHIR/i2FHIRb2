@@ -26,20 +26,24 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Optional
+
+from jsonasobj import load
 from rdflib import Graph
 
 from i2fhirb2.loaders.fhircollectionloader import FHIRCollection
 from i2fhirb2.loaders.fhirresourceloader import FHIRResource
 
 
-def fhir_json_to_rdf(metavoc: Graph, json_fname: str, base_uri: str, target_graph: Optional[Graph]=None) -> Graph:
+def fhir_json_to_rdf(metavoc: Graph, json_fname: str, base_uri: str, target_graph: Optional[Graph]=None,
+                     add_ontology_header: bool=False) -> Graph:
     if target_graph is None:
         target_graph = Graph()
-    data = FHIRResource.load_file_or_uri(json_fname)
+    data = load(json_fname)
     if 'resourceType' in data and data.resourceType != 'Bundle':
-        FHIRResource(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=False)
+        FHIRResource(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=add_ontology_header)
     elif 'entry' in data and isinstance(data.entry, list) and 'resource' in data.entry[0]:
-        FHIRCollection(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=False)
+        FHIRCollection(metavoc, None, base_uri, data, target=target_graph,
+                       add_ontology_header=add_ontology_header if 'resourceType' in data else False)
     else:
         print("File does not appear to be a FHIR resource")
     return target_graph

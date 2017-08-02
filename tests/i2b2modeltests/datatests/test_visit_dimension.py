@@ -27,18 +27,37 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from collections import OrderedDict
+from datetime import datetime
+
+from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
+from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
 
 
-class FhirDataLoaderTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        from tests.base_test_case import FHIRGraph
-        cls.fhir_ontology = FHIRGraph()
+class VisitDimensionTestCase(unittest.TestCase):
 
-    def test_1(self):
-        from i2fhirb2.fhir.fhirdataloader import FHIRRDF
-        x = FHIRRDF(self.fhir_ontology, '/Users/mrf7578/Development/fhir/build/publish/account-example.json', "http://hl7.org/fhir/Account/example")
-        x._g.serialize(destination="../data_out/account-example.ttl", format="turtle")
+    def test_basics(self):
+        from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension, ActiveStatusCd
+        VisitDimension._clear()
+        VisitDimension.update_date = datetime(2017, 1, 3)
+        VisitDimension.upload_id = 100143
+        x = VisitDimension(500001, 10000017, ActiveStatusCd(ActiveStatusCd.sd_day, ActiveStatusCd.ed_ongoing), datetime(2007, 10, 4))
+        self.assertEqual(OrderedDict([
+             ('encounter_num', 500001),
+             ('patient_num', 10000017),
+             ('active_status_cd', 'OD'),
+             ('start_date', datetime(2007, 10, 4, 0, 0)),
+             ('end_date', None),
+             ('inout_cd', None),
+             ('location_cd', None),
+             ('location_path', None),
+             ('length_of_stay', None),
+             ('visit_blob', None),
+             ('update_date', datetime(2017, 1, 3, 0, 0)),
+             ('download_date', datetime(2017, 1, 3, 0, 0)),
+             ('import_date', datetime(2017, 1, 3, 0, 0)),
+             ('sourcesystem_cd', 'Unspecified'),
+             ('upload_id', 100143)]), x._freeze())
 
 
 if __name__ == '__main__':

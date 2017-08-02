@@ -49,7 +49,7 @@ class FHIREncounterMappingTestCase(unittest.TestCase):
 
         em = FHIREncounterMapping(FHIR["Patient/f001"], "patient01", "http://hl7.org/fhir")
         self.assertEqual(OrderedDict([
-             ('encounter_ide', 'f001'),
+             ('encounter_ide', 'Patient/f001'),
              ('encounter_ide_source', 'http://hl7.org/fhir/'),
              ('project_id', 'fhir'),
              ('encounter_num', 500000),

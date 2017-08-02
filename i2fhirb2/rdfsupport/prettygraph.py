@@ -26,11 +26,30 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import re
-from rdflib import Graph, BNode
-from rdflib.plugins.serializers.turtle import TurtleSerializer, SUBJECT
+from rdflib import Graph, BNode, Literal
+from rdflib.plugins.serializers.turtle import TurtleSerializer, SUBJECT, VERB, _GEN_QNAME_FOR_DT
 
+
+# Two changes to the serializer -- one is in the label routine where the serializer (deliberately) mangles the
+# format. (use_plain=True).  The second is the actual layout...
 
 class TurtleSeriailizerMod(TurtleSerializer):
+    def label(self, node, position):
+        if node == RDF.nil:
+            return '()'
+        if position is VERB and node in self.keywords:
+            return self.keywords[node]
+        if isinstance(node, Literal):
+            return node._literal_n3(
+                # use_plain=True,
+                use_plain=False,
+                qname_callback=lambda dt: self.getQName(
+                    dt, _GEN_QNAME_FOR_DT))
+        else:
+            node = self.relativize(node)
+
+            return self.getQName(node, position == VERB) or node.n3()
+
     def p_squared(self, node, position, newline=False):
         if (not isinstance(node, BNode)
             or node in self._serialized
@@ -61,9 +80,11 @@ class TurtleSeriailizerMod(TurtleSerializer):
             # self.depth -= 1
 
         return True
-# TurtleSerializer.p_squared = TurtleSeriailizerMod.p_squared
+TurtleSerializer.p_squared = TurtleSeriailizerMod.p_squared
+TurtleSerializer.label = TurtleSeriailizerMod.label
 
-from rdflib.namespace import NAME_START_CATEGORIES
+from rdflib.namespace import NAME_START_CATEGORIES, RDF
+
 NAME_START_CATEGORIES.append('Nd')
 
 

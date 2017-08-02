@@ -84,6 +84,15 @@ class FHIRMetaVoc:
     def has_type(self, t: URIRef) -> bool:
         return (t, None, None) in self._o
 
+    def is_valid(self, t: URIRef) -> bool:
+        """
+        Raise an exception if 't' is unrecognized
+        :param t: metadata URI
+        """
+        if not self.has_type(t):
+            raise TypeError("Unrecognized FHIR type: {}".format(t))
+        return True
+
     def is_primitive(self, t: URIRef) -> bool:
         """
         Determine whether type "t" is a FHIR primitive type
@@ -92,19 +101,39 @@ class FHIRMetaVoc:
         """
         return FHIR.Primitive in self._o.objects(t, RDFS.subClassOf)
 
+    def value_predicate_to_type(self, value_pred: str) -> URIRef:
+        """
+        Convert a predicate in the form of "fhir:[...].value[type] to fhir:type, covering the downshift on the
+        first character if necessary
+        :param value_pred: Predicate associated with the value
+        :return: corresponding type or None if not found
+        """
+        if value_pred.startswith('value'):
+            vp_datatype = value_pred.replace('value', '')
+            if vp_datatype:
+                if self.has_type(FHIR[vp_datatype]):
+                    return FHIR[vp_datatype]
+                else:
+                    vp_datatype = vp_datatype[0].lower() + vp_datatype[1:]
+                    if self.has_type(FHIR[vp_datatype]):
+                        return FHIR[vp_datatype]
+        if self.is_valid(FHIR[value_pred]):
+            return FHIR[value_pred]
+
     def is_atom(self, t: URIRef) -> bool:
         """
         Determine whether type "t" is an 'atomic' type -- i.e it doesn't use a FHIR value representation
         :param t: type to test
         :return:
         """
+        if not self.has_type(t):
+            raise TypeError("Unrecognized FHIR type: {}".format(t))
         return len(set(self._o.objects(t, RDFS.subClassOf))) == 0
 
     def primitive_datatype(self, t: URIRef) -> Optional[URIRef]:
         """
         Return the data type for primitive type t, if any
         :param t: type
-        :param v: value for managing FHIR dates
         :return: corresponding data type
         """
         for sco in self._o.objects(t, RDFS.subClassOf):

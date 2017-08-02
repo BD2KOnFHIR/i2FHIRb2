@@ -1,0 +1,49 @@
+{
+  "search": {
+    "mode": "match"
+  },
+  "resource": {
+    "code": {
+      "coding": [
+        {
+          "system": "http:\/\/loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ],
+      "text": "Diastolic blood pressure"
+    },
+    "effectiveDateTime": "2007-01-29",
+    "meta": {
+      "lastUpdated": "2017-03-23T15:48:25.000+00:00",
+      "versionId": "3"
+    },
+    "subject": {
+      "reference": "Patient\/SMART-99912345"
+    },
+    "id": "SMART-Observation-vp-11-diastolic",
+    "text": {
+      "div": "<div xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\">2007-01-29: Diastolic blood pressure = 48 mm[Hg]<\/div>",
+      "status": "generated"
+    },
+    "category": {
+      "coding": [
+        {
+          "system": "http:\/\/hl7.org\/fhir\/observation-category",
+          "code": "vital-signs",
+          "display": "Vital Signs"
+        }
+      ],
+      "text": "Vital Signs"
+    },
+    "resourceType": "Observation",
+    "status": "final",
+    "valueQuantity": {
+      "unit": "mm[Hg]",
+      "system": "http:\/\/unitsofmeasure.org",
+      "code": "mm[Hg]",
+      "value": 48.0
+    }
+  },
+  "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/SMART-Observation-vp-11-diastolic"
+}

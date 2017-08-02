@@ -31,10 +31,10 @@
         fhir:value "finished"
     ] ;
     fhir:Encounter.type [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:CodeableConcept.coding [
             a sct:308646001 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "308646001"
             ] ;
@@ -51,7 +51,8 @@
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
         ]
     ] .
 

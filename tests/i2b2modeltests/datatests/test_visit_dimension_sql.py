@@ -27,22 +27,36 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from datetime import datetime
 
-from rdflib import Literal, XSD
+from tests.utils.connection_helper import connection_helper
 
 
-class DecimalDatatypeTestCase(unittest.TestCase):
-    def test_decimal_literal(self):
-        self.assertNotEqual(str(Literal("117.50", datatype=XSD.decimal)),
-                            str(Literal("117.5", datatype=XSD.decimal)))
-        self.assertEqual(Literal(117.50),
-                         Literal(117.5))
-        self.assertEqual(Literal(117.50, datatype=XSD.decimal),
-                         Literal(117.5, datatype=XSD.decimal))
-        self.assertNotEqual(Literal("117.50", datatype=XSD.decimal),
-                            Literal("117.5", datatype=XSD.decimal))
-        self.assertEqual(Literal("117.50", datatype=XSD.decimal).toPython(),
-                         Literal("117.5", datatype=XSD.decimal).toPython())
+class VisitDimensionSQLTestCase(unittest.TestCase):
+    opts = connection_helper()
+
+    def test_insert(self):
+        from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension, ActiveStatusCd
+
+        VisitDimension.delete_upload_id(self.opts.tables, self.opts.uploadid)
+        VisitDimension._clear()
+        VisitDimension.upload_id = self.opts.uploadid
+
+        x = VisitDimension(5000017, 10000017, ActiveStatusCd(ActiveStatusCd.sd_day, ActiveStatusCd.ed_year),
+                           datetime(2007, 12, 9), datetime(2008, 1, 1))
+
+        n_ins, n_upd = x.add_or_update_records(self.opts.tables, [x])
+        self.assertEqual((0, 1), (n_upd, n_ins))
+        n_ins, n_upd = x.add_or_update_records(self.opts.tables, [x])
+        self.assertEqual((0, 0), (n_upd, n_ins))
+        x._end_date = datetime(2010, 2, 1)
+        x._active_status_cd.endcode = ActiveStatusCd.ed_month
+        y = VisitDimension(5000018, 10000017, ActiveStatusCd(ActiveStatusCd.sd_day, ActiveStatusCd.ed_year),
+                           datetime(2007, 12, 9), datetime(2008, 1, 1))
+
+        n_ins, n_upd = x.add_or_update_records(self.opts.tables, [x, y])
+        self.assertEqual((1, 1), (n_upd, n_ins))
+        self.assertEqual(2, x.delete_upload_id(self.opts.tables, x.upload_id))
 
 
 if __name__ == '__main__':

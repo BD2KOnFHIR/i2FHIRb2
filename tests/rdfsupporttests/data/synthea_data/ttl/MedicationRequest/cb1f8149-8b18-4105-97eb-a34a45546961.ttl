@@ -5,7 +5,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/4c696322-4615-4396-93cd-e2686c4f7752> a fhir:MedicationRequest ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/cb1f8149-8b18-4105-97eb-a34a45546961> a fhir:MedicationRequest ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:MedicationRequest.context [
         fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> ;
@@ -14,36 +14,46 @@
         ]
     ] ;
     fhir:MedicationRequest.dosageInstruction [
-        fhir:index 0
+        fhir:index "0"^^xsd:integer
     ] ;
     fhir:MedicationRequest.medicationCodeableConcept [
         fhir:CodeableConcept.coding [
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
-                fhir:value "1803932"
+                fhir:value "896188"
             ] ;
             fhir:Coding.display [
-                fhir:value "Leucovorin 100 MG Injection"
+                fhir:value "Fluticasone propionate 0.25 MG/ACTUAT / salmeterol 0.05 MG/ACTUAT [Advair]"
             ] ;
             fhir:Coding.system [
                 fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
             ]
         ]
     ] ;
+    fhir:MedicationRequest.reasonReference [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:ccbc87d7-8439-4558-9672-7d58c56aa56c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ccbc87d7-8439-4558-9672-7d58c56aa56c"
+        ]
+    ] ;
     fhir:MedicationRequest.status [
         fhir:value "active"
     ] ;
     fhir:Resource.id [
-        fhir:value "4c696322-4615-4396-93cd-e2686c4f7752"
+        fhir:value "cb1f8149-8b18-4105-97eb-a34a45546961"
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
         ]
     ] .
 
-<http://standardhealthrecord.org/fhir/MedicationRequest/4c696322-4615-4396-93cd-e2686c4f7752.ttl> a owl:Ontology ;
+<http://standardhealthrecord.org/fhir/MedicationRequest/cb1f8149-8b18-4105-97eb-a34a45546961.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
+
+<http://standardhealthrecord.org/fhir/urn:uuid:ccbc87d7-8439-4558-9672-7d58c56aa56c> a fhir:Resource .
 
 <http://standardhealthrecord.org/fhir/urn:uuid:ff4f9269-5036-45dc-b0fb-d8133ae13c76> a fhir:Resource .
 

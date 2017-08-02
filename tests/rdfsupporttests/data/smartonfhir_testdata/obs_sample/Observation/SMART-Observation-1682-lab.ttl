@@ -18,7 +18,7 @@
     fhir:Observation.category [
         fhir:CodeableConcept.coding [
             a <http://hl7.org/fhir/observation-category/laboratory> ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "laboratory"
             ] ;
@@ -36,7 +36,7 @@
     fhir:Observation.code [
         fhir:CodeableConcept.coding [
             a loinc:20565-8 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "20565-8"
             ] ;
@@ -55,7 +55,7 @@
         fhir:value "2005-07-04"^^xsd:date
     ] ;
     fhir:Observation.referenceRange [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:Observation.referenceRange.high [
             fhir:Quantity.code [
                 fhir:value "mmol/L"
@@ -67,7 +67,7 @@
                 fhir:value "mmol/L"
             ] ;
             fhir:Quantity.value [
-                fhir:value 29.0
+                fhir:value "29.0"^^xsd:decimal
             ]
         ] ;
         fhir:Observation.referenceRange.low [
@@ -81,7 +81,7 @@
                 fhir:value "mmol/L"
             ] ;
             fhir:Quantity.value [
-                fhir:value 22.0
+                fhir:value "22.0"^^xsd:decimal
             ]
         ]
     ] ;
@@ -102,7 +102,7 @@
             fhir:value "mmol/L"
         ] ;
         fhir:Quantity.value [
-            fhir:value 24.0
+            fhir:value "24.0"^^xsd:decimal
         ]
     ] ;
     fhir:Resource.id [

@@ -12,7 +12,7 @@
     ] ;
     fhir:Organization.type [
         fhir:CodeableConcept.coding [
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "prov"
             ] ;

@@ -10,9 +10,9 @@
 <http://standardhealthrecord.org/fhir/Observation/1d52ae90-6721-476c-ad4c-ec978eac4a34> a fhir:Observation ;
     fhir:nodeRole fhir:treeRoot ;
     fhir:Observation.category [
-        fhir:index 0 ;
+        fhir:index "0"^^xsd:integer ;
         fhir:CodeableConcept.coding [
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.system [
                 fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
             ]
@@ -21,7 +21,7 @@
     fhir:Observation.code [
         fhir:CodeableConcept.coding [
             a loinc:69453-9 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "69453-9"
             ] ;
@@ -54,7 +54,7 @@
     fhir:Observation.valueCodeableConcept [
         fhir:CodeableConcept.coding [
             a sct:87433001 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "87433001"
             ] ;
@@ -74,7 +74,8 @@
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [
-            fhir:index 0
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-observation-Observation"
         ]
     ] .
 

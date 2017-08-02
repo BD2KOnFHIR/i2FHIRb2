@@ -40,7 +40,7 @@ class MetadataXMLTestCase(unittest.TestCase):
         self.assertEqual("""<?xml version="1.0"?>
 <ValueMetadata>
     <Version>3.02</Version>
-    <CreationDateTime>07/31/2017 00:00:00</CreationDateTime>
+    <CreationDateTime>2017-07-31 00:00:00</CreationDateTime>
     <TestID>FHIR:Text.string</TestID>
     <TestName>Text value</TestName>
     <DataType>String</DataType>
@@ -55,7 +55,7 @@ class MetadataXMLTestCase(unittest.TestCase):
         self.assertEqual("""<?xml version="1.0"?>
 <ValueMetadata>
     <Version>3.02</Version>
-    <CreationDateTime>07/31/2017 00:00:00</CreationDateTime>
+    <CreationDateTime>2017-07-31 00:00:00</CreationDateTime>
     <TestID>FHIR:Like.boolean</TestID>
     <TestName>Do you like me</TestName>
     <DataType>Enum</DataType>
@@ -73,7 +73,7 @@ class MetadataXMLTestCase(unittest.TestCase):
         self.assertEqual("""<?xml version="1.0"?>
 <ValueMetadata>
     <Version>3.02</Version>
-    <CreationDateTime>07/31/2017 00:00:00</CreationDateTime>
+    <CreationDateTime>2017-07-31 00:00:00</CreationDateTime>
     <TestID>FHIR:Coded.realcode</TestID>
     <TestName>Flavors</TestName>
     <DataType>Enum</DataType>

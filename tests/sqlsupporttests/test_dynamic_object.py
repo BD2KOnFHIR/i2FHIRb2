@@ -171,7 +171,6 @@ class DynamicObjTestCase(unittest.TestCase):
             def __init__(self, v):
                 self._v = v
 
-            # TODO: figure out the lint problem with the method signature below
             @DynObject.entry(_t)
             @staticmethod
             def v1():

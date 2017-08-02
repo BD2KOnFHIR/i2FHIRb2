@@ -18,7 +18,7 @@
     fhir:Observation.category [
         fhir:CodeableConcept.coding [
             a <http://hl7.org/fhir/observation-category/exam> ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "exam"
             ] ;
@@ -36,7 +36,7 @@
     fhir:Observation.code [
         fhir:CodeableConcept.coding [
             a loinc:18185-9 ;
-            fhir:index 0 ;
+            fhir:index "0"^^xsd:integer ;
             fhir:Coding.code [
                 fhir:value "18185-9"
             ] ;
@@ -74,7 +74,7 @@
             fhir:value "weeks"
         ] ;
         fhir:Quantity.value [
-            fhir:value 43.4
+            fhir:value "43.4"^^xsd:decimal
         ]
     ] ;
     fhir:Resource.id [

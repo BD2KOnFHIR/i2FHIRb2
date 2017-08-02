@@ -28,7 +28,6 @@
 import os
 import unittest
 
-import sys
 from rdflib import Graph
 
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
@@ -39,23 +38,54 @@ save_output = False
 
 class JSONToRDFTestCase(unittest.TestCase):
 
-    def test_patient_dimension(self):
+    def test_patient_example(self):
         from i2fhirb2.jsontordf import jsontordf
 
         test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
-        infile = os.path.join(test_directory, "patient-example.json")
-        rdf = jsontordf([infile])
+        infname = os.path.join(test_directory, "patient-example.json")
         testfname = os.path.join(test_directory, "patient-example.ttl")
-
         if save_output:
-            with open(testfname, "w") as outf:
-                outf.write(str(rdf))
-            print("---> RDF written to {}".format(testfname))
-            self.assertTrue(False, "Generating a new test file")
+            outfname = testfname
+        else:
+            outfname = os.path.join(test_directory, "patient-example-out.ttl")
+        args = "-i {} -o {} -s".format(infname, outfname)
+        self.assertTrue(jsontordf(args.split()))
+        self.assertFalse(save_output, "Test file: {} generated".format(outfname))
+        out_graph = Graph()
+        out_graph.load(outfname, format="turtle")
+        test_graph = Graph()
+        test_graph.load(testfname, format="turtle")
+        comp_result = rdf_compare(test_graph, out_graph, ignore_owl_version=True, ignore_type_arcs=True)
+        if len(comp_result):
+            print(comp_result)
+        self.assertTrue(len(comp_result) == 0)
 
-        target = Graph()
-        target.load(testfname, format="turtle")
-        self.assertTrue(rdf_compare(target, rdf.graph, sys.stdout))
+    def test_fhir_files(self):
+        from i2fhirb2.jsontordf import jsontordf
+
+        fnames = ['activitydefinition-example',
+                  'activitydefinition-medicationorder-example',
+                  'capabilitystatement-base',
+                  'careplan-example-f001-heart',
+                  'claim-example',
+                  'patient-example']
+
+        for fname in fnames:
+            in_url = "http://build.fhir.org/{}.json".format(fname)
+            test_url = "http://build.fhir.org/{}.ttl".format(fname)
+            test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
+            outfname = os.path.join(test_directory, "{}.ttl".format(fname))
+            args = "-i {} -o {} -s".format(in_url, outfname)
+            self.assertTrue(jsontordf(args.split()))
+            out_graph = Graph()
+            out_graph.load(outfname, format="turtle")
+            test_graph = Graph()
+            test_graph.load(test_url, format="turtle")
+            comp_result = rdf_compare(test_graph, out_graph, ignore_owl_version=True, ignore_type_arcs=True)
+            if len(comp_result):
+                print(comp_result)
+            self.assertTrue(len(comp_result) == 0)
+
 
 if __name__ == '__main__':
     unittest.main()

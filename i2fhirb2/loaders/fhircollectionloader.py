@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Optional
 
-from jsonasobj import JsonObj
+from jsonasobj import JsonObj, load
 from rdflib import Graph
 
 from i2fhirb2.loaders.fhirresourceloader import FHIRResource
@@ -52,7 +52,7 @@ class FHIRCollection:
         :param target: Target graph -- load everything into this if present
         """
         if json_fname:
-            collection = FHIRResource.load_file_or_uri(json_fname)
+            collection = load(json_fname)
         else:
             collection = data
         if 'type' in collection and collection.type != "collection":
