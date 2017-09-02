@@ -43,7 +43,7 @@ class I2B2TablesTestCase(unittest.TestCase):
     opts = genargs(['x', '@' + conf_directory + '/db_conf'])
 
     def test_basics(self):
-        from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         self.assertEqual(['concept_path',
@@ -61,7 +61,7 @@ class I2B2TablesTestCase(unittest.TestCase):
             self.assertTrue(e[0] < 2)
 
     def test_as_dict(self):
-        from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         self.assertEqual(x.concept_dimension, x['concept_dimension'])

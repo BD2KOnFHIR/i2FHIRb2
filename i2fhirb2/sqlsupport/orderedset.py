@@ -31,7 +31,9 @@ import collections
 
 # Taken from https://stackoverflow.com/questions/1653970/does-python-have-an-ordered-set#1653974
 class OrderedSet(collections.OrderedDict, collections.MutableSet):
-
+    """
+    An Ordered Set - combines the uniqueness of a set with entry ordering
+    """
     def update(self, *args, **kwargs):
         if kwargs:
             raise TypeError("update() takes no keyword arguments")

@@ -25,20 +25,21 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 from rdflib import URIRef
+from sqlalchemy import func
+from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
 from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class EncounterNumberGenerator:
     """
     i2b2 encounter number generator.
     """
-    # TODO: This needs to be tied into the visit_dimension table
-    # and the next number should be retrieved via a SQL query
     def __init__(self, next_number: int):
         self._next_number = next_number
 
@@ -46,6 +47,16 @@ class EncounterNumberGenerator:
         rval = self._next_number
         self._next_number += 1
         return rval
+
+    def refresh(self, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        session = sessionmaker(bind=tables.crc_engine)()
+        q = func.max(tables.visit_dimension.c.encounter_num)
+        if ignore_upload_id is not None:
+            q = q.filter(tables.visit_dimension.c.upload_id != ignore_upload_id)
+        qr = session.query(q).all()
+        self._next_number = qr[0][0] + 1
+        session.close()
+        return self._next_number
 
 
 class FHIREncounterMapping:
@@ -60,6 +71,10 @@ class FHIREncounterMapping:
         cls.identity_source_id = 'HIVE'
         cls.number_generator = EncounterNumberGenerator(500000)
         cls.number_map.clear()
+
+    @classmethod
+    def refresh_encounter_number_generator(cls, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        return cls.number_generator.refresh(tables, ignore_upload_id)
 
     def __init__(self, encounterURI: URIRef, patient_id: str, patient_ide_source: str):
         """

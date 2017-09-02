@@ -31,7 +31,7 @@ from typing import Optional, Tuple, List
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class ObservationFactKey:
@@ -166,7 +166,7 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
         Encoded instance number that allows more than one modifier to be provided for each CONCEPT_CD.
         Each row will have a different MODIFIER_CD but a similar INSTANCE_NUM
         """
-        return self._instance_num if self._instance_num is not None else 1
+        return self._instance_num if self._instance_num is not None else 0
 
     @DynObject.entry(_t)
     def valtype_cd(self) -> str:

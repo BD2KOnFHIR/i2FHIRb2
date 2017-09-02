@@ -42,7 +42,7 @@ class FHIRConceptDimension(FHIRMetadata):
         :return: A list of FHIR concept dimension entries for loading into i2b2 tables
         """
         return [cast(ConceptDimension, ConceptDimensionRoot('FHIR'))] + \
-               [ConceptDimension(subj, self._name_base) for subj in self.fhir_concepts(subject)]
+               [ConceptDimension(subj, self._name_base) for subj in self.fhir_concepts(subject).keys()]
 
     @staticmethod
     def tsv_header() -> str:

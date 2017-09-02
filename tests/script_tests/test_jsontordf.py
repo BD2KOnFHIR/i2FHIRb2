@@ -28,7 +28,7 @@
 import os
 import unittest
 
-from rdflib import Graph
+from rdflib import Graph, URIRef
 
 from i2fhirb2.rdfsupport.rdfcompare import rdf_compare
 
@@ -85,6 +85,23 @@ class JSONToRDFTestCase(unittest.TestCase):
             if len(comp_result):
                 print(comp_result)
             self.assertTrue(len(comp_result) == 0)
+
+    def test_continuations(self):
+        from i2fhirb2.jsontordf import jsontordf
+
+        test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data')
+        outfname = os.path.join(test_directory, "patlist1.ttl")
+        url = "http://fhirtest.uhn.ca/baseDstu2/Patient?_format=json&gender=male"
+        args = "-i {} -o {} -nc".format(url, outfname)
+        self.assertTrue(jsontordf(args.split()))
+        out_graph = Graph()
+        out_graph.load(outfname, format="turtle")
+        self.assertTrue(len([s for s in set(out_graph.subjects()) if isinstance(s, URIRef)]) < 50)
+        args = "-i {} -o {}".format(url, outfname)
+        self.assertTrue(jsontordf(args.split()))
+        out_graph = Graph()
+        out_graph.load(outfname, format="turtle")
+        self.assertTrue(len([s for s in set(out_graph.subjects()) if isinstance(s, URIRef)]) >  3000)
 
 
 if __name__ == '__main__':

@@ -31,25 +31,25 @@ import unittest
 
 class TableNamesTestCase(unittest.TestCase):
     def test(self):
-        from i2fhirb2.i2b2model.shared.tablenames import i2b2table
-        self.assertEqual("concept_dimension", i2b2table.concept_dimension)
-        self.assertEqual("ontology_table", i2b2table.ontology_table)
-        self.assertEqual("custom_meta", i2b2table.phys_name(i2b2table.ontology_table))
-        self.assertEqual("concept_dimension", i2b2table.phys_name(i2b2table.concept_dimension))
+        from i2fhirb2.i2b2model.shared.tablenames import i2b2tables
+        self.assertEqual("concept_dimension", i2b2tables.concept_dimension)
+        self.assertEqual("ontology_table", i2b2tables.ontology_table)
+        self.assertEqual("custom_meta", i2b2tables.phys_name(i2b2tables.ontology_table))
+        self.assertEqual("concept_dimension", i2b2tables.phys_name(i2b2tables.concept_dimension))
         with self.assertRaises(AttributeError):
-            _ = i2b2table.other_dimension
+            _ = i2b2tables.other_dimension
         with self.assertRaises(KeyError):
-            _ = i2b2table.phys_name("foo")
+            _ = i2b2tables.phys_name("foo")
         self.assertEqual([
              'concept_dimension',
+             'encounter_mapping',
              'modifier_dimension',
              'ontology_table',
              'patient_dimension',
              'patient_mapping',
              'provider_dimension',
-             'provider_mapping',
              'table_access',
-             'visit_dimension'], i2b2table.all_tables())
+             'visit_dimension'], i2b2tables.all_tables())
 
 if __name__ == '__main__':
     unittest.main()

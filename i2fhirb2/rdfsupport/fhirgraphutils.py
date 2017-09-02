@@ -30,18 +30,27 @@ from typing import Union, Optional, Tuple
 
 from rdflib import Graph, BNode, Literal, RDF
 from rdflib.term import Identifier, URIRef, Node
+from rdflib.exceptions import UniquenessError
 
 from i2fhirb2.fhir.fhirspecific import FHIR
 
 
 def value(g: Graph, subject: Node, predicate: URIRef, asLiteral=False) -> \
         Union[None, BNode, URIRef, str, date, bool, datetime, int, float]:
-    v = g.value(subject, predicate)
-    if isinstance(v, BNode) and predicate != FHIR.value:
-        vv = g.value(v, FHIR.value)
-        return (vv.toPython() if not asLiteral else vv) if vv else None
+
+    values = list(set(g.objects(subject, predicate)))
+    if len(values) == 0:
+        return None
+
+    if all(isinstance(v, BNode) for v in values) and predicate != FHIR.value:
+        vv = list(set(g.value(v, FHIR.value) for v in values))
+        if len(vv) > 1:
+            raise UniquenessError("Non-unique values for {} {} : [{}]".format(subject, predicate, ', '.join(vv)))
+        return vv[0].toPython() if not asLiteral else vv[0]
     else:
-        return v.toPython() if isinstance(v, Literal) and not asLiteral else v
+        if len(values) > 1:
+            raise UniquenessError("Non-unique values for {} {} : [{}]".format(subject, predicate, ', '.join(values)))
+        return values[0].toPython() if isinstance(values[0], Literal) and not asLiteral else values[0]
 
 
 def extension(g: Graph, node: Identifier, extension_predicate: Union[URIRef, str], asLiteral=False) -> \

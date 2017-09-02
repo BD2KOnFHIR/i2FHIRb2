@@ -55,7 +55,7 @@ class FHIRCollection:
             collection = load(json_fname)
         else:
             collection = data
-        if 'type' in collection and collection.type != "collection":
+        if 'type' in collection and collection.type not in  ["collection", "searchset"]:
             raise TypeError("{} is not a FHIR collection".format(json_fname))
         self.entries = [FHIRResource(vocabulary, None, base_uri, data=entry.resource,
                                      add_ontology_header=add_ontology_header,

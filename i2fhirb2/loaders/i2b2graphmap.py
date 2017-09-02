@@ -27,15 +27,14 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace
 from datetime import datetime
-from typing import List, Callable
+from typing import List
 
 from rdflib import Graph, RDF
 
-from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.fhir.fhirresourcemap import FHIR_RESOURCE_MAP, FHIR_Infrastructure_type, FHIR_Observation_type, \
+from i2fhirb2.fhir.fhirresourcemap import FHIR_RESOURCE_MAP, FHIR_Infrastructure_type, FHIR_Observation_Fact_type, \
     FHIR_Visit_Dimension_type, FHIR_Provider_Dimension_type, FHIR_Patient_Dimension_type, FHIR_Bundle_type
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
@@ -47,8 +46,11 @@ from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
 from i2fhirb2.rdfsupport.fhirgraphutils import value
 from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables, change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
+
+# TODO: Handle continuation pages in queries and bundles
 
 class I2B2GraphMap:
     def __init__(self, g: Graph, opts: Namespace):
@@ -75,7 +77,7 @@ class I2B2GraphMap:
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]
                 if isinstance(mapped_type, FHIR_Infrastructure_type):
                     self.num_infrastructure += 1
-                elif isinstance(mapped_type, FHIR_Observation_type):
+                elif isinstance(mapped_type, FHIR_Observation_Fact_type):
                     patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(g, subj)
                     patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
                     pm = FHIRPatientMapping(patient_id, patient_ide_source)
@@ -106,28 +108,45 @@ class I2B2GraphMap:
                     self.num_unmapped += 1
 
     def generate_tsv_files(self) -> None:
-        self.generate_tsv_file("observation_fact.tsv", ObservationFact, self.observation_facts)
-        self.generate_tsv_file("patient_dimension.tsv", PatientDimension, self.patient_dimensions)
-        self.generate_tsv_file("patient_mapping.tsv", PatientMapping, self.patient_mappings)
-        self.generate_tsv_file("visit_dimension.tsv", VisitDimension, self.visit_dimensions)
-        self.generate_tsv_file("encounter_mapping.tsv", EncounterMapping, self.encounter_mappings)
+        self._generate_tsv_file("observation_fact.tsv", ObservationFact, self.observation_facts)
+        self._generate_tsv_file("patient_dimension.tsv", PatientDimension, self.patient_dimensions)
+        self._generate_tsv_file("patient_mapping.tsv", PatientMapping, self.patient_mappings)
+        self._generate_tsv_file("visit_dimension.tsv", VisitDimension, self.visit_dimensions)
+        self._generate_tsv_file("encounter_mapping.tsv", EncounterMapping, self.encounter_mappings)
 
-    def generate_tsv_file(self, fname: str, cls: type, values: List[I2B2_Core]) -> None:
+    def _generate_tsv_file(self, fname: str, cls, values: List[I2B2_Core]) -> None:
         write_tsv(self._opts.outdir, fname, cls._header(), values)
 
-    def load_i2b2_tables(self) -> None:
+    @staticmethod
+    def clear_i2b2_tables(tables: I2B2Tables, uploadid: int) -> None:
+        """
+        Remove all entries in the i2b2 tables for uploadid.
+        :param tables:
+        :param uploadid:
+        :return:
+        """
+        # This is a static function to support the removefacts operation
+        print("Deleted {} patient_dimension records"
+              .format(PatientDimension.delete_upload_id(tables, uploadid)))
+        print("Deleted {} patient_mapping records"
+              .format(PatientMapping.delete_upload_id(tables, uploadid)))
+        print("Deleted {} observation_fact records"
+              .format(ObservationFact.delete_upload_id(tables, uploadid)))
+        print("Deleted {} visit_dimension records"
+              .format(VisitDimension.delete_upload_id(tables, uploadid)))
+        print("Deleted {} encounter_mapping records"
+              .format(EncounterMapping.delete_upload_id(tables, uploadid)))
+
+    def load_i2b2_tables(self, check_dups=False) -> None:
+        # session = sessionmaker(bind=tables.crc_engine)()
+        I2B2_Core._check_dups = check_dups
         if self._opts.remove:
             # TODO: This should really be within a transaction boundary
-            print("Deleted {} patient_dimension records"
-                  .format(PatientDimension.delete_upload_id(self._opts.tables, self._opts.uploadid)))
-            print("Deleted {} patient_mapping records"
-                  .format(PatientMapping.delete_upload_id(self._opts.tables, self._opts.uploadid)))
-            print("Deleted {} observation_fact records"
-                  .format(ObservationFact.delete_upload_id(self._opts.tables, self._opts.uploadid)))
-            print("Deleted {} visit_dimension records"
-                  .format(VisitDimension.delete_upload_id(self._opts.tables, self._opts.uploadid)))
-            print("Deleted {} encounter_mapping records"
-                  .format(EncounterMapping.delete_upload_id(self._opts.tables, self._opts.uploadid)))
+            self.clear_i2b2_tables(self._opts.tables, self._opts.uploadid)
+        change_column_length(self._opts.tables.observation_fact, self._opts.tables.observation_fact.c.concept_cd,
+                             200, self._opts.tables.crc_connection)
+        change_column_length(self._opts.tables.observation_fact, self._opts.tables.observation_fact.c.modifier_cd,
+                             200, self._opts.tables.crc_connection)
         print("{} / {} patient_dimension records added / modified"
               .format(*PatientDimension.add_or_update_records(self._opts.tables, self.patient_dimensions)))
         print("{} / {} patient_mapping records added / modified"
@@ -138,6 +157,7 @@ class I2B2GraphMap:
               .format(*EncounterMapping.add_or_update_records(self._opts.tables, self.encounter_mappings)))
         print("{} / {} observation_fact records added / modified"
               .format(*ObservationFact.add_or_update_records(self._opts.tables, self.observation_facts)))
+        # session.close()
 
     def summary(self) -> str:
         summary_text = """Generated:
@@ -152,7 +172,7 @@ class I2B2GraphMap:
     {num_provider} Provider resources
     {num_unmapped} Unmapped resources
 """
-        num_skips = self.num_infrastructure + self.num_visit + self.num_provider +  self.num_unmapped + self.num_bundle
+        num_skips = self.num_infrastructure + self.num_visit + self.num_provider + self.num_unmapped + self.num_bundle
         rval = summary_text.format(len(self.observation_facts),
                                    len(self.patient_dimensions),
                                    len(self.patient_mappings))

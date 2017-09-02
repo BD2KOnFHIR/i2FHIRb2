@@ -25,17 +25,19 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
+
+from sqlalchemy import func
+from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping, PatientIDEStatus
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class PatientNumberGenerator:
     """
     i2b2 patient number generator.
     """
-    # TODO: This needs to be tied into the patient_dimension table
-    # and the next number should be retrieved via a SQL query
     def __init__(self, next_number: int):
         self._next_number = next_number
 
@@ -43,6 +45,16 @@ class PatientNumberGenerator:
         rval = self._next_number
         self._next_number += 1
         return rval
+
+    def refresh(self, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        session = sessionmaker(bind=tables.crc_engine)()
+        q = func.max(tables.patient_dimension.c.patient_num)
+        if ignore_upload_id is not None:
+            q = q.filter(tables.patient_dimension.c.upload_id != ignore_upload_id)
+        qr = session.query(q).all()
+        self._next_number = qr[0][0] + 1
+        session.close()
+        return self._next_number
 
 
 class FHIRPatientMapping:
@@ -57,6 +69,10 @@ class FHIRPatientMapping:
         cls.identity_source_id = 'HIVE'
         cls.number_generator = PatientNumberGenerator(100000001)
         cls.number_map.clear()
+
+    @classmethod
+    def refresh_patient_number_generator(cls, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        return cls.number_generator.refresh(tables, ignore_upload_id)
 
     def __init__(self, patient_id: str, patient_ide_source: str):
         """

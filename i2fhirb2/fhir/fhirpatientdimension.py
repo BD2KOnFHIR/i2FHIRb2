@@ -38,6 +38,7 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, Vital
 
 # TODO: is there any reason to pull patient_id from Patient.identifier rather than URL?
 # TODO: what of foreign addresses
+# TODO: if only one address and no role (e.g. 'home') load anyway
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
 from i2fhirb2.rdfsupport.fhirgraphutils import value, extension, concept_uri, code
 from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
@@ -104,10 +105,12 @@ class FHIRPatientDimension:
             self.birthdate = birthdate
 
             # address -- use == home / period.end is empty or past deathcode date
-            for address in g.objects(patient, FHIR.Patient.address):
-                if value(g, address, FHIR.Address.use) == "home":
+            addresses = g.objects(patient, FHIR.Patient.address)
+            for address in addresses:
+                address_use = value(g, address, FHIR.Address.use)
+                if address_use is None or address_use == "home":
                     period = g.value(address, FHIR.Address.period)
-                    if period and value(g, period, FHIR.Period.end) is None:
+                    if not period or (period and value(g, period, FHIR.Period.end) is None):
                         city = value(g, address, FHIR.Address.city)
                         state = value(g, address, FHIR.Address.state)
                         zipcode = value(g, address, FHIR.Address.postalCode)

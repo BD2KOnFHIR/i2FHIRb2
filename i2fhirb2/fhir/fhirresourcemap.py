@@ -41,7 +41,7 @@ class FHIR_Infrastructure_type(FHIR_Resource_type):
     pass
 
 
-class FHIR_Observation_type(FHIR_Resource_type):
+class FHIR_Observation_Fact_type(FHIR_Resource_type):
     def __init__(self, patient_ref: URIRef, encounter_ref: Optional[URIRef], provider_ref: Optional[URIRef]):
         self.patient_ref = patient_ref
         self.encounter_ref = encounter_ref
@@ -83,10 +83,10 @@ class FHIR_Bundle_type(FHIR_Resource_type):
     pass
 
 
-FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
-    FHIR.Account: FHIR_Observation_type(FHIR.Account.subject, None, FHIR.Account.owner),
+FHIR_RESOURCE_MAP = {           # type: Dict[URIRef, Optional[FHIR_Resource_type]]
+    FHIR.Account: FHIR_Observation_Fact_type(FHIR.Account.subject, None, FHIR.Account.owner),
     FHIR.ActivityDefinition: None,
-    FHIR.AdverseEvent: None,
+    FHIR.AdverseEvent: FHIR_Observation_Fact_type(FHIR.AdverseEvent.subject, None, None),
     FHIR.AllergyIntolerance: None,
     FHIR.Appointment: None,
     FHIR.AppointmentResponse: None,
@@ -96,7 +96,7 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.BodyStructure: None,
     FHIR.Bundle: FHIR_Bundle_type,
     FHIR.CapabilityStatement: None,
-    FHIR.CarePlan: FHIR_Observation_type(FHIR.CarePlan.subject, FHIR.CarePlan.context, None),
+    FHIR.CarePlan: FHIR_Observation_Fact_type(FHIR.CarePlan.subject, FHIR.CarePlan.context, None),
     FHIR.CareTeam: None,
     FHIR.ChargeItem: None,
     FHIR.Claim: None,
@@ -108,7 +108,7 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.CompartmentDefinition: None,
     FHIR.Composition: None,
     FHIR.ConceptMap: None,
-    FHIR.Condition: FHIR_Observation_type(FHIR.Condition.subject, FHIR.Condition.context, FHIR.Condition.asserter),
+    FHIR.Condition: FHIR_Observation_Fact_type(FHIR.Condition.subject, FHIR.Condition.context, FHIR.Condition.asserter),
     FHIR.Consent: None,
     FHIR.Contract: None,
     FHIR.Coverage: None,
@@ -118,8 +118,8 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.DeviceMetric: None,
     FHIR.DeviceRequest: None,
     FHIR.DeviceUseStatement: None,
-    FHIR.DiagnosticReport: FHIR_Observation_type(FHIR.DiagnosticReport.subject, FHIR.DiagnosticReport.context,
-                                                 FHIR.DiagnosticReport.performer),
+    FHIR.DiagnosticReport: FHIR_Observation_Fact_type(FHIR.DiagnosticReport.subject, FHIR.DiagnosticReport.context,
+                                                      FHIR.DiagnosticReport.performer),
     FHIR.DocumentManifest: None,
     FHIR.DocumentReference: None,
     FHIR.EligibilityRequest: None,
@@ -154,15 +154,15 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.Medication: None,
     FHIR.MedicationAdministration: None,
     FHIR.MedicationDispense: None,
-    FHIR.MedicationRequest: FHIR_Observation_type(FHIR.MedicationRequest.subject, FHIR.MedicationRequest.context,
-                                                  FHIR.MedicationRequest.requester),
+    FHIR.MedicationRequest: FHIR_Observation_Fact_type(FHIR.MedicationRequest.subject, FHIR.MedicationRequest.context,
+                                                       FHIR.MedicationRequest.requester),
     FHIR.MedicationStatement: None,
     FHIR.MessageDefinition: None,
     FHIR.MessageHeader: None,
     FHIR.NamingSystem: None,
     FHIR.NutritionOrder: None,
-    FHIR.Observation: FHIR_Observation_type(FHIR.Observation.subject, FHIR.Observation.context,
-                                            FHIR.Observation.performer),
+    FHIR.Observation: FHIR_Observation_Fact_type(FHIR.Observation.subject, FHIR.Observation.context,
+                                                 FHIR.Observation.performer),
     FHIR.OperationDefinition: None,
     FHIR.OperationOutcome: None,
     FHIR.Organization: FHIR_Provider_Dimension_type(),
@@ -198,9 +198,10 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.SupplyDelivery: None,
     FHIR.SupplyRequest: None,
     FHIR.Task: None,
-    FHIR.TestReport: FHIR_Infrastructure_type,
-    FHIR.TestScript: FHIR_Infrastructure_type,
+    FHIR.TestReport: FHIR_Infrastructure_type(),
+    FHIR.TestScript: FHIR_Infrastructure_type(),
     FHIR.ValueSet: FHIR_Infrastructure_type(),
-    FHIR.VisionPrescription: FHIR_Observation_type(FHIR.VisionPrescription.patient, FHIR.VisionPrescription.encounter,
-                                                   FHIR.VisionPrescription.prescriber)
+    FHIR.VisionPrescription: FHIR_Observation_Fact_type(FHIR.VisionPrescription.patient,
+                                                        FHIR.VisionPrescription.encounter,
+                                                        FHIR.VisionPrescription.prescriber)
 }

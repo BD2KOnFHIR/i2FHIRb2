@@ -30,6 +30,10 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
+from i2fhirb2.fhir.fhirpatientmapping import PatientNumberGenerator
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+from tests.utils.connection_helper import connection_helper
+
 
 class FHIRPatientMappingTestCase(unittest.TestCase):
     def test_1(self):
@@ -71,6 +75,19 @@ class FHIRPatientMappingTestCase(unittest.TestCase):
         pm2 = FHIRPatientMapping("p123", "http://hl7.org/fhir")
         self.assertEqual(2, len(pm.patient_mapping_entries))
         self.assertEqual(pm2.patient_num, pm.patient_num)
+
+    def test_patientnum_refresh(self):
+        # Not a lot we can do to test this without knowing what is in the database.   We COULD add something to the
+        # tables and demonstrate that we don't see it if we pass a number in...
+        png = PatientNumberGenerator(10000)
+        self.assertEqual(png.new_number(), 10000)
+        self.assertEqual(png.new_number(), 10001)
+        opts = connection_helper()
+        png.refresh(opts.tables, None)
+        print("Next patient number: {}".format(png.new_number()))
+        self.assertNotEqual(png.new_number(), 10002)
+        png.refresh(opts.tables, 4321)
+        self.assertNotEqual(png.new_number(), 10002)
 
 
 if __name__ == '__main__':

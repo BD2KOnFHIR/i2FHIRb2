@@ -1,0 +1,78 @@
+{
+  "entry": [
+    {
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "referenceRange": [
+          {
+            "high": {
+              "unit": "mmol\/L",
+              "system": "http:\/\/unitsofmeasure.org",
+              "code": "mmol\/L",
+              "value": 145.0
+            },
+            "low": {
+              "unit": "mmol\/L",
+              "system": "http:\/\/unitsofmeasure.org",
+              "code": "mmol\/L",
+              "value": 135.0
+            },
+            "meaning": {
+              "coding": [
+                {
+                  "system": "http:\/\/hl7.org\/fhir\/referencerange-meaning",
+                  "code": "normal",
+                  "display": "Normal Range"
+                }
+              ],
+              "text": "Normal Range"
+            }
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http:\/\/loinc.org",
+              "code": "2951-2",
+              "display": "Sodium SerPl-sCnc"
+            }
+          ],
+          "text": "Sodium SerPl-sCnc"
+        },
+        "effectiveDateTime": "2005-07-05",
+        "meta": {
+          "lastUpdated": "2017-03-23T15:39:39.000+00:00",
+          "versionId": "3"
+        },
+        "subject": {
+          "reference": "Patient\/SMART-1134281"
+        },
+        "id": "SMART-Observation-1706-lab",
+        "text": {
+          "div": "<div xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\">2005-07-05: Sodium SerPl-sCnc = 137 mmol\/L<\/div>",
+          "status": "generated"
+        },
+        "category": {
+          "coding": [
+            {
+              "system": "http:\/\/hl7.org\/fhir\/observation-category",
+              "code": "laboratory",
+              "display": "Laboratory"
+            }
+          ],
+          "text": "Laboratory"
+        },
+        "resourceType": "Observation",
+        "status": "final",
+        "valueQuantity": {
+          "unit": "mmol\/L",
+          "system": "http:\/\/unitsofmeasure.org",
+          "value": 137.0
+        }
+      },
+      "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/SMART-Observation-1706-lab"
+    }
+  ]
+}

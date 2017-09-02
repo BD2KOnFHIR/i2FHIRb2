@@ -26,7 +26,9 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import re
+import urllib
 from typing import Union, List, Optional, Dict
+from urllib.parse import urlencode
 from uuid import uuid4
 
 from jsonasobj.jsonobj import JsonObj, load, JsonObjTypes
@@ -36,6 +38,7 @@ from rdflib.term import Node, BNode, Literal
 from i2fhirb2.fhir.fhirspecific import FHIR, FHIR_RESOURCE_RE, FHIR_RE_RESOURCE, FHIR_RE_BASE, \
     REPLACED_NARRATIVE_TEXT
 from i2fhirb2.loaders.fhirmetatavocabularyloader import FHIRMetaVoc
+from i2fhirb2.rdfsupport.fhirgraphutils import value
 from i2fhirb2.rdfsupport.prettygraph import PrettyGraph
 
 LOINC = Namespace("http://loinc.org/owl#")
@@ -71,7 +74,7 @@ def hl7_v2_uri(system: str, code: str, nsmap: Dict[str, Namespace]) -> Optional[
 
 
 def hl7_fhir_uri(system: str, code: str, nsmap: Dict[str, Namespace]) -> Optional[URIRef]:
-    nsmap.setdefault(system.replace('http://hl7.org/fhir/', ''), Namespace(system))
+    nsmap.setdefault(system.replace('http://hl7.org/fhir/', '').replace('/', '_'), Namespace(system))
     return URIRef(system + '/' + code)
 
 
@@ -100,8 +103,10 @@ class FHIRResource:
         """
         if json_fname:
             self.root = load(json_fname)
-        else:
+        elif data:
             self.root = data
+        else:
+            assert False, "Either a json file name or actual data image must be supplied"
         self._base_uri = base_uri + ('/' if base_uri[-1] not in '/#' else '')
         if 'resourceType' not in self.root:
             raise ValueError("{} is not a FHIR resource".format(json_fname))
@@ -118,8 +123,7 @@ class FHIRResource:
 
     @property
     def resource_id(self) -> Optional[str]:
-        resource_id_container = self._g.value(self._resource_uri, FHIR.Resource.id)
-        return self._g.value(resource_id_container, FHIR.value) if resource_id_container else None
+        return value(self._g, self._resource_uri, FHIR.Resource.id)
 
     @property
     def resource_type(self) -> str:
@@ -151,13 +155,6 @@ class FHIRResource:
         :param obj:
         :return: self for chaining
         """
-        # TODO: Debug code - remove
-        # if 'extension' in str(pred):
-        #     print("*** {} {} {}".format(subj, pred, obj))
-        #     for p, o in self.graph.predicate_objects(subj):
-        #         print("\t{} {} {}".format(subj, p, o))
-        #     for p, o in self.graph.predicate_objects(obj):
-        #         print("\t{} {} {}".format(obj, p, o))
         self._g.add((subj, pred, obj))
         return self
 
@@ -200,10 +197,10 @@ class FHIRResource:
         match = FHIR_RESOURCE_RE.match(val)
         ref_uri_str = res_type = None
         if match:
-            ref_uri_str = val if match.group(FHIR_RE_BASE) else (self._base_uri + val)
+            ref_uri_str = val if match.group(FHIR_RE_BASE) else (self._base_uri + urllib.parse.quote(val))
             res_type = match.group(FHIR_RE_RESOURCE)
         elif self._base_uri and not val.startswith('#') and not val.startswith('/'):
-            ref_uri_str = self._base_uri + val
+            ref_uri_str = self._base_uri + urllib.parse.quote(val)
             res_type = val.split('/', 1)[0] if '/' in val else "Resource"
         if ref_uri_str:
             ref_uri = URIRef(ref_uri_str)
@@ -231,12 +228,17 @@ class FHIRResource:
         :param valuetype: value type if NOT determinable by predicate
         :return: value node if target is a BNode else None
         """
+        if json_key not in json_obj:
+            print("Expecting to find object named {} in JSON:")
+            print(json_obj._as_json_dumps())
+            print("entry skipped")
+            return None
         val = json_obj[json_key]
         if isinstance(val, List):
             list_idx = 0
             for lv in val:
                 entry_bnode = BNode()
-                self.add(entry_bnode, FHIR.index, Literal(list_idx, datatype=XSD.integer))
+                self.add(entry_bnode, FHIR.index, Literal(list_idx))
                 if isinstance(lv, JsonObj):
                     self.add_value_node(entry_bnode, pred, lv, valuetype)
                 else:

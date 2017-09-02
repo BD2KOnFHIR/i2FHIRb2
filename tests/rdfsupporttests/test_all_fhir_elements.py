@@ -65,8 +65,6 @@ FHIRInstanceTestCase.single_file = False
 # Comparing to FHIR, so make certain we're doing FHIR dates
 FHIRMetaVoc.fhir_dates = True
 
-make_and_clear_directory(FHIRInstanceTestCase.output_directory)
-
 
 def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
     json_file = os.path.join(dirpath, fname)
@@ -91,6 +89,9 @@ def json_to_ttl(self: FHIRInstanceTestCase, dirpath: str, fname: str) -> bool:
 
 FHIRInstanceTestCase.validation_function = json_to_ttl
 # TODO: Finish all the FHIR test issues
+print("***** rdfsupporttests.test_all_fhir_elements is disabled *****")
+print()
+# make_and_clear_directory(FHIRInstanceTestCase.output_directory)
 # FHIRInstanceTestCase.build_test_harness()
 
 

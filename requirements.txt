@@ -1,4 +1,4 @@
-jsonasobj>=1.1.0
+jsonasobj>=1.1.1
 SQLAlchemy
 python-dateutil
 rdflib>=4.2.2

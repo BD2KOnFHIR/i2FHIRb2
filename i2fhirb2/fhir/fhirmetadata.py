@@ -26,13 +26,15 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from abc import ABCMeta, abstractmethod
-from typing import Set, Optional, List
+from collections import OrderedDict
+from typing import Set, Optional, List, Dict, Tuple
 
+from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from rdflib import Graph, URIRef, RDF, OWL, RDFS
-from rdflib.namespace import split_uri
 
-from i2fhirb2.fhir.fhirspecific import FHIR, skip_fhir_predicates, w5_infrastructure_categories, W5, fhir_primitives
+from i2fhirb2.fhir.fhirspecific import FHIR, w5_infrastructure_categories, fhir_primitives, \
+    composite_uri, is_w5_uri
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
 
@@ -60,6 +62,11 @@ class FHIRMetadata(metaclass=ABCMeta):
     The W5 OntologyEntry in i2b2 space
     """
 
+    # fhir_concepts is a map from a concept_code URI to a tuple consisting of:
+    #   a type URI -- for generating modifier entries in the ontology table
+    #   a parent URI if the concept URI is not in the FHIR meta vocabulary
+    _fhir_concepts = OrderedDict()  # type: Dict[URIRef, Tuple[URIRef, Optional[URIRef]]]
+
     def __init__(self, g: Graph, name_base: str = "\\FHIR\\"):
         """
         Create a FHIR i2b2 generator
@@ -78,7 +85,7 @@ class FHIRMetadata(metaclass=ABCMeta):
         Return the uris for the w5 (classification) classes. These become the i2b2 navigational concepts.
         """
         return {subj for subj in self.g.subjects(RDF.type, OWL.Class)
-                if isinstance(subj, URIRef) and self.is_w5_uri(subj) and not self.w5_infrastructure_category(subj)}
+                if isinstance(subj, URIRef) and is_w5_uri(subj) and not self.w5_infrastructure_category(subj)}
 
     def w5_infrastructure_category(self, subj: URIRef) -> bool:
         """
@@ -91,36 +98,56 @@ class FHIRMetadata(metaclass=ABCMeta):
     def fhir_resource_concepts(self) -> Set[URIRef]:
         """
         Return the uris for the set of all qualifying FHIR resources
-        :return:
+        :return: URIs of all FHIR resources
         """
         return {subj for subj in self.g.transitive_subjects(RDFS.subClassOf, FHIR.Resource)
                 if isinstance(subj, URIRef) and not self.w5_infrastructure_category(subj)}
 
-    def fhir_concepts(self, subject: Optional[URIRef]=None) -> Set[URIRef]:
+    def fhir_concepts(self, resource: Optional[URIRef]=None) -> Dict[URIRef, Tuple[URIRef, Optional[URIRef]]]:
         """
         Return all qualifying descendants of fhir:Resource + all first level properties.  This is the complete
         set of FHIR elements in the concept dimension.
-        :param subject: Subject to restrict output to for debugging
-        :return:
+        :param resource: Subject to restrict output to for debugging
+        :return: A list of all URI
         """
-        rval = set()
-        for subj in ({subject} if subject else self.fhir_resource_concepts()):
-            rval.add(subj)
-            rval.update(self.concept_properties(subj))
-        return rval
+        if not self._fhir_concepts:
+            for subj in ({resource} if resource else sorted(self.fhir_resource_concepts())):
+                self._fhir_concepts[subj] = (None, None)        # No type / no parent
+                self._generate_fact_concepts(subj)
+        return self._fhir_concepts
 
-    def concept_properties(self, subj: URIRef) -> Set[URIRef]:
+    def _generate_fact_concepts(self, resource: URIRef) -> None:
         """
-        Return all of the properties for a given subject.  Note that FHIR generates a separate property
-        for each element of a choice. As an example, "value" has a separate entry for "valueBoolean", "valueInteger",
-        "valueDate", etc.  For the time being, we skip entries that are subproperties of parent FHIR
-        (but not W5) elements.
-        :param subj: subject class
-        :return: list of associated properties property predicates
+        Generate a concept entry for each predicate associated with subj.  This method parallels the generate_facts
+        method in FHIRObservationFactFactory method.  The difference between the two is that, here, we generate a list
+        of *all* possible concept codes, where the generate_facts method only generates those for things that exist.
+        :param resource: URI of resource to concept
         """
-        # TODO: Temporary fix for putting together the poster
-        return {s for s in self.g.subjects(RDFS.domain, subj)}
-        # if not any(e for e in self.objects(s, RDFS.subPropertyOf) if not is_w5_uri(e))}
+
+        for concept_predicate in sorted(set(self.g.subjects(RDFS.domain, resource))):
+            if concept_predicate not in FHIRObservationFactFactory.special_processing_list:
+                range_type = self.g.value(concept_predicate, RDFS.range, any=False)
+                self._fhir_concepts[concept_predicate] = (range_type, resource)
+                if not self.is_primitive(range_type):
+                    self._non_primitive_paths(concept_predicate, range_type)
+
+    def _non_primitive_paths(self, base_predicate: URIRef, predicate_type: URIRef,
+                             seen_predicate_types: List[URIRef] = None) -> None:
+
+        if seen_predicate_types is None:
+            seen_predicate_types = []
+        if predicate_type not in seen_predicate_types:
+            for predicate in sorted(set(self.g.subjects(RDFS.domain, predicate_type))):
+                if predicate not in FHIRObservationFactFactory.special_processing_list:
+                    range_type = self.g.value(predicate, RDFS.range, any=False)
+                    if not self.is_primitive(range_type):
+                        extended_base_predicate = composite_uri(base_predicate, predicate)
+                        self._fhir_concepts[extended_base_predicate] = (range_type, base_predicate)
+                        seen_predicate_types.append(predicate_type)
+                        self._non_primitive_paths(extended_base_predicate, range_type, seen_predicate_types)
+                        seen_predicate_types.remove(predicate_type)
+        else:
+            print("Recursion on :{} {}".format(base_predicate, predicate_type))
 
     def dimension_list(self, _: Optional[URIRef]=None) -> List[OntologyEntry]:
         """ Abstract class to return i2b2 dimension entries"""
@@ -172,9 +199,9 @@ class FHIRMetadata(metaclass=ABCMeta):
         if seen is None:
             seen = set()
         for pred in self.g.subjects(RDFS.domain, range_type):
-            if pred not in skip_fhir_predicates:
+            if pred not in FHIRObservationFactFactory.special_processing_list:
                 # Concatenate the root property and predicates in the nested range
-                extended_prop = self.composite_uri(prop, pred)
+                extended_prop = composite_uri(prop, pred)
                 for rng in self.g.objects(pred, RDFS.range):
                     if rng not in seen:
                         seen.add(rng)
@@ -183,27 +210,6 @@ class FHIRMetadata(metaclass=ABCMeta):
                             rval += self.generate_modifier_path(extended_prop, rng, depth+1, seen)
                         seen.discard(rng)
         return rval
-
-    @staticmethod
-    def composite_uri(parent: URIRef, mod: URIRef) -> URIRef:
-        """
-        Return a composite URI consisting of the parent + '.' + the last element in the modifier
-        :param parent: base URI
-        :param mod: modifier URI
-        :return: composite
-        """
-        p1 = split_uri(mod)
-        if len(p1) < 2:
-            print("E1")
-        p2 = p1[1].rsplit('.', 1)
-        if len(p2) < 2:
-            print("E2")
-        last_mod_component = split_uri(mod)[1].rsplit('.', 1)[1]
-        return URIRef(str(parent) + '.' + last_mod_component)
-
-    @staticmethod
-    def is_w5_uri(uri: URIRef) -> bool:
-        return split_uri(uri)[0] == str(W5)
 
     @staticmethod
     @abstractmethod

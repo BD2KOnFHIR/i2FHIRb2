@@ -1,368 +1,1820 @@
 @prefix fhir: <http://hl7.org/fhir/> .
+@prefix identifier-type: <http://hl7.org/fhir/identifier-type> .
+@prefix loinc: <http://loinc.org/owl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix v2-0203: <http://hl7.org/fhir/v2/0203> .
+@prefix v3-Ethnicity: <http://hl7.org/fhir/v3/Ethnicity> .
+@prefix v3-MaritalStatus: <http://hl7.org/fhir/v3/MaritalStatus> .
+@prefix v3-Race: <http://hl7.org/fhir/v3/Race> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://hl7.org/fhir/Bundle/7da629f4-e38a-49c3-b57b-99fdead7554b> a fhir:Bundle ;
-    fhir:Bundle.entry [
-            [fhir:Bundle.entry.resource [
-                    [
+<http://hl7.org/fhir/CarePlan/355d176b-5170-4087-b19d-fdcd30128683> a fhir:CarePlan ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:CarePlan.activity [
+        fhir:index "2"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:710081004 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "710081004"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Smoking cessation therapy"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:229065009 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "229065009"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Exercise therapy"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ],
+        [
+        fhir:index "3"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:226234005 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "226234005"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Healthy diet"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:226060000 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "226060000"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Stress management"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa"
+        ]
+    ] ;
+    fhir:CarePlan.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            a sct:698358001 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "698358001"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Angina self management plan"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:CarePlan.period [
+        fhir:Period.start [
+            fhir:value "1985-01-20"^^xsd:date
+        ]
+    ] ;
+    fhir:CarePlan.status [
+        fhir:value "active"
+    ] ;
+    fhir:CarePlan.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "355d176b-5170-4087-b19d-fdcd30128683"
+    ] .
+
+<http://hl7.org/fhir/CarePlan/355d176b-5170-4087-b19d-fdcd30128683.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/CarePlan/710149c7-1b28-4941-8363-7f8f1fc57491> a fhir:CarePlan ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:CarePlan.activity [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:160670007 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "160670007"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Diabetic diet"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:229065009 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "229065009"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Exercise therapy"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:CarePlan.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            a sct:698360004 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "698360004"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Diabetes self management plan"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:CarePlan.goal [
+        fhir:index "4"^^xsd:integer ;
+        fhir:link fhir: ;
+        fhir:Reference.reference [
+            fhir:value ""
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
+        fhir:link fhir: ;
+        fhir:Reference.reference [
+            fhir:value ""
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:link fhir: ;
+        fhir:Reference.reference [
+            fhir:value ""
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link fhir: ;
+        fhir:Reference.reference [
+            fhir:value ""
+        ]
+    ],
+        [
+        fhir:index "3"^^xsd:integer ;
+        fhir:link fhir: ;
+        fhir:Reference.reference [
+            fhir:value ""
+        ]
+    ] ;
+    fhir:CarePlan.period [
+        fhir:Period.start [
+            fhir:value "1973-12-16"^^xsd:date
+        ]
+    ] ;
+    fhir:CarePlan.status [
+        fhir:value "active"
+    ] ;
+    fhir:CarePlan.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "710149c7-1b28-4941-8363-7f8f1fc57491"
+    ] .
+
+<http://hl7.org/fhir/CarePlan/710149c7-1b28-4941-8363-7f8f1fc57491.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/186c0631-f1e8-4afc-9ea1-30f2677e0f7b> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1978-07-19T10:50:12-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1978-06-24"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1978-06-24T17:10:40-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "186c0631-f1e8-4afc-9ea1-30f2677e0f7b"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/186c0631-f1e8-4afc-9ea1-30f2677e0f7b.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/266ae7e9-ed65-4c36-b48b-9e79a22fac51> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1947-10-19T12:42:04-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1947-09-18"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1947-09-18T23:31:04-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "266ae7e9-ed65-4c36-b48b-9e79a22fac51"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/266ae7e9-ed65-4c36-b48b-9e79a22fac51.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/5223a190-cfa7-42b0-b453-1def406ccc02> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1987-11-19"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1987-11-19T10:50:12-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "5223a190-cfa7-42b0-b453-1def406ccc02"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/5223a190-cfa7-42b0-b453-1def406ccc02.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/6881da10-fb29-4f52-b460-40dbbb0cb4fe> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1928-10-28T05:52:10-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1928-10-11"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1928-10-11T08:09:17-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "6881da10-fb29-4f52-b460-40dbbb0cb4fe"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/6881da10-fb29-4f52-b460-40dbbb0cb4fe.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/6be45808-ac19-4a37-8b9e-d4fb09cc639a> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1976-08-24T17:10:40-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1976-07-25"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1976-07-25T16:50:51-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "6be45808-ac19-4a37-8b9e-d4fb09cc639a"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/6be45808-ac19-4a37-8b9e-d4fb09cc639a.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/83be2215-e640-435b-a51a-1a1e469b46e5> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1987-12-11"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:399211009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "399211009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "History of myocardial infarction (situation)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "83be2215-e640-435b-a51a-1a1e469b46e5"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/83be2215-e640-435b-a51a-1a1e469b46e5.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/84531bbc-26fb-49f8-82a7-e44dd33969a9> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1958-03-25T16:50:51-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1958-02-17"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1958-02-17T21:22:22-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "84531bbc-26fb-49f8-82a7-e44dd33969a9"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/84531bbc-26fb-49f8-82a7-e44dd33969a9.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/a254509f-4e4c-4554-97a8-df2707ff5df0> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1973-12-16"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:44054006 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "44054006"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Diabetes"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1973-12-16T22:33:35-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "a254509f-4e4c-4554-97a8-df2707ff5df0"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/a254509f-4e4c-4554-97a8-df2707ff5df0.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/c5e63e5b-dd44-4f8d-91ef-8e85f7a21469> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1948-03-17T21:22:22-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1948-02-19"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1948-02-19T12:42:04-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "c5e63e5b-dd44-4f8d-91ef-8e85f7a21469"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/c5e63e5b-dd44-4f8d-91ef-8e85f7a21469.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/c6828039-c59f-42e3-b5f4-839ecb3ef1fa> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1985-01-20"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:53741008 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "53741008"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Coronary Heart Disease"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1985-01-20T16:03:21-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "c6828039-c59f-42e3-b5f4-839ecb3ef1fa"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/c6828039-c59f-42e3-b5f4-839ecb3ef1fa.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/cdf45df5-6228-475f-8f7f-dd5341747e6f> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.abatementDateTime [
+        fhir:value "1932-01-18T23:31:04-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.assertedDate [
+        fhir:value "1931-12-28"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:444814009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "444814009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Viral sinusitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1931-12-28T05:52:10-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "cdf45df5-6228-475f-8f7f-dd5341747e6f"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/cdf45df5-6228-475f-8f7f-dd5341747e6f.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/ea69aa61-7106-45ea-8d70-c576df6d85ef> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1987-12-11"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:22298006 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "22298006"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Myocardial Infarction"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "ea69aa61-7106-45ea-8d70-c576df6d85ef"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/ea69aa61-7106-45ea-8d70-c576df6d85ef.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/DiagnosticReport/79eaa26d-1f52-4aba-858b-a2de6f631990> a fhir:DiagnosticReport ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:DiagnosticReport.code [
+        fhir:CodeableConcept.coding [
+            a loinc:69409-1 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "69409-1"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "U.S. standard certificate of death - 2003 revision"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://loinc.org"
+            ]
+        ]
+    ] ;
+    fhir:DiagnosticReport.effectiveDateTime [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:DiagnosticReport.issued [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:DiagnosticReport.performer [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Reference.display [
+            fhir:value "Hospital Lab"
+        ]
+    ] ;
+    fhir:DiagnosticReport.result [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:85dcae9e-7c24-4276-a9ef-9d7f1884079a> ;
+        fhir:Reference.display [
+            fhir:value "Cause of Death [US Standard Certificate of Death]"
+        ] ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:85dcae9e-7c24-4276-a9ef-9d7f1884079a"
+        ]
+    ] ;
+    fhir:DiagnosticReport.status [
+        fhir:value "final"
+    ] ;
+    fhir:DiagnosticReport.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "79eaa26d-1f52-4aba-858b-a2de6f631990"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
+        ]
+    ] .
+
+<http://hl7.org/fhir/DiagnosticReport/79eaa26d-1f52-4aba-858b-a2de6f631990.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Encounter/ab17e1fd-f563-4d41-b384-cafbde2ca5d3> a fhir:Encounter ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Encounter.class [
+        fhir:Coding.code [
+            fhir:value "ambulatory"
+        ]
+    ] ;
+    fhir:Encounter.period [
+        fhir:Period.end [
+            fhir:value "1987-12-11T14:56:11-06:00"^^xsd:dateTime
+        ] ;
+        fhir:Period.start [
+            fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+        ]
+    ] ;
+    fhir:Encounter.serviceProvider [
+        fhir:link <http://hl7.org/fhir/urn:uuid:da6a0304-f733-4794-843d-5284e216a1f4> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:da6a0304-f733-4794-843d-5284e216a1f4"
+        ]
+    ] ;
+    fhir:Encounter.status [
+        fhir:value "finished"
+    ] ;
+    fhir:Encounter.type [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            a sct:308646001 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "308646001"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Death Certification"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Encounter/ab17e1fd-f563-4d41-b384-cafbde2ca5d3.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Goal/16d851e0-671e-4d7e-b50e-1634e7ce1590> a fhir:Goal ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Goal.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:Goal.description [
+        fhir:CodeableConcept.text [
+            fhir:value "Glucose [Mass/volume] in Blood < 108"
+        ]
+    ] ;
+    fhir:Goal.status [
+        fhir:value "in-progress"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "16d851e0-671e-4d7e-b50e-1634e7ce1590"
+    ] .
+
+<http://hl7.org/fhir/Goal/16d851e0-671e-4d7e-b50e-1634e7ce1590.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Goal/2bd2d41c-8bd1-47a4-a02e-83f5f9aa6dba> a fhir:Goal ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Goal.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:Goal.description [
+        fhir:CodeableConcept.text [
+            fhir:value "Maintain blood pressure below 140/90 mmHg"
+        ]
+    ] ;
+    fhir:Goal.status [
+        fhir:value "in-progress"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "2bd2d41c-8bd1-47a4-a02e-83f5f9aa6dba"
+    ] .
+
+<http://hl7.org/fhir/Goal/2bd2d41c-8bd1-47a4-a02e-83f5f9aa6dba.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Goal/308ed94c-2bad-4559-96b0-3d3832a832a5> a fhir:Goal ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Goal.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:Goal.description [
+        fhir:CodeableConcept.text [
+            fhir:value "Hemoglobin A1c total in Blood < 7.0"
+        ]
+    ] ;
+    fhir:Goal.status [
+        fhir:value "in-progress"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "308ed94c-2bad-4559-96b0-3d3832a832a5"
+    ] .
+
+<http://hl7.org/fhir/Goal/308ed94c-2bad-4559-96b0-3d3832a832a5.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Goal/d43dd80e-3587-45d9-902f-b5e2b91703c5> a fhir:Goal ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Goal.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:Goal.description [
+        fhir:CodeableConcept.text [
+            fhir:value "Address patient knowledge deficit on diabetic self-care"
+        ]
+    ] ;
+    fhir:Goal.status [
+        fhir:value "in-progress"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "d43dd80e-3587-45d9-902f-b5e2b91703c5"
+    ] .
+
+<http://hl7.org/fhir/Goal/d43dd80e-3587-45d9-902f-b5e2b91703c5.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Goal/ec6e0809-1ea4-4b5c-9dbf-65a0b33594d9> a fhir:Goal ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Goal.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:Goal.description [
+        fhir:CodeableConcept.text [
+            fhir:value "Improve and maintenance of optimal foot health: aim at early detection of peripheral vascular problems and neuropathy presumed due to diabetes; and prevention of diabetic foot ulcer, gangrene"
+        ]
+    ] ;
+    fhir:Goal.status [
+        fhir:value "in-progress"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "ec6e0809-1ea4-4b5c-9dbf-65a0b33594d9"
+    ] .
+
+<http://hl7.org/fhir/Goal/ec6e0809-1ea4-4b5c-9dbf-65a0b33594d9.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/MedicationRequest/0dfdcb87-784c-4999-8735-95015e74ee4c> a fhir:MedicationRequest ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:MedicationRequest.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:MedicationRequest.dosageInstruction [
+        fhir:index "0"^^xsd:integer
+    ] ;
+    fhir:MedicationRequest.medicationCodeableConcept [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "834101"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Penicillin V Potassium 500 MG"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+            ]
+        ]
+    ] ;
+    fhir:MedicationRequest.status [
+        fhir:value "active"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "0dfdcb87-784c-4999-8735-95015e74ee4c"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
+        ]
+    ] .
+
+<http://hl7.org/fhir/MedicationRequest/0dfdcb87-784c-4999-8735-95015e74ee4c.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/MedicationRequest/28e12cc8-867e-4bfd-9734-5a59c5e5f2e4> a fhir:MedicationRequest ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:MedicationRequest.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:MedicationRequest.dosageInstruction [
+        fhir:index "0"^^xsd:integer
+    ] ;
+    fhir:MedicationRequest.medicationCodeableConcept [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "860975"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+            ]
+        ]
+    ] ;
+    fhir:MedicationRequest.reasonReference [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
+        ]
+    ] ;
+    fhir:MedicationRequest.status [
+        fhir:value "active"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "28e12cc8-867e-4bfd-9734-5a59c5e5f2e4"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
+        ]
+    ] .
+
+<http://hl7.org/fhir/MedicationRequest/28e12cc8-867e-4bfd-9734-5a59c5e5f2e4.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/MedicationRequest/4c43d6fc-c983-4db9-9628-9ce6353148a9> a fhir:MedicationRequest ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:MedicationRequest.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:MedicationRequest.dosageInstruction [
+        fhir:index "0"^^xsd:integer
+    ] ;
+    fhir:MedicationRequest.medicationCodeableConcept [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "564666"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Nitroglycerin 0.4 MG/ACTUAT [Nitrolingual]"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+            ]
+        ]
+    ] ;
+    fhir:MedicationRequest.reasonReference [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:ea69aa61-7106-45ea-8d70-c576df6d85ef> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ea69aa61-7106-45ea-8d70-c576df6d85ef"
+        ]
+    ] ;
+    fhir:MedicationRequest.status [
+        fhir:value "active"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "4c43d6fc-c983-4db9-9628-9ce6353148a9"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
+        ]
+    ] .
+
+<http://hl7.org/fhir/MedicationRequest/4c43d6fc-c983-4db9-9628-9ce6353148a9.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/MedicationRequest/e924c7b4-9ad3-4a42-abd3-c136986313ee> a fhir:MedicationRequest ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:MedicationRequest.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
+        ]
+    ] ;
+    fhir:MedicationRequest.dosageInstruction [
+        fhir:index "0"^^xsd:integer
+    ] ;
+    fhir:MedicationRequest.medicationCodeableConcept [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "564666"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Nitroglycerin 0.4 MG/ACTUAT [Nitrolingual]"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+            ]
+        ]
+    ] ;
+    fhir:MedicationRequest.reasonReference [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa"
+        ]
+    ] ;
+    fhir:MedicationRequest.status [
+        fhir:value "stopped"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "e924c7b4-9ad3-4a42-abd3-c136986313ee"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
+        ]
+    ] .
+
+<http://hl7.org/fhir/MedicationRequest/e924c7b4-9ad3-4a42-abd3-c136986313ee.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Observation/85dcae9e-7c24-4276-a9ef-9d7f1884079a> a fhir:Observation ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Observation.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
+            ]
+        ]
+    ] ;
+    fhir:Observation.code [
+        fhir:CodeableConcept.coding [
+            a loinc:69453-9 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "69453-9"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Cause of Death [US Standard Certificate of Death]"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://loinc.org"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Cause of Death [US Standard Certificate of Death]"
+        ]
+    ] ;
+    fhir:Observation.effectiveDateTime [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.issued [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.status [
+        fhir:value "final"
+    ] ;
+    fhir:Observation.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+        ]
+    ] ;
+    fhir:Observation.valueCodeableConcept [
+        fhir:CodeableConcept.coding [
+            a sct:22298006 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "22298006"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Myocardial Infarction"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Myocardial Infarction"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "85dcae9e-7c24-4276-a9ef-9d7f1884079a"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-observation-Observation"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Observation/85dcae9e-7c24-4276-a9ef-9d7f1884079a.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Organization/da6a0304-f733-4794-843d-5284e216a1f4> a fhir:Organization ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Organization.name [
+        fhir:value "Synthetic Provider"
+    ] ;
+    fhir:Organization.type [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "prov"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Healthcare Provider"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/organization-type"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Healthcare Provider"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "da6a0304-f733-4794-843d-5284e216a1f4"
+    ] .
+
+<http://hl7.org/fhir/Organization/da6a0304-f733-4794-843d-5284e216a1f4.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Patient/1e980f92-1a69-41f3-97f4-8e32d6fe933c> a fhir:Patient ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:DomainResource.extension [
+        fhir:index "5"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-interpreterRequired"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "false"^^xsd:boolean
+        ]
+    ],
+        [
+        fhir:index "7"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-FathersName-extension"
+        ] ;
+        fhir:Extension.valueHumanName [
+            fhir:HumanName.text [
+                fhir:value "Lauryn737 MacGyver396"
+            ]
+        ]
+    ],
+        [
+        fhir:index "6"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-actor-FictionalPerson-extension"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "true"^^xsd:boolean
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/birthPlace"
+        ] ;
+        fhir:Extension.valueAddress [
+            fhir:Address.city [
+                fhir:value "Quincy"
+            ] ;
+            fhir:Address.country [
+                fhir:value "US"
+            ] ;
+            fhir:Address.state [
+                fhir:value "MA"
+            ]
+        ]
+    ],
+        [
+        fhir:index "8"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-SocialSecurityNumber-extension"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "999-49-6119"
+        ]
+    ],
+        [
+        fhir:index "3"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "Aron249 Auer214"
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-ethnicity"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Ethnicity/2148-5> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2148-5"
                 ] ;
-                fhir:index 20
+                fhir:Coding.display [
+                    fhir:value "Mexican"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Ethnicity"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "ethnicity"
+            ]
+        ]
+    ],
+        [
+        fhir:index "4"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+        ] ;
+        fhir:Extension.valueCode [
+            fhir:value "M"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-race"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Race/2131-1> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2131-1"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Other"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Race"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "race"
+            ]
+        ]
+    ] ;
+    fhir:DomainResource.text [
+        fhir:Narrative.div "<div>Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>. Version identifier: 76199f3c40cd1daebe8563307048500f5a0a78ab</div>" ;
+        fhir:Narrative.status [
+            fhir:value "generated"
+        ]
+    ] ;
+    fhir:Patient.address [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Address.city [
+            fhir:value "Dracut"
+        ] ;
+        fhir:Address.country [
+            fhir:value "US"
+        ] ;
+        fhir:Address.line [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "3035 Marks Avenue"
+        ] ;
+        fhir:Address.postalCode [
+            fhir:value "01826"
+        ] ;
+        fhir:Address.state [
+            fhir:value "MA"
+        ] ;
+        fhir:Element.extension [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Element.extension [
+                fhir:index "1"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "longitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "-71.2639580713739"^^xsd:decimal
+                ]
             ],
                 [
-                    [fhir:Bundle.entry.fullUrl [
-                            [fhir:value "urn:uuid:85dcae9e-7c24-4276-a9ef-9d7f1884079a"
-                        ] ;
-                        fhir:Bundle.entry.resource [
-                                [fhir:Resource.id [
-                                        [fhir:value "85dcae9e-7c24-4276-a9ef-9d7f1884079a"
-                                    ] ;
-                                    fhir:Resource.meta [
-                                            [fhir:Meta.profile [
-                                                    [fhir:index 0
-                                                ]
-                                            ]
-                                        ] ;
-                                        fhir:index 15
-                                    ],
-                                        [
-                                            [fhir:Bundle.entry.fullUrl [
-                                                    [fhir:value "urn:uuid:79eaa26d-1f52-4aba-858b-a2de6f631990"
-                                                ] ;
-                                                fhir:Bundle.entry.resource [
-                                                        [fhir:Resource.id [
-                                                                [fhir:value "79eaa26d-1f52-4aba-858b-a2de6f631990"
-                                                            ] ;
-                                                            fhir:Resource.meta [
-                                                                    [fhir:Meta.profile [
-                                                                            [fhir:index 0
-                                                                        ]
-                                                                    ]
-                                                                ] ;
-                                                                fhir:index 16
-                                                            ],
-                                                                [
-                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                            [fhir:value "urn:uuid:83be2215-e640-435b-a51a-1a1e469b46e5"
-                                                                        ] ;
-                                                                        fhir:Bundle.entry.resource [
-                                                                                [fhir:Resource.id [
-                                                                                        [fhir:value "83be2215-e640-435b-a51a-1a1e469b46e5"
-                                                                                    ] ;
-                                                                                    fhir:Resource.meta [
-                                                                                            [fhir:Meta.profile [
-                                                                                                    [fhir:index 0
-                                                                                                ]
-                                                                                            ]
-                                                                                        ] ;
-                                                                                        fhir:index 14
-                                                                                    ],
-                                                                                        [
-                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                    [
-                                                                                                ] ;
-                                                                                                fhir:index 22
-                                                                                            ],
-                                                                                                [
-                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                            [fhir:value "urn:uuid:5223a190-cfa7-42b0-b453-1def406ccc02"
-                                                                                                        ] ;
-                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                [fhir:Resource.id [
-                                                                                                                        [fhir:value "5223a190-cfa7-42b0-b453-1def406ccc02"
-                                                                                                                    ] ;
-                                                                                                                    fhir:Resource.meta [
-                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                    [fhir:index 0
-                                                                                                                                ]
-                                                                                                                            ]
-                                                                                                                        ] ;
-                                                                                                                        fhir:index 12
-                                                                                                                    ],
-                                                                                                                        [
-                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                    [
-                                                                                                                                ] ;
-                                                                                                                                fhir:index 19
-                                                                                                                            ],
-                                                                                                                                [
-                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                            [fhir:value "urn:uuid:da6a0304-f733-4794-843d-5284e216a1f4"
-                                                                                                                                        ] ;
-                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                        [fhir:value "da6a0304-f733-4794-843d-5284e216a1f4"
-                                                                                                                                                    ]
-                                                                                                                                                ] ;
-                                                                                                                                                fhir:index 1
-                                                                                                                                            ],
-                                                                                                                                                [
-                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                            [fhir:value "urn:uuid:84531bbc-26fb-49f8-82a7-e44dd33969a9"
-                                                                                                                                                        ] ;
-                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                        [fhir:value "84531bbc-26fb-49f8-82a7-e44dd33969a9"
-                                                                                                                                                                    ] ;
-                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                ]
-                                                                                                                                                                            ]
-                                                                                                                                                                        ] ;
-                                                                                                                                                                        fhir:index 7
-                                                                                                                                                                    ],
-                                                                                                                                                                        [
-                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                    [
-                                                                                                                                                                                ] ;
-                                                                                                                                                                                fhir:index 21
-                                                                                                                                                                            ],
-                                                                                                                                                                                [
-                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                            [fhir:value "urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
-                                                                                                                                                                                        ] ;
-                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                        [fhir:value "ab17e1fd-f563-4d41-b384-cafbde2ca5d3"
-                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                ]
-                                                                                                                                                                                                            ]
-                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                        fhir:index 2
-                                                                                                                                                                                                    ],
-                                                                                                                                                                                                        [
-                                                                                                                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                    [fhir:value "urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0"
-                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                        [fhir:Resource.id [
-                                                                                                                                                                                                                                [fhir:value "a254509f-4e4c-4554-97a8-df2707ff5df0"
-                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                            fhir:Resource.meta [
-                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                fhir:index 8
-                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                            [fhir:value "urn:uuid:ea69aa61-7106-45ea-8d70-c576df6d85ef"
-                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                                                                        [fhir:value "ea69aa61-7106-45ea-8d70-c576df6d85ef"
-                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                        fhir:index 13
-                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                    [fhir:value "urn:uuid:266ae7e9-ed65-4c36-b48b-9e79a22fac51"
-                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                        [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                [fhir:value "266ae7e9-ed65-4c36-b48b-9e79a22fac51"
-                                                                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                                                                            fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                fhir:index 5
-                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                            [fhir:value "urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c"
-                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                        [fhir:value "1e980f92-1a69-41f3-97f4-8e32d6fe933c"
-                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                        fhir:index 0
-                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                    [
-                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                fhir:index 18
-                                                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                            [fhir:value "urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa"
-                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                        [fhir:value "c6828039-c59f-42e3-b5f4-839ecb3ef1fa"
-                                                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                        fhir:index 11
-                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                                                    [fhir:value "urn:uuid:6be45808-ac19-4a37-8b9e-d4fb09cc639a"
-                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                        [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                [fhir:value "6be45808-ac19-4a37-8b9e-d4fb09cc639a"
-                                                                                                                                                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                                                                                                                                                            fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                fhir:index 9
-                                                                                                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                            [
-                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                        fhir:index 23
-                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                        fhir:index 27
-                                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                        fhir:index 25
-                                                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:value "urn:uuid:cdf45df5-6228-475f-8f7f-dd5341747e6f"
-                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                        [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                                                                                [fhir:value "cdf45df5-6228-475f-8f7f-dd5341747e6f"
-                                                                                                                                                                                                                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                            fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:index 4
-                                                                                                                                                                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:value "urn:uuid:c5e63e5b-dd44-4f8d-91ef-8e85f7a21469"
-                                                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        [fhir:value "c5e63e5b-dd44-4f8d-91ef-8e85f7a21469"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        fhir:index 6
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        fhir:index 24
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:index 17
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:index 26
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:value "urn:uuid:186c0631-f1e8-4afc-9ea1-30f2677e0f7b"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [fhir:value "186c0631-f1e8-4afc-9ea1-30f2677e0f7b"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        fhir:index 10
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:value "urn:uuid:6881da10-fb29-4f52-b460-40dbbb0cb4fe"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [fhir:value "6881da10-fb29-4f52-b460-40dbbb0cb4fe"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            fhir:Resource.meta [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [fhir:index 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:index 3
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            fhir:Bundle.type [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [fhir:value "collection"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                fhir:Resource.id [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [fhir:value "7da629f4-e38a-49c3-b57b-99fdead7554b"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    fhir:nodeRole fhir:treeRoot .
+                fhir:index "0"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "latitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "42.66457229468093"^^xsd:decimal
+                ]
+            ] ;
+            fhir:Extension.url [
+                fhir:value "http://hl7.org/fhir/StructureDefinition/geolocation"
+            ]
+        ]
+    ] ;
+    fhir:Patient.birthDate [
+        fhir:value "1928-02-24"^^xsd:date
+    ] ;
+    fhir:Patient.communication [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Patient.communication.language [
+            fhir:CodeableConcept.coding [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "es"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Spanish"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/ValueSet/languages"
+                ]
+            ]
+        ]
+    ] ;
+    fhir:Patient.deceasedDateTime [
+        fhir:value "1987-12-11T14:41:11-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Patient.gender [
+        fhir:value "male"
+    ] ;
+    fhir:Patient.identifier [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "urn:oid:2.16.840.1.113883.4.3.25"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v2/0203/DL> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "DL"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v2/0203"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "S99941129"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "https://github.com/synthetichealth/synthea"
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "8100a81c-85f8-46cd-9012-57f3c0bc8ef7"
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "http://hl7.org/fhir/sid/us-ssn"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/identifier-type/SB> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "SB"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/identifier-type"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "999496119"
+        ]
+    ] ;
+    fhir:Patient.maritalStatus [
+        fhir:CodeableConcept.coding [
+            a <http://hl7.org/fhir/v3/MaritalStatus/M> ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "M"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/v3/MaritalStatus"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "M"
+        ]
+    ] ;
+    fhir:Patient.multipleBirthBoolean [
+        fhir:value "false"^^xsd:boolean
+    ] ;
+    fhir:Patient.name [
+        fhir:index "0"^^xsd:integer ;
+        fhir:HumanName.family [
+            fhir:value "MacGyver396"
+        ] ;
+        fhir:HumanName.given [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Trey101"
+        ] ;
+        fhir:HumanName.prefix [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Mr."
+        ] ;
+        fhir:HumanName.use [
+            fhir:value "official"
+        ]
+    ] ;
+    fhir:Patient.photo [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Attachment.contentType [
+            fhir:value "image/png"
+        ] ;
+        fhir:Attachment.data [
+            fhir:value "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"^^xsd:base64Binary
+        ] ;
+        fhir:Attachment.title [
+            fhir:value "Biometrics.Fingerprint"
+        ]
+    ] ;
+    fhir:Patient.telecom [
+        fhir:index "0"^^xsd:integer ;
+        fhir:ContactPoint.system [
+            fhir:value "phone"
+        ] ;
+        fhir:ContactPoint.use [
+            fhir:value "home"
+        ] ;
+        fhir:ContactPoint.value [
+            fhir:value "1-920-866-7408"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "1e980f92-1a69-41f3-97f4-8e32d6fe933c"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-PersonOfRecord"
+        ]
+    ] .
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <http://hl7.org/fhir/Bundle/7da629f4-e38a-49c3-b57b-99fdead7554b.ttl> a owl:Ontology ;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    owl:imports fhir:fhir.ttl .
+<http://hl7.org/fhir/Patient/1e980f92-1a69-41f3-97f4-8e32d6fe933c.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/urn:uuid:85dcae9e-7c24-4276-a9ef-9d7f1884079a> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:da6a0304-f733-4794-843d-5284e216a1f4> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:ea69aa61-7106-45ea-8d70-c576df6d85ef> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:c6828039-c59f-42e3-b5f4-839ecb3ef1fa> a fhir:Resource .
+
+fhir: a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:a254509f-4e4c-4554-97a8-df2707ff5df0> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:1e980f92-1a69-41f3-97f4-8e32d6fe933c> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:ab17e1fd-f563-4d41-b384-cafbde2ca5d3> a fhir:Resource .
 
