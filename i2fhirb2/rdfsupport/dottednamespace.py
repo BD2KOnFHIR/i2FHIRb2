@@ -25,7 +25,6 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional
 
 from rdflib import Namespace, URIRef
 
@@ -37,7 +36,7 @@ class DottedNamespace(Namespace):
     def __new__(cls, value):
         return Namespace.__new__(cls, value)
 
-    def __getattribute__(self, item):
+    def __getattribute__(self, item: str) -> "DottedURIRef":
         if item == 'index':
             return DottedURIRef(str(self) + item)
         else:

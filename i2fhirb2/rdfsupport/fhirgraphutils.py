@@ -26,7 +26,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime, date
-from typing import Union, Optional, Tuple
+from typing import Union, Optional, Tuple, List
 
 from rdflib import Graph, BNode, Literal, RDF
 from rdflib.term import Identifier, URIRef, Node
@@ -100,3 +100,61 @@ def link(g: Graph, subject: Node, predicate: URIRef) -> Tuple[Optional[URIRef], 
             typ = g.value(l, RDF.type)
             return l, typ
     return None, None
+
+
+class CodeableConcept:
+    def __init__(self, system: str, code: str, uri: Optional[URIRef]=None):
+        self.system = system
+        self.code = code
+        self.uri = uri
+
+    def __lt__(self, other):
+        return repr(self) < repr(other)
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
+    def __repr__(self):
+        return "({}, {}, {})".format(self.system, self.code, self.uri)
+
+    def __str__(self):
+        return 'CodeableConcept("{}", "{}", {})'.format(self.system, self.code,
+                                                        'URIRef("{}")'.format(self.uri) if self.uri else "None")
+
+
+def codeable_concept_code(g: Graph, subject: Node, predicate: URIRef, system: Optional[str]=None) -> List[CodeableConcept]:
+    """
+    Return a list of CodeableConcept entries for the supplied subject and predicate in graph g
+    :param g: graph containing the data
+    :param subject: subject
+    :param predicate: predicate
+    :param system: coding system.  If present, only concepts in this system will be returned
+    :return: system, code and optional URI of matching concept(s)
+    """
+    # EXAMPLE:
+    # fhir:Patient.maritalStatus [
+    #    fhir:CodeableConcept.coding [
+    #      fhir:index 0;
+    #      a sct:36629006;
+    #      fhir:Coding.system [ fhir:value "http://snomed.info/sct" ];
+    #      fhir:Coding.code [ fhir:value "36629006" ];
+    #      fhir:Coding.display [ fhir:value "Legally married" ]
+    #    ], [
+    #      fhir:index 1;
+    #      fhir:Coding.system [ fhir:value "http://hl7.org/fhir/v3/MaritalStatus" ];
+    #      fhir:Coding.code [ fhir:value "M" ]
+    #    ]
+    # ];
+    rval = []
+    coded_entry = g.value(subject, predicate, any=False)
+    if coded_entry:
+        for codeable_concept in list(g.objects(coded_entry, FHIR.CodeableConcept.coding)):
+            coding_system = value(g, codeable_concept, FHIR.Coding.system)
+            coding_code = value(g, codeable_concept, FHIR.Coding.code)
+            if coding_system and coding_code and (system is None or system == coding_system):
+                rval.append(CodeableConcept(coding_system, coding_code, g.value(codeable_concept, RDF.type, any=False)))
+    return rval
+
+
+
+

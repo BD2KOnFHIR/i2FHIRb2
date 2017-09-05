@@ -3,3 +3,4 @@ SQLAlchemy
 python-dateutil
 rdflib>=4.2.2
 psycopg2
+dirlistproc

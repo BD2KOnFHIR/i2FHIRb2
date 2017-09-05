@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Tuple, Dict, Optional
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping, PatientIDEStatus
@@ -50,7 +50,8 @@ class PatientNumberGenerator:
         session = sessionmaker(bind=tables.crc_engine)()
         q = func.max(tables.patient_dimension.c.patient_num)
         if ignore_upload_id is not None:
-            q = q.filter(tables.patient_dimension.c.upload_id != ignore_upload_id)
+            q = q.filter(or_(tables.patient_dimension.c.upload_id.is_(None),
+                         tables.patient_dimension.c.upload_id != ignore_upload_id))
         qr = session.query(q).all()
         self._next_number = qr[0][0] + 1
         session.close()

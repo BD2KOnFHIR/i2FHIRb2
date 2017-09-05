@@ -1,7 +1,0 @@
-grep activitydefinition-example *
-grep activitydefinition-medicationorder-example *
-grep capabilitystatement-base *
-grep careplan-example-f001-heart *
-grep claim-example *
-grep claimresponse-example-vision-3tier *
-grep patient-example *

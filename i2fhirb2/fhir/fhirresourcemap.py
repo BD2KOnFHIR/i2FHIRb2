@@ -34,7 +34,9 @@ from i2fhirb2.rdfsupport.fhirgraphutils import value, link
 
 
 class FHIR_Resource_type:
-    pass
+
+    def fact_key_for(self, g: Graph, subj: URIRef) -> Tuple[Optional[URIRef], Optional[URIRef], Optional[URIRef]]:
+        return None, None, None
 
 
 class FHIR_Infrastructure_type(FHIR_Resource_type):
@@ -76,7 +78,10 @@ class FHIR_Provider_Dimension_type(FHIR_Resource_type):
 
 
 class FHIR_Patient_Dimension_type(FHIR_Resource_type):
-    pass
+
+    def fact_key_for(self, g: Graph, subj: URIRef) -> Tuple[Optional[URIRef], Optional[URIRef], Optional[URIRef]]:
+        return subj, None, link(g, subj, FHIR.managingOrganization)[0]
+
 
 
 class FHIR_Bundle_type(FHIR_Resource_type):

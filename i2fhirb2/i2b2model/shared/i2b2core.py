@@ -173,4 +173,5 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
                 num_inserts += conn.execute(table.insert(), inserts[:500]).rowcount
                 inserts = inserts[500:]
                 print(".", end='')
+            print('\n')
         return num_inserts, num_updates

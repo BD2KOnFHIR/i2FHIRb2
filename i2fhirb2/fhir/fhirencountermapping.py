@@ -28,7 +28,7 @@
 from typing import Dict, Tuple, Optional
 
 from rdflib import URIRef
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
@@ -52,7 +52,8 @@ class EncounterNumberGenerator:
         session = sessionmaker(bind=tables.crc_engine)()
         q = func.max(tables.visit_dimension.c.encounter_num)
         if ignore_upload_id is not None:
-            q = q.filter(tables.visit_dimension.c.upload_id != ignore_upload_id)
+            q = q.filter(or_(tables.visit_dimension.c.upload_id.is_(None),
+                         tables.visit_dimension.c.upload_id != ignore_upload_id))
         qr = session.query(q).all()
         self._next_number = qr[0][0] + 1
         session.close()
