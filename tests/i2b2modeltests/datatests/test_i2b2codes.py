@@ -25,35 +25,27 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from argparse import ArgumentParser, Namespace
 
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
-
-
-def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
-    parser.add_argument("-db", "--dburl", help="Default database URL")
-    parser.add_argument("--user", help="Default user name")
-    parser.add_argument("--password", help="Default password")
-    parser.add_argument("--crcdb", help="CRC database URL.  (default: DBURL)")
-    parser.add_argument("--crcuser", help="User name for CRC database. (default: USER)")
-    parser.add_argument("--crcpassword", help="Password for CRC database. (default: PASSWORD")
-    parser.add_argument("--ontdb", help="Ontology database URL.  (default: DBURL)")
-    parser.add_argument("--ontuser", help="User name for ontology database. (default: USER)")
-    parser.add_argument("--ontpassword", help="Password for ontology database. (default: PASSWORD")
-    return parser
+import unittest
 
 
-def process_parsed_args(opts: Namespace) -> Namespace:
-    def setdefault(vn: str, default: object) -> None:
-        assert vn in opts, "Unknown option"
-        if not getattr(opts, vn):
-            setattr(opts, vn, default)
+class I2B2CodesTestCase(unittest.TestCase):
 
-    setdefault('crcdb', opts.dburl)
-    setdefault('crcuser', opts.user)
-    setdefault('crcpassword', opts.password)
-    setdefault('ontdb', opts.dburl)
-    setdefault('ontuser', opts.user)
-    setdefault('ontpassword', opts.password)
-    opts.tables = I2B2Tables(opts)
-    return opts
+    def test_codes(self):
+        from i2fhirb2.i2b2model.data.i2b2codes import I2B2DemographicsCodes
+        self.assertEqual('DEM|AGE:-1', I2B2DemographicsCodes.age())
+        self.assertEqual('DEM|AGE:17', I2B2DemographicsCodes.age(17))
+        self.assertEqual('DEM|AGE:0', I2B2DemographicsCodes.age(0))
+        self.assertEqual('DEM|DATE:birth', I2B2DemographicsCodes.birthdate)
+        self.assertEqual('DEM|LANGUAGE:bulg', I2B2DemographicsCodes.language('bulg'))
+        self.assertEqual('DEM|SEX:m', I2B2DemographicsCodes.sex_male)
+        self.assertEqual('DEM|SEX:@', I2B2DemographicsCodes.sex_unknown)
+        self.assertEqual('DEM|VITAL:y', I2B2DemographicsCodes.vital_dead)
+        self.assertEqual('DEM|ZIP:55901', I2B2DemographicsCodes.zip(55901))
+
+        self.assertEqual('DEM|SEX:m', I2B2DemographicsCodes().sex_male)
+
+
+
+if __name__ == '__main__':
+    unittest.main()

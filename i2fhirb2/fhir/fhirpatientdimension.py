@@ -26,21 +26,22 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 from rdflib import Graph, URIRef, Literal, XSD
 
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.fhir.fhirspecific import FHIR, FHIR_RE_ID, FHIR_RE_BASE, V3, SNOMEDCT, \
-    FHIR_RESOURCE_RE
+from i2fhirb2.fhir.fhirspecific import FHIR, V3, SNOMEDCT
+from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
 
 
 # TODO: is there any reason to pull patient_id from Patient.identifier rather than URL?
-# TODO: what of foreign addresses
+# TODO: what of foreign addresses?
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
-from i2fhirb2.rdfsupport.fhirgraphutils import value, extension, concept_uri, code
+from i2fhirb2.rdfsupport.fhirgraphutils import value, extension, concept_uri, codeable_concept_code
 from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
+from i2fhirb2.i2b2model.data.i2b2codes import I2B2DemographicsCodes
 
 
 class FHIRPatientDimension:
@@ -59,6 +60,12 @@ class FHIRPatientDimension:
         self.patient_dimension_entry = PatientDimension(self.patient_mappings.patient_num,
                                                         VitalStatusCd(VitalStatusCd.bd_unknown,
                                                                       VitalStatusCd.dd_unknown))
+
+        # Additional attributes that don't go into patient dimension but are recorded as observation facts
+        self._language = None
+        self._marital_status = None
+        self._race = None
+        self._religion = None
         self.add_patient_information(g, patient)
 
     @staticmethod
@@ -83,11 +90,13 @@ class FHIRPatientDimension:
                 self.patient_dimension_entry._sex_cd = 'M'
             elif gender == "female":
                 self.patient_dimension_entry._sex_cd = 'F'
+            elif gender == "other":
+                self.patient_dimension_entry._sex_cd = 'U'
 
             # deceased.deceasedBoolean --> vital_status_code.deathInd
             isdeceased = value(g, patient, FHIR.Patient.deceasedBoolean)
             if isdeceased is not None:
-                self.patient_dimension_entry.deathcode = VitalStatusCd.dd_deceased if isdeceased \
+                self.patient_dimension_entry._vital_status_cd = VitalStatusCd.dd_deceased if isdeceased \
                     else VitalStatusCd.dd_living
 
             # deceased.deceasedDateTime --> deathcode / death_date
@@ -104,10 +113,12 @@ class FHIRPatientDimension:
             self.birthdate = birthdate
 
             # address -- use == home / period.end is empty or past deathcode date
-            for address in g.objects(patient, FHIR.Patient.address):
-                if value(g, address, FHIR.Address.use) == "home":
+            addresses = g.objects(patient, FHIR.Patient.address)
+            for address in addresses:
+                address_use = value(g, address, FHIR.Address.use)
+                if address_use is None or address_use == "home":
                     period = g.value(address, FHIR.Address.period)
-                    if period and value(g, period, FHIR.Period.end) is None:
+                    if not period or (period and value(g, period, FHIR.Period.end) is None):
                         city = value(g, address, FHIR.Address.city)
                         state = value(g, address, FHIR.Address.state)
                         zipcode = value(g, address, FHIR.Address.postalCode)
@@ -118,20 +129,41 @@ class FHIRPatientDimension:
                                     'Zip codes\\' + state + '\\' + city + '\\' + zipcode + '\\'
 
             # maritalStatus --> map to 'single', 'married', 'divorced', 'widow', other?
-            # TODO: This should be done with an ontology
-            ms = code(g, patient, FHIR.Patient.maritalStatus, V3.MaritalStatus)
-            if ms:
-                if ms != 'UNK':
-                    self.patient_dimension_entry._marital_status_cd = \
-                        'divorced' if ms in ['A', 'D'] else \
-                        'married' if ms in ['L', 'M', 'P'] else \
-                        'widow' if ms in ['W'] else \
-                        'single'
+            marital_stati = codeable_concept_code(g, patient, FHIR.Patient.maritalStatus)
+            for ms in marital_stati:
+                if ms.system == str(V3.MaritalStatus):
+                    self._marital_status = marital_stati[0]
+                    msc = self._marital_status.code
+                    if msc != 'UNK':
+                        self.patient_dimension_entry._marital_status_cd = \
+                            'divorced' if msc in ['A', 'D'] else \
+                            'married' if msc in ['L', 'M', 'P'] else \
+                            'widow' if msc in ['W'] else \
+                            'single'
+                    break
             else:
                 msuri = concept_uri(g, patient, FHIR.Patient.maritalStatus, SNOMEDCT)
                 if msuri:
                     # TODO: figure out what to do with SNOMED id's (terminology service, anyone?)
                     pass
+
+            # language
+            communications = list(g.objects(patient, FHIR.Patient.communication))
+            language = None
+            for communication in communications:
+                pref = value(g, communication, FHIR.Patient.communication.preferred)
+                if pref or (pref is None and len(communications) == 1):
+                    languages = codeable_concept_code(g, communication, FHIR.Patient.communication.language)
+                    if languages:
+                        language = languages[0]
+                        break
+
+            if language is not None:
+                self._language = language.code
+
+            # race - not a part of the core fhir spec or known extensions
+
+            # religion
 
     @property
     def birthdate(self) -> Literal:
@@ -192,3 +224,56 @@ class FHIRPatientDimension:
             else:
                 self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_hour
             self.patient_dimension_entry._death_date = dd.toPython()
+
+    def as_observation_facts(self, encounter_num: int, provider_id: str, start_date: datetime) -> List[ObservationFact]:
+        rval = []
+        pde = self.patient_dimension_entry
+        ofk = ObservationFactKey(self.patient_dimension_entry.patient_num, encounter_num, provider_id, start_date)
+
+        # Age entry
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.age(pde.age_in_years_num)))
+
+        # Sex
+        rval.append(ObservationFact(ofk, 
+                                    I2B2DemographicsCodes.sex_female if pde.sex_cd == 'F'
+                                    else I2B2DemographicsCodes.sex_male if pde.sex_cd == 'M'
+                                    else I2B2DemographicsCodes.sex_undifferentiated if pde.sex_cd == 'U'
+                                    else I2B2DemographicsCodes.sex_unknown))
+
+        # Birthdate
+        if pde.birth_date:
+            bd_of = ObservationFact(ofk, I2B2DemographicsCodes.birthdate)
+            bd_of._date_val(pde.birth_date)
+            rval.append(bd_of)
+
+        # Deathdate
+        if pde.death_date:
+            dd_of = ObservationFact(ofk, I2B2DemographicsCodes.birthdate)
+            dd_of._date_val(pde.death_date)
+            rval.append(dd_of)
+
+        # Language
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.language(self._language)))
+
+        # Marital status
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.marital_status(self._marital_status)))
+
+        # race
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.race(self._race)))
+
+        # religion
+        # Religion codes currently like the FHIR
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.religion(self._religion)))
+
+        # vital -- no idea what vital_deferred means
+        rval.append(
+            ObservationFact(ofk,
+                            I2B2DemographicsCodes.vital_living
+                            if pde._vital_status_code.dd_deceased == VitalStatusCd.dd_living
+                            else I2B2DemographicsCodes.vital_unknown if pde._vital_status_code.dd_unknown
+                            else I2B2DemographicsCodes.vital_dead))
+
+        # zip
+        rval.append(ObservationFact(ofk, I2B2DemographicsCodes.zip(pde.zip_cd)))
+
+        return rval

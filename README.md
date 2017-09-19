@@ -65,8 +65,9 @@ Python 3.6.1
     Collecting rdflib (from i2FHIRb2==0.0.2)
       Using cached rdflib-4.2.2-py3-none-any.whl
        ...
+    (venv) > 
    ```
-   (Don't miss the '.' in the above command)
+   (Don't miss the period  ('.') in the above command)
    
    i2FHIRb2 comes with the python postgresql driver (psycopg2) pre-installed. If you are using an Oracle databae, you need to:
    ```text
@@ -79,55 +80,16 @@ Python 3.6.1
     There are a number of different dialects available for Microsoft SQL Server. See: http://docs.sqlalchemy.org/en/latest/dialects/mssql.html for details. Note that the same testing caveat applies.
 4) Validate the installation
     ```bash
-    (venv) > generate_i2b2 -h
+    (venv) > generate_i2b2
      usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
-                     [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-g]
-                     [-v] [--list] [-db DBURL] [-u USER] [-p PASSWORD]
-                     [--test] [--crcdb CRCDB] [--crcuser CRCUSER]
+                     [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
+                     [--list] [-db DBURL] [-u USER] [-p PASSWORD] [--test]
+                     [--crcdb CRCDB] [--crcuser CRCUSER]
                      [--crcpassword CRCPASSWORD] [--ontdb ONTDB]
                      [--ontuser ONTUSER] [--ontpassword ONTPASSWORD]
                      [--onttable ONTTABLE]
                      indir
-
-    FHIR in i2b2 metadata generator
-    
-    positional arguments:
-      indir                 Input directory or URI of w5.ttl and fhir.ttl files
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -o OUTDIR, --outdir OUTDIR
-                            Output directory to store .tsv files. If absent, .tsv
-                            files are not generated.
-      -t TABLE, --table TABLE
-                            Table to update (concept_dimension,
-                            modifier_dimension, ontology_table, table_access)
-                            (default: All tables)
-      -r RESOURCE, --resource RESOURCE
-                            Name of specific resource to emit (e.g. Observation).
-                            (default: all)
-      --sourcesystem SOURCESYSTEM_CD
-                            sourcesystem code (default: "FHIR STU3")
-      --base BASE           Concept dimension base path. (default: "\FHIR\")
-      -l, --load            Load i2b2 SQL tables
-      -g, --gentsv          Generate TSV output
-      -v, --version         show program's version number and exit
-      --list                List table names
-      -db DBURL, --dburl DBURL
-                            Default database URL
-      -u USER, --user USER  Default user name
-      -p PASSWORD, --password PASSWORD
-                            Default password
-      --test                Test the confguration
-      --crcdb CRCDB         CRC database URL. (default: DBURL)
-      --crcuser CRCUSER     User name for CRC database. (default: USER)
-      --crcpassword CRCPASSWORD
-                            Password for CRC database. (default: PASSWORD
-      --ontdb ONTDB         Ontology database URL. (default: DBURL)
-      --ontuser ONTUSER     User name for ontology database. (default: USER)
-      --ontpassword ONTPASSWORD
-                            Password for ontology database. (default: PASSWORD
-      --onttable ONTTABLE   Ontology table name (default: custom_meta)
+    generate_i2b2: error: the following arguments are required: indir
    ```
 5) Edit the SQL configuration file.
       
@@ -136,57 +98,61 @@ Python 3.6.1
     ```text
     > cd scripts
     > edit db_conf
-    -db "postgresql+psycopg2://localhost:5432/i2b2"
+    --dburl "postgresql+psycopg2://localhost:5432/i2b2"
     --user postgres
     --password postgres
     ```
-    (Note that these parameters can also be run directly from the command line:
+    (Note that these parameters can also be entered directly from the command line:
     ```text
     (venv) > generate_i2b2 tests/data -l -db "postgresql+psycopg2://localhost:5432/i2b2" -u postgres -p postgres``)
  
 6) Test the configuration:
     ```text
-    (venv) > generate_i2b2 tests/data --test @db.conf
-     Validating input files
-        File: ../tests/data/fhir.ttl exists
-        File: ../tests/data/w5.ttl exists
-    Validating sql connection
-        Connection validated
-    Validating target tables
-        Table concept_dimension exists
-        Table modifier_dimension exists
-        Table ontology_table exists
-        Table patient_dimension exists
-        Table provider_dimension exists
-        Table table_access exists
-        Table visit_dimension exists
-    Testing write access
-        2 rows updated in table_access table
-     (venv) >
-        
+    (venv) > generate_i2b2 ../tests/data/fhir_metadata_vocabulary/ --test @db_conf
+Validating input files
+	File: ../tests/data/fhir_metadata_vocabulary/fhir.ttl exists
+	File: ../tests/data/fhir_metadata_vocabulary/w5.ttl exists
+Validating sql connection
+	Connection validated
+Validating target tables
+	Table concept_dimension exists
+	Table encounter_mapping exists
+	Table modifier_dimension exists
+	Table ontology_table exists
+	Table patient_dimension exists
+	Table patient_mapping exists
+	Table provider_dimension exists
+	Table table_access exists
+	Table visit_dimension exists
+Testing write access
+	2 rows updated in table_access table
+     (venv) > 
     ```
-   
+ 
+ Further instructions for running the various loader functions can be found in the [scripts](scripts) directory.
+ 
+ 
 6) Run the FHIR in i2b2 loader
 
 ```text
-(venv) > generate_i2b2 tests/data -l @db_conf
+(venv) > generate_i2b2 http://build.fhir.org/ -l @db_conf
 Loading fhir.ttl
 loading w5.ttl
 1 i2b2metadata.table_access record inserted
 Changing length of concept_dimension.concept_cd from 50 to 200
-1466 i2b2demodata.concept_dimension records inserted
+1493 i2b2demodata.concept_dimension records inserted
 Changing length of modifier_dimension.modifier_cd from 50 to 200
-6629 i2b2demodata.modifier_dimension records inserted
+2392 i2b2demodata.modifier_dimension records inserted
 Changing length of custom_meta.c_basecode from 50 to 200
 Changing length of custom_meta.c_tooltip from 700 to 1600
-10016 i2b2metadata.custom_meta records inserted
+10171 i2b2metadata.custom_meta records inserted
 (venv) >
 ```
 
 ### Importing .tsv files
 
 
-**NOTE**: Before you load the files below, you need to adjust the length of the following columns:
+**NOTE**: Before you load the files below, you may need to adjust the length of the following columns:
 <table>
 <tr>
 <td><b>table</b></td>

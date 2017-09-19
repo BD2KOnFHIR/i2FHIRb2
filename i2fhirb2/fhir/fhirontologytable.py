@@ -25,14 +25,15 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional, List, cast, Callable
+from collections import OrderedDict
+from typing import Optional, List, cast, Callable, Dict
 
 from rdflib import URIRef, RDFS
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirspecific import concept_code, concept_path, W5, w5_infrastructure_categories, \
-    skip_fhir_predicates
+from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
+from i2fhirb2.fhir.fhirspecific import concept_path, W5, w5_infrastructure_categories, composite_uri, FHIR
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
     ModifierOntologyEntry
 
@@ -53,56 +54,61 @@ class FHIROntologyTable(FHIRMetadata):
             for path in self.i2b2_paths(self._name_base, subj, RDFS.subClassOf):
                 rval.append(ConceptOntologyEntry(subj, path, path, False, False))
 
-        for subj in self.fhir_concepts(subject):
-            if subj not in skip_fhir_predicates:
-                for path in self.i2b2_paths(self._name_base, subj, RDFS.subClassOf, self.is_w5_path):
-                    if '.' not in split_uri(subj)[1]:
-                        # TODO: find a semantic way to resolve this -- lexical parsing is brittle
-                        rval.append(ConceptOntologyEntry(subj, path, path, False))
-                    # Add an entry for each property of the subject
-                    for prop in self.concept_properties(subj):
-                        for obj in self.g.objects(prop, RDFS.range):
-                            if self.is_primitive(obj):
-                                # Primitive type -- Can be accessed with a single code
-                                entry = ConceptOntologyEntry(prop,
-                                                             path,
-                                                             self._name_base,
-                                                             True,
-                                                             True,
-                                                             obj)
-                            else:
-                                # Nested type -- first level becomes a concept, the remainder will be classes
-                                entry = ConceptOntologyEntry(prop,
-                                                             path,
-                                                             self._name_base,
-                                                             False,
-                                                             '.' in concept_code(prop))
-                                rval += self.modifiers(subj, prop, entry.c_fullname, self._name_base)
-                            rval.append(entry)
+        # fhir_concepts is an ordered dictionary whose keys are all concept_dimension concepts and
+        # whose range is a tuple consisting of a type and an optional parent concept uri if the
+        # concept isn't a root resource
+        fhir_concepts = self.fhir_concepts(subject)
+        base_paths = OrderedDict()          # type: Dict[URIRef, [str]]
+        subj_parents = dict()               # type: Dict[URIRef, URIRef]
 
+        # Determine all of the i2b2 paths to the root concepts
+        for subj in fhir_concepts.keys():
+            if fhir_concepts[subj][1] is None:
+                base_paths[subj] = self.i2b2_paths(self._name_base, subj, RDFS.subClassOf, self.is_w5_path)
+            else:
+                subj_parents[subj] = fhir_concepts[subj][1]
+
+        # Extend the paths to include the synthesized codes
+        while subj_parents:
+            parents_items = list(subj_parents.items())
+            for subj, parent in parents_items:
+                if parent in base_paths:
+                    base_paths[subj] = base_paths[parent]
+                    subj_parents.pop(subj)
+
+        for subj in base_paths.keys():
+            # Root resource code - non-leaf, non-draggable
+            if fhir_concepts[subj][1] is None:
+                for path in base_paths[subj]:
+                    rval.append(ConceptOntologyEntry(subj, path, path, False, False))
+            else:
+                subj_type = fhir_concepts[subj][0]
+                for path in base_paths[subj]:
+                    if self.is_primitive(subj_type):
+                        rval.append(ConceptOntologyEntry(subj, path, self._name_base, True, True, subj_type))
+                    else:
+                        rval.append(ConceptOntologyEntry(subj, path, self._name_base, False, True))
+                        rval += self.modifiers_and_primitives(subj, subj_type, path)
         return rval
 
-    def modifiers(self, subj: URIRef, prop: URIRef, full_concept_path: str, modifier_base_path: str,
-                  depth: int=1) -> List[ModifierOntologyEntry]:
+    def modifiers_and_primitives(self, subj: URIRef, subj_type: URIRef, path: str) -> List[OntologyEntry]:
         rval = []
-        value_added = False
-        for range_obj in self.g.objects(prop, RDFS.range):
-            # TODO: vp always returns none.  Reconcile this
-            # vp = self.value_property(prop)
-            # if vp:
-            #     if not value_added:
-            #         rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
-            #                                           vp))
-            #         value_added = True
-            # elif self.is_primitive(range_obj):
-            if self.is_primitive(range_obj):
-                rval.append(ModifierOntologyEntry(depth, subj, prop, full_concept_path, modifier_base_path, True,
-                                                  prop, range_obj))
-            else:
-                recursive_modifiers = self.generate_modifier_path(prop, range_obj)
-                for rm in recursive_modifiers:
-                    rval.append(ModifierOntologyEntry(rm.hlevel, subj, rm.fullname, full_concept_path,
-                                                      modifier_base_path, self.is_primitive(rm.type), rm.dimcode, rm.type))
+        # Level 0 modifiers -- create an additional ConceptOntologyEntry for every primitive type
+        # TODO: Facter this pattern out -- it appears in a lot of places
+        pred_types = [(p, self.g.value(p, RDFS.range, any=False))
+                      for p in self.g.subjects(RDFS.domain, subj_type)
+                      if p not in FHIRObservationFactFactory.special_processing_list]
+        for pred, pred_type in pred_types:
+            if self.is_primitive(pred_type):
+                rval.append(ModifierOntologyEntry(1,
+                                                  subj,
+                                                  pred,
+                                                  path + concept_path(subj),
+                                                  self._name_base,
+                                                  self.is_primitive(pred_type),
+                                                  pred,
+                                                  pred_type if self.is_primitive(pred_type) else None))
+
         return rval
 
     def i2b2_paths(self, base: str, subject: URIRef, predicate: URIRef,

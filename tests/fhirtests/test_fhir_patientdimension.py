@@ -81,6 +81,8 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 12345)]), pd_entry.patient_dimension_entry._freeze())
 
+        if len(pd_entry.patient_mappings.patient_mapping_entries) == 0:
+            print("----> HERE!")
         self.assertEqual(2, len(pd_entry.patient_mappings.patient_mapping_entries))
         self.assertEqual(OrderedDict([
              ('patient_ide', 'example'),
@@ -104,6 +106,20 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[1]._freeze())
+
+    @unittest.skip
+    def test_different_dates(self):
+        from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
+        from i2fhirb2.fhir.fhirspecific import FHIR
+
+        g = Graph()
+        g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example-deceased.ttl"),
+               format="turtle")
+        s = FHIR['Patient/example']
+        pd_entry = FHIRPatientDimension(g, s)
+        from pprint import PrettyPrinter; pp = PrettyPrinter().pprint
+        pp(pd_entry.patient_dimension_entry._freeze())
+        self.assertTrue(False)
 
 
 if __name__ == '__main__':

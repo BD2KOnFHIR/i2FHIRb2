@@ -14,18 +14,6 @@
     fhir:ActivityDefinition.contact [
         fhir:index "0"^^xsd:integer ;
         fhir:ContactDetail.telecom [
-            fhir:index "1"^^xsd:integer ;
-            fhir:ContactPoint.system [
-                fhir:value "email"
-            ] ;
-            fhir:ContactPoint.use [
-                fhir:value "work"
-            ] ;
-            fhir:ContactPoint.value [
-                fhir:value "info@motivemi.com"
-            ]
-        ],
-            [
             fhir:index "0"^^xsd:integer ;
             fhir:ContactPoint.system [
                 fhir:value "phone"
@@ -35,6 +23,18 @@
             ] ;
             fhir:ContactPoint.value [
                 fhir:value "415-362-4007"
+            ]
+        ],
+            [
+            fhir:index "1"^^xsd:integer ;
+            fhir:ContactPoint.system [
+                fhir:value "email"
+            ] ;
+            fhir:ContactPoint.use [
+                fhir:value "work"
+            ] ;
+            fhir:ContactPoint.value [
+                fhir:value "info@motivemi.com"
             ]
         ]
     ] ;
@@ -251,7 +251,7 @@
         fhir:value "This activity definition is used as part of various suicide risk order sets"
     ] ;
     fhir:ActivityDefinition.useContext [
-        fhir:index "2"^^xsd:integer ;
+        fhir:index "1"^^xsd:integer ;
         fhir:UsageContext.code [
             fhir:Coding.code [
                 fhir:value "focus"
@@ -262,13 +262,13 @@
         ] ;
         fhir:UsageContext.valueCodeableConcept [
             fhir:CodeableConcept.coding [
-                a sct:40379007 ;
+                a sct:87512008 ;
                 fhir:index "0"^^xsd:integer ;
                 fhir:Coding.code [
-                    fhir:value "40379007"
+                    fhir:value "87512008"
                 ] ;
                 fhir:Coding.display [
-                    fhir:value "Major depression, recurrent, mild"
+                    fhir:value "Mild major depression"
                 ] ;
                 fhir:Coding.system [
                     fhir:value "http://snomed.info/sct"
@@ -302,58 +302,6 @@
         ]
     ],
         [
-        fhir:index "6"^^xsd:integer ;
-        fhir:UsageContext.code [
-            fhir:Coding.code [
-                fhir:value "venue"
-            ] ;
-            fhir:Coding.system [
-                fhir:value "http://hl7.org/fhir/usage-context-type"
-            ]
-        ] ;
-        fhir:UsageContext.valueCodeableConcept [
-            fhir:CodeableConcept.coding [
-                a sct:440655000 ;
-                fhir:index "0"^^xsd:integer ;
-                fhir:Coding.code [
-                    fhir:value "440655000"
-                ] ;
-                fhir:Coding.display [
-                    fhir:value "Outpatient environment"
-                ] ;
-                fhir:Coding.system [
-                    fhir:value "http://snomed.info/sct"
-                ]
-            ]
-        ]
-    ],
-        [
-        fhir:index "1"^^xsd:integer ;
-        fhir:UsageContext.code [
-            fhir:Coding.code [
-                fhir:value "focus"
-            ] ;
-            fhir:Coding.system [
-                fhir:value "http://hl7.org/fhir/usage-context-type"
-            ]
-        ] ;
-        fhir:UsageContext.valueCodeableConcept [
-            fhir:CodeableConcept.coding [
-                a sct:87512008 ;
-                fhir:index "0"^^xsd:integer ;
-                fhir:Coding.code [
-                    fhir:value "87512008"
-                ] ;
-                fhir:Coding.display [
-                    fhir:value "Mild major depression"
-                ] ;
-                fhir:Coding.system [
-                    fhir:value "http://snomed.info/sct"
-                ]
-            ]
-        ]
-    ],
-        [
         fhir:index "4"^^xsd:integer ;
         fhir:UsageContext.code [
             fhir:Coding.code [
@@ -380,10 +328,10 @@
         ]
     ],
         [
-        fhir:index "5"^^xsd:integer ;
+        fhir:index "2"^^xsd:integer ;
         fhir:UsageContext.code [
             fhir:Coding.code [
-                fhir:value "user"
+                fhir:value "focus"
             ] ;
             fhir:Coding.system [
                 fhir:value "http://hl7.org/fhir/usage-context-type"
@@ -391,13 +339,13 @@
         ] ;
         fhir:UsageContext.valueCodeableConcept [
             fhir:CodeableConcept.coding [
-                a sct:309343006 ;
+                a sct:40379007 ;
                 fhir:index "0"^^xsd:integer ;
                 fhir:Coding.code [
-                    fhir:value "309343006"
+                    fhir:value "40379007"
                 ] ;
                 fhir:Coding.display [
-                    fhir:value "Physician"
+                    fhir:value "Major depression, recurrent, mild"
                 ] ;
                 fhir:Coding.system [
                     fhir:value "http://snomed.info/sct"
@@ -430,11 +378,83 @@
                 ]
             ]
         ]
+    ],
+        [
+        fhir:index "6"^^xsd:integer ;
+        fhir:UsageContext.code [
+            fhir:Coding.code [
+                fhir:value "venue"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/usage-context-type"
+            ]
+        ] ;
+        fhir:UsageContext.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a sct:440655000 ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "440655000"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Outpatient environment"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://snomed.info/sct"
+                ]
+            ]
+        ]
+    ],
+        [
+        fhir:index "5"^^xsd:integer ;
+        fhir:UsageContext.code [
+            fhir:Coding.code [
+                fhir:value "user"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/usage-context-type"
+            ]
+        ] ;
+        fhir:UsageContext.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a sct:309343006 ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "309343006"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Physician"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://snomed.info/sct"
+                ]
+            ]
+        ]
     ] ;
     fhir:ActivityDefinition.version [
         fhir:value "1.0.0"
     ] ;
     fhir:DomainResource.contained [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Resource.id [
+            fhir:value "citalopramSubstance"
+        ] ;
+        fhir:Substance.code [
+            fhir:CodeableConcept.coding [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2556"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "citalopram"
+            ]
+        ]
+    ],
+        [
         fhir:index "0"^^xsd:integer ;
         fhir:Medication.code [
             fhir:CodeableConcept.coding [
@@ -497,29 +517,9 @@
         fhir:Resource.id [
             fhir:value "citalopramMedication"
         ]
-    ],
-        [
-        fhir:index "1"^^xsd:integer ;
-        fhir:Resource.id [
-            fhir:value "citalopramSubstance"
-        ] ;
-        fhir:Substance.code [
-            fhir:CodeableConcept.coding [
-                fhir:index "0"^^xsd:integer ;
-                fhir:Coding.code [
-                    fhir:value "2556"
-                ] ;
-                fhir:Coding.system [
-                    fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
-                ]
-            ] ;
-            fhir:CodeableConcept.text [
-                fhir:value "citalopram"
-            ]
-        ]
     ] ;
     fhir:DomainResource.text [
-        fhir:Narrative.div "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: citalopramPrescription</p><p><b>contained</b>: , </p><p><b>url</b>: <a>http://motivemi.com/artifacts/ActivityDefinition/citalopramPrescription</a></p><p><b>identifier</b>: citalopramPrescription (OFFICIAL)</p><p><b>version</b>: 1.0.0</p><p><b>name</b>: CitalopramPrescription</p><p><b>title</b>: Citalopram Prescription</p><p><b>status</b>: active</p><p><b>experimental</b>: true</p><p><b>date</b>: Aug 15, 2015</p><p><b>publisher</b>: Motive Medical Intelligence</p><p><b>description</b>: Citalopram 20 mg tablet 1 tablet oral 1 time daily now (30 table; 3 refills</p><p><b>purpose</b>: Defines a guideline supported prescription for the treatment of depressive disorders</p><p><b>usage</b>: This activity definition is used as part of various suicide risk order sets</p><p><b>approvalDate</b>: Mar 12, 2016</p><p><b>lastReviewDate</b>: Aug 15, 2016</p><p><b>effectivePeriod</b>: Jan 1, 2016 --&gt; Dec 31, 2017</p><p><b>useContext</b>: , , , , , , </p><p><b>jurisdiction</b>: United States of America (the) <span>(Details : {urn:iso:std:iso:3166 code 'US' = 'United States of America (the))</span></p><p><b>topic</b>: Mental Health Treatment <span>(Details )</span></p><p><b>contributor</b>: </p><p><b>contact</b>: </p><p><b>copyright</b>: © Copyright 2016 Motive Medical Intelligence. All rights reserved.</p><p><b>relatedArtifact</b>: , </p><p><b>kind</b>: MedicationRequest</p><p><b>product</b>: id: citalopramMedication; citalopram <span>(Details : {RxNorm code '200371' = '200371)</span>; Tablet dose form <span>(Details : {SNOMED CT code '385055001' = 'Tablet', given as 'Tablet dose form'})</span></p><p><b>dosage</b>: </p><blockquote><p><b>dynamicValue</b></p><p><b>description</b>: dispenseRequest.numberOfRepeatsAllowed is three (3)</p><p><b>path</b>: dispenseRequest.numberOfRepeatsAllowed</p><p><b>language</b>: text/cql</p><p><b>expression</b>: 3</p></blockquote><blockquote><p><b>dynamicValue</b></p><p><b>description</b>: dispenseRequest.quantity is thirty (30) tablets</p><p><b>path</b>: dispenseRequest.quantity</p><p><b>language</b>: text/cql</p><p><b>expression</b>: 30 '{tbl}'</p></blockquote></div>" ;
+        fhir:Narrative.div "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: citalopramPrescription</p><p><b>contained</b>: , </p><p><b>url</b>: <a>http://motivemi.com/artifacts/ActivityDefinition/citalopramPrescription</a></p><p><b>identifier</b>: citalopramPrescription (OFFICIAL)</p><p><b>version</b>: 1.0.0</p><p><b>name</b>: CitalopramPrescription</p><p><b>title</b>: Citalopram Prescription</p><p><b>status</b>: active</p><p><b>experimental</b>: true</p><p><b>date</b>: Aug 15, 2015</p><p><b>publisher</b>: Motive Medical Intelligence</p><p><b>description</b>: Citalopram 20 mg tablet 1 tablet oral 1 time daily now (30 table; 3 refills</p><p><b>purpose</b>: Defines a guideline supported prescription for the treatment of depressive disorders</p><p><b>usage</b>: This activity definition is used as part of various suicide risk order sets</p><p><b>approvalDate</b>: Mar 12, 2016</p><p><b>lastReviewDate</b>: Aug 15, 2016</p><p><b>effectivePeriod</b>: Jan 1, 2016 --&gt; Dec 31, 2017</p><p><b>useContext</b>: , , , , , , </p><p><b>jurisdiction</b>: United States of America (the) <span>(Details : {urn:iso:std:iso:3166 code 'US' = 'United States of America (the))</span></p><p><b>topic</b>: Mental Health Treatment <span>(Details )</span></p><p><b>contributor</b>: </p><p><b>contact</b>: </p><p><b>copyright</b>: © Copyright 2016 Motive Medical Intelligence. All rights reserved.</p><p><b>relatedArtifact</b>: , </p><p><b>kind</b>: MedicationRequest</p><p><b>product</b>: id: citalopramMedication; citalopram <span>(Details : {RxNorm code '200371' = 'citalopram 20 MG Oral Tablet)</span>; Tablet dose form <span>(Details : {SNOMED CT code '385055001' = 'Tablet', given as 'Tablet dose form'})</span></p><p><b>dosage</b>: </p><blockquote><p><b>dynamicValue</b></p><p><b>description</b>: dispenseRequest.numberOfRepeatsAllowed is three (3)</p><p><b>path</b>: dispenseRequest.numberOfRepeatsAllowed</p><p><b>language</b>: text/cql</p><p><b>expression</b>: 3</p></blockquote><blockquote><p><b>dynamicValue</b></p><p><b>description</b>: dispenseRequest.quantity is thirty (30) tablets</p><p><b>path</b>: dispenseRequest.quantity</p><p><b>language</b>: text/cql</p><p><b>expression</b>: 30 '{tbl}'</p></blockquote></div>" ;
         fhir:Narrative.status [
             fhir:value "generated"
         ]

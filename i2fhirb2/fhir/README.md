@@ -5,7 +5,7 @@
 
 ```python
 FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
-    FHIR.Account: FHIR_Observation_type(FHIR.Account.subject, None, FHIR.Account.owner),
+    FHIR.Account: FHIR_Observation_Fact_type(FHIR.Account.subject, None, FHIR.Account.owner),
     FHIR.ActivityDefinition: None,
     FHIR.AdverseEvent: None,
     FHIR.AllergyIntolerance: None,
@@ -17,5 +17,5 @@ FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {
     FHIR.BodyStructure: None,
     FHIR.Bundle: FHIR_Bundle_type,
     FHIR.CapabilityStatement: None,
-    FHIR.CarePlan: FHIR_Observation_type(FHIR.CarePlan.subject, FHIR.CarePlan.context, None),
+    FHIR.CarePlan: FHIR_Observation_Fact_type(FHIR.CarePlan.subject, FHIR.CarePlan.context, None),
 ```

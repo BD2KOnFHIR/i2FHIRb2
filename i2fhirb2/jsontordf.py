@@ -34,6 +34,7 @@ from rdflib import Graph
 
 from i2fhirb2.loaders.fhirjsonloader import fhir_json_to_rdf
 
+# TODO: bad output directory results in errors. A
 dirname, _ = os.path.split(os.path.abspath(__file__))
 
 DEFAULT_FHIR_URI = "http://hl7.org/fhir/"
@@ -67,7 +68,8 @@ def proc_file(infile: str, outfile: str, opts: Namespace) -> bool:
     :param opts:
     :return:
     """
-    g = fhir_json_to_rdf(opts.fhir_metavoc, infile, opts.uribase, opts.graph, add_ontology_header=not opts.noontology)
+    g = fhir_json_to_rdf(opts.fhir_metavoc, infile, opts.uribase, opts.graph, add_ontology_header=not opts.noontology,
+                         do_continuations=not opts.nocontinuation)
     print("{} ".format(infile), end='')
     if g:
         if not opts.outfile:
@@ -112,6 +114,7 @@ def addargs(parser: ArgumentParser) -> None:
     parser.add_argument("-mv", "--metadatavoc", help="FHIR metadata vocabulary", default=DEFAULT_FHIR_MV)
     parser.add_argument("-no", "--noontology", help="Omit owl ontology header", action="store_true")
     parser.add_argument("-nn", "--nonarrative", help="Omit narrative text on output", action="store_true")
+    parser.add_argument("-nc", "--nocontinuation", help="Don't follow URL continuations", action="store_true")
     parser.add_argument("--maxsize", help="Maximum sensible file size in KB.  0 means no size check",
                         type=int, default=800)
     parser.fromfile_prefix_chars = "@"
@@ -127,6 +130,9 @@ def jsontordf(argv: List[str]) -> bool:
     """ Entry point for command line utility """
     dlp = dirlistproc.DirectoryListProcessor(argv, description="Convert FHIR JSON into RDF", infile_suffix=".json",
                                              outfile_suffix=".ttl", addargs=addargs, postparse=postparse)
+    # If it looks like we're processing a URL as an input file, skip the suffix theck
+    if dlp.opts.infile and len(dlp.opts.infile) == 1 and not dlp.opts.indir and "://" in dlp.opts.infile[0]:
+        dlp.infile_suffix = ""
     nfiles, nsuccess = dlp.run(proc=proc_file, file_filter_2=file_filter)
     if nfiles:
         if dlp.opts.graph:

@@ -33,7 +33,9 @@ from collections import OrderedDict
 
 from rdflib import URIRef
 
+from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
 from i2fhirb2.fhir.fhirspecific import FHIR
+from tests.utils.connection_helper import connection_helper
 
 
 class FHIREncounterMappingTestCase(unittest.TestCase):
@@ -76,6 +78,19 @@ class FHIREncounterMappingTestCase(unittest.TestCase):
              ('upload_id', None)]), em.encounter_mapping_entries[1]._freeze())
         self.assertEqual(2, len(em.encounter_mapping_entries))
         self.assertEqual(500000, em.encounter_num)
+
+    def test_encounternum_refresh(self):
+        # Not a lot we can do to test this without knowing what is in the database.   We COULD add something to the
+        # tables and demonstrate that we don't see it if we pass a number in...
+        png = EncounterNumberGenerator(2000017)
+        self.assertEqual(png.new_number(), 2000017)
+        self.assertEqual(png.new_number(), 2000018)
+        opts = connection_helper()
+        png.refresh(opts.tables, None)
+        print("Next encounter number: {}".format(png.new_number()))
+        self.assertNotEqual(png.new_number(), 2000019)
+        png.refresh(opts.tables, 4321)
+        self.assertNotEqual(png.new_number(), 2000019)
 
 
 if __name__ == '__main__':

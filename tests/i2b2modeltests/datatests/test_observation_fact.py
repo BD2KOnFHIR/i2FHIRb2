@@ -64,7 +64,7 @@ class ObservationFactTestCase(unittest.TestCase):
              ('provider_id', 'provider'),
              ('start_date', datetime(2017, 5, 23, 11, 17)),
              ('modifier_cd', '@'),
-             ('instance_num', 1),
+             ('instance_num', 0),
              ('valtype_cd', '@'),
              ('tval_char', None),
              ('nval_num', None),
@@ -93,7 +93,7 @@ class ObservationFactTestCase(unittest.TestCase):
 
         for subj in self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
             obj = self.g.value(subj, FHIR.Observation.status)
-            fof = FHIRObservationFact(self.g, ofk, FHIR.Observation.status, obj)
+            fof = FHIRObservationFact(self.g, ofk, FHIR.Observation.status, None, obj)
             self.assertEqual(OrderedDict([
                  ('encounter_num', 23456),
                  ('patient_num', 12345),
@@ -101,7 +101,7 @@ class ObservationFactTestCase(unittest.TestCase):
                  ('provider_id', 'provider'),
                  ('start_date', datetime(2017, 5, 23, 11, 17)),
                  ('modifier_cd', '@'),
-                 ('instance_num', 1),
+                 ('instance_num', 0),
                  ('valtype_cd', 'T'),
                  ('tval_char', 'final'),
                  ('nval_num', None),

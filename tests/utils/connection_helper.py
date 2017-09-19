@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace, ArgumentParser
 
-from i2fhirb2.sqlsupport.db_connection import add_connection_args, process_parsed_args
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args
 from tests.utils.base_test_case import test_conf_directory
 
 

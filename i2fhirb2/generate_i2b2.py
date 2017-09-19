@@ -31,12 +31,13 @@ from argparse import ArgumentParser, Namespace, Action
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any
+from urllib import request
+from urllib.error import HTTPError
 
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
 from rdflib import Graph, URIRef
-from sqlalchemy import delete, Table, Column, update
-from sqlalchemy.engine import Engine
+from sqlalchemy import delete, Table, update
 
 from i2fhirb2 import __version__
 from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
@@ -47,10 +48,12 @@ from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
-from i2fhirb2.i2b2model.shared.tablenames import i2b2table
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.i2b2model.shared.tablenames import i2b2tables
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
+    change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
+Default_Metavoc_URI = "http://build.fhir.org/"
 Default_Sourcesystem_Code = 'FHIR STU3'
 Default_Base = 'FHIR'
 Default_Path_Base = '\\{}\\'.format(Default_Base)
@@ -73,10 +76,10 @@ def generate_output(o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef]
 
 
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
-    return ((opts.table and opts.table != i2b2table.table_access) or generate_table_access(opts)) and \
-           ((opts.table and opts.table != i2b2table.concept_dimension) or generate_concept_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2table.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2table.ontology_table) or generate_ontology(g, opts))
+    return ((opts.table and opts.table != i2b2tables.table_access) or generate_table_access(opts)) and \
+           ((opts.table and opts.table != i2b2tables.concept_dimension) or generate_concept_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2tables.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2tables.ontology_table) or generate_ontology(g, opts))
 
 
 def generate_table_access(opts: Namespace) -> bool:
@@ -109,7 +112,7 @@ def generate_concept_dimension(g: Graph, opts: Namespace) -> bool:
 
     if opts.outdir:
         return generate_output(FHIRConceptDimension(g, name_base=opts.base), opts, resource,
-                               i2b2table.concept_dimension)
+                               i2b2tables.concept_dimension)
     else:
         table = opts.tables.concept_dimension
         change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
@@ -130,15 +133,6 @@ def update_dimension_table(fo: FHIRMetadata, opts: Namespace, table: Table, tabl
     return True
 
 
-def change_column_length(table: Table, column: Column, length: int, engine: Engine) -> None:
-    if column.type.length < length:
-        print("Changing length of {} from {} to {}".format(column, column.type.length, length))
-        column.type.length = length
-        column_name = column.name
-        column_type = column.type.compile(engine.dialect)
-        engine.execute('ALTER TABLE {table} ALTER COLUMN {column_name} TYPE {column_type}'.format(**locals()))
-
-
 def generate_modifier_dimension(g: Graph, opts: Namespace) -> bool:
     resource = URIRef(opts.resource) if opts.resource else None
 
@@ -148,7 +142,7 @@ def generate_modifier_dimension(g: Graph, opts: Namespace) -> bool:
 
     if opts.outdir:
         return generate_output(FHIRModifierDimension(g, name_base=opts.base), opts, resource,
-                               i2b2table.modifier_dimension)
+                               i2b2tables.modifier_dimension)
     else:
         table = opts.tables.modifier_dimension
         change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
@@ -181,9 +175,9 @@ def generate_ontology(g: Graph, opts: Namespace) -> bool:
 def load_fhir_ontology(opts: Namespace) -> Optional[Graph]:
     g = Graph()
     print("Loading fhir.ttl")
-    g.load(opts.indir + "fhir.ttl", format="turtle")
+    g.load(opts.metavoc + "fhir.ttl", format="turtle")
     print("loading w5.ttl")
-    g.load(opts.indir + "w5.ttl", format="turtle")
+    g.load(opts.metavoc + "w5.ttl", format="turtle")
     return g
 
 
@@ -198,12 +192,19 @@ def test_configuration(opts: Namespace) -> bool:
     write access to at least some of the tables
     """
     def test_ttl_file(name: str) -> bool:
-        f = Path(opts.indir + name)
-        if f.is_file():
-            print("\tFile: {}{} exists".format(opts.indir, name))
+        filename = opts.metavoc + name
+        f = Path(opts.metavoc + name)
+        if '://' in str(filename):
+            try:
+                request.urlopen(filename)
+            except HTTPError as e_:
+                return error("{}: {}".format(filename, e_))
+            print('\tURL: {} is valid'.format(filename))
+        elif f.is_file():
+            print("\tFile: {} exists".format(filename))
             return True
         else:
-            return error("'{}' file not found in {}".format(name, opts.indir))
+            return error("'{}' file not found in {}".format(name, opts.metavoc))
 
     def test_tn(name: str, i2b2tables: I2B2Tables) -> bool:
         if name in [k for k, _ in i2b2tables._tables()]:
@@ -239,8 +240,8 @@ def test_configuration(opts: Namespace) -> bool:
     else:
         print("\tConnection validated")
         print("Validating target tables")
-        for tn in i2b2table.all_tables():
-            if not test_tn(i2b2table.phys_name(tn), tables):
+        for tn in i2b2tables.all_tables():
+            if not test_tn(i2b2tables.phys_name(tn), tables):
                 success = False
 
     if success:
@@ -266,15 +267,17 @@ def create_parser() -> ArgumentParser:
     Create a command line parser
     :return: parser
     """
-    metadata_tables = [i2b2table.concept_dimension, i2b2table.modifier_dimension, i2b2table.ontology_table,
-                       i2b2table.table_access]
-    parser = ArgumentParser(description="FHIR in i2b2 metadata generator", fromfile_prefix_chars='@')
+    metadata_tables = [i2b2tables.concept_dimension, i2b2tables.modifier_dimension, i2b2tables.ontology_table,
+                       i2b2tables.table_access]
+    parser = ArgumentParser(description="FHIR in i2b2 metadata generator")
     # For reasons we don't completely understand, the default parser doesn't split the lines...
     parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
-    parser.add_argument("indir", help="Input directory or URI of w5.ttl and fhir.ttl files")
-    parser.add_argument("-o", "--outdir", help="Output directory to store .tsv files."
-                                               " If absent, .tsv files are not generated.")
-    parser.add_argument("-t", "--table", metavar="TABLE",
+    parser.add_argument("-mv", "--metavoc", metavar="METAVOC URI",
+                        help="Input directory or URI of w5.ttl and fhir.ttl files"
+                             "(default: {})".format(Default_Metavoc_URI), default=Default_Metavoc_URI)
+    parser.add_argument("-od", "--outdir", metavar="TSV OUTPUT DIR",
+                        help="Output directory to store .tsv files. If absent, .tsv files are not generated.")
+    parser.add_argument("-t", "--table", metavar="I2B2 TABLE",
                         help="Table to update ({}) (default: All tables)".format(', '.join(metadata_tables)),
                         choices=metadata_tables)
     parser.add_argument("-r", "--resource",
@@ -285,21 +288,16 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("--base",
                         default=Default_Path_Base,
                         help="Concept dimension base path. (default: \"{}\")".format(Default_Path_Base))
-    parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
-    parser.add_argument("-g", "--gentsv", help="Generate TSV output", action="store_true")
+    parser.add_argument("-l", "--load",
+                        help="Load i2b2 SQL tables", action="store_true")
     parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__))
     parser.add_argument("--list", help="List table names", action="store_true")
-    parser.add_argument("-db", "--dburl", help="Default database URL")
-    parser.add_argument("-u", "--user", help="Default user name")
-    parser.add_argument("-p", "--password", help="Default password")
     parser.add_argument("--test", help="Test the confguration", action="store_true")
-    parser.add_argument("--crcdb", help="CRC database URL.  (default: DBURL)")
-    parser.add_argument("--crcuser", help="User name for CRC database. (default: USER)")
-    parser.add_argument("--crcpassword", help="Password for CRC database. (default: PASSWORD")
-    parser.add_argument("--ontdb", help="Ontology database URL.  (default: DBURL)")
-    parser.add_argument("--ontuser", help="User name for ontology database. (default: USER)")
-    parser.add_argument("--ontpassword", help="Password for ontology database. (default: PASSWORD")
-    parser.add_argument("--onttable", help="Ontology table name (default: {})".format(Default_Ontology_TableName))
+    # Add the database connection arguments list
+    add_connection_args(parser)
+    parser.add_argument("--onttable", metavar="ONTOLOGY TABLE NAME",
+                        help="Ontology table name (default: {})".format(Default_Ontology_TableName),
+                        default=Default_Ontology_TableName)
     return parser
 
 
@@ -310,21 +308,16 @@ def genargs(argv: List[str]) -> Namespace:
         if not getattr(self, vn):
             setattr(self, vn, default)
 
-    opts = create_parser().parse_args(argv)
+    opts = create_parser().parse_args(decode_file_args(argv))
     opts.setdefault = lambda *a: setdefault(opts, *a)
     opts.updatedate = datetime.now()
-    if not opts.indir.endswith(os.sep):
-        opts.indir = os.path.join(opts.indir, '')
+    if not opts.metavoc.endswith(os.sep):
+        opts.metavoc = os.path.join(opts.metavoc, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
-    if opts.load or opts.gentsv or opts.list or opts.test:
-        opts.setdefault('crcdb', opts.dburl)
-        opts.setdefault('crcuser', opts.user)
-        opts.setdefault('crcpassword', opts.password)
-        opts.setdefault('ontdb', opts.dburl)
-        opts.setdefault('ontuser', opts.user)
-        opts.setdefault('ontpassword', opts.password)
-    return opts
+    i2b2tables.ontology_table = opts.onttable
+    # Set the defaults for the crc and ontology tables
+    return process_parsed_args(opts) if opts.load or opts.list or opts.test else opts
 
 
 def generate_i2b2(argv: List[str]) -> bool:
@@ -334,13 +327,13 @@ def generate_i2b2(argv: List[str]) -> bool:
         if not test_configuration(opts):
             return False
     opts.tables = I2B2Tables(opts) if (opts.load or opts.list) and not opts.test else None
-    if opts.load or opts.gentsv:
+    if opts.load or opts.outdir:
         g = load_fhir_ontology(opts)
     else:
         g = None
     if opts.list:
         print('\n'.join(["{} : {}".format(tn, tp) for tn, tp in opts.tables._tables()]))
-    if opts.load or opts.gentsv:
+    if opts.load or opts.outdir:
         return g is not None and generate_i2b2_files(g, opts)
     else:
         return True

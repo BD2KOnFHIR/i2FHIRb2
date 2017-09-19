@@ -27,7 +27,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # TODO: The mapping portion of this function should be loaded from the i2b2 table mapping table
-class _T:
+
+
+class _I2B2Tables:
     _funcs = {"phys_name", "all_tables"}
 
     def __init__(self):
@@ -39,13 +41,13 @@ class _T:
         self.patient_mapping = None
         self.visit_dimension = None
         self.provider_dimension = None
-        self.provider_mapping = None
+        self.encounter_mapping = None
 
     def __getattribute__(self, item):
         if item.startswith("_") or item not in self.__dict__:
             return super().__getattribute__(item)
         v = self.__dict__[item]
-        return item if item not in _T._funcs else v
+        return item if item not in _I2B2Tables._funcs else v
 
     def phys_name(self, item):
         """
@@ -62,6 +64,6 @@ class _T:
         :return:
         """
         return sorted([k for k in self.__dict__.keys()
-                       if k not in _T._funcs and not k.startswith("_")])
+                       if k not in _I2B2Tables._funcs and not k.startswith("_")])
 
-i2b2table = _T()
+i2b2tables = _I2B2Tables()

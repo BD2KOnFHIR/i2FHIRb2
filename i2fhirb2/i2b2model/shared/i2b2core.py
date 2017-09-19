@@ -37,6 +37,7 @@ from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements, DynamicPropTyp
 
 class I2B2_Core(DynObject):
     _t = DynElements()
+    _check_dups = False
 
     def __init__(self,
                  update_date: Optional[DynamicPropType] = None,
@@ -150,13 +151,27 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
             else:
                 inserts.append(record._freeze())
         if inserts:
-            dups = cls._check_for_dups(inserts)
-            if dups:
-                print("{} duplicate records encountered".format(len(dups)))
-                for k, vals in dups.items():
-                    if len(vals) == 2 and vals[0] == vals[1]:
-                        inserts.remove(vals[1])
-                    else:
-                        print("Key: {} has a non-identical dup".format(k))
-            num_inserts = conn.execute(table.insert(), inserts).rowcount
+            if cls._check_dups:
+                dups = cls._check_for_dups(inserts)
+                nprints = 0
+                # TODO: Figure out why duplicates are occuring -- they are very specific
+                if dups:
+                    print("{} duplicate records encountered".format(len(dups)))
+                    for k, vals in dups.items():
+                        if len(vals) == 2 and vals[0] == vals[1]:
+                            inserts.remove(vals[1])
+                        else:
+                            if nprints < 20:
+                                print("Key: {} has a non-identical dup".format(k))
+                            elif nprints == 20:
+                                print(".... more ...")
+                            nprints += 1
+                            for v in vals[1:]:
+                                inserts.remove(v)
+            # TODO: refactor this to load on a per-resource basis.  Temporary fix
+            while inserts:
+                num_inserts += conn.execute(table.insert(), inserts[:500]).rowcount
+                inserts = inserts[500:]
+                print(".", end='')
+            print('\n')
         return num_inserts, num_updates

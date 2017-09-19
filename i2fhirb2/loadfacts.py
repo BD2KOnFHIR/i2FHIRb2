@@ -33,6 +33,8 @@ from typing import List, Optional
 
 from rdflib import Graph
 
+from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
+from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from i2fhirb2.fhir.fhirspecific import DEFAULT_FMV, FHIR, DEFAULT_PROVIDER_ID
 from i2fhirb2.generate_i2b2 import Default_Sourcesystem_Code, Default_Path_Base
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
@@ -44,8 +46,7 @@ from i2fhirb2.loaders.fhirjsonloader import fhir_json_to_rdf
 
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.db_connection import add_connection_args, process_parsed_args
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables
 
 
 def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
@@ -82,7 +83,6 @@ def create_parser() -> ArgumentParser:
     Create a command line parser
     :return: parser
     """
-    # TODO: figure out how to split out the db connection arguments so we can reuse them
     parser = ArgumentParser(description="Load FHIR Resource Data into i2b2 CRC tables", fromfile_prefix_chars='@')
     parser.add_argument("-f", "--file", metavar="Input file", help="URL or name of input file")
     parser.add_argument("-d", "--indir", metavar="Input directory", help="URI of server or directory of input files")
@@ -107,6 +107,7 @@ def create_parser() -> ArgumentParser:
     parser.add_argument("-p", "--providerid", metavar="Default provider id",
                         help="Default provider id (default: {})".format(DEFAULT_PROVIDER_ID),
                         default=DEFAULT_PROVIDER_ID)
+    parser.add_argument("--dupcheck", help="Check for duplicate records before add.", action="store_true")
     return parser
 
 
@@ -116,7 +117,7 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
     :param argv: input arguments
     :return: options if success or None of parameters aren't valid
     """
-    opts = add_connection_args(create_parser()).parse_args(argv)
+    opts = add_connection_args(create_parser()).parse_args(decode_file_args(argv))
     if not (opts.file or opts.indir):
         print("Either an input file or input directory must be supplied", file=sys.stderr)
         return None
@@ -152,30 +153,29 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
 
     if opts.sourcesystem:
         I2B2_Core_With_Upload_Id.sourcesystem_cd = opts.sourcesystem
-        # TODO: make sure this works
-        # PatientDimension.sourcesystem_cd = opts.sourcesystem
-        # PatientMapping.sourcesystem_cd = opts.sourcesystem
-        # ObservationFact.sourcesystem_cd = opts.sourcesystem
-        # VisitDimension.sourcesystem_cd = opts.sourcesystem
-        # EncounterMapping.sourcesystem_cd = opts.sourcesystem
     I2B2_Core_With_Upload_Id.upload_id = opts.uploadid
-    # PatientMapping.upload_id = opts.uploadid
-    # PatientDimension.upload_id = opts.uploadid
-    # ObservationFact.upload_id = opts.uploadid
-    # VisitDimension.upload_id = opts.uploadid
-    # EncounterMapping.upload_id = opts.uploadid
 
     return opts
 
 
 def print_rdf_summary(g: Graph()) -> None:
+    # TODO: Figure out how to count the number of resources
     # num_resources = len(list(g.subject_objects(FHIR.resourceType)))
     num_triples = len(g)
-    print("Loaded ??? resources creating {} triples (Unable to determine how many...)".format(num_triples))
+    # print("Loaded ??? resources creating {} triples (Unable to determine how many...)".format(num_triples))
+    print("{} triples".format(num_triples))
 
 
 def load_graph_map(opts: Namespace) -> Optional[I2B2GraphMap]:
     opts.tables = I2B2Tables(opts) if opts.load else None
+    print("upload_id: {}".format(opts.uploadid))
+    if opts.tables:
+        print("  Starting encounter number: {}"
+             .format(FHIREncounterMapping.refresh_encounter_number_generator(opts.tables,
+                                                                             opts.uploadid if opts.remove else None)))
+        print("  Starting patient number: {}"
+            .format(FHIRPatientMapping.refresh_patient_number_generator(opts.tables,
+                                                                        opts.uploadid if opts.remove else None)))
     g = load_rdf_graph(opts)
     if g:
         update_dt = datetime.now()
@@ -206,7 +206,7 @@ def populate_fact_table(argv: List[str]) -> bool:
             if opts.outdir:
                 i2b2_map.generate_tsv_files()
             if opts.load:
-                i2b2_map.load_i2b2_tables()
+                i2b2_map.load_i2b2_tables(opts.dupcheck)
             return True
 
 

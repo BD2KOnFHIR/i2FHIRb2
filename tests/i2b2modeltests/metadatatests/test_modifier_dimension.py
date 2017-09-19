@@ -98,25 +98,13 @@ class ModifierDimensionTestCase(BaseTestCase):
         ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
 
         ot = FHIRModifierDimension(self.g)
-        self.assertEqual([
-                        '\\FHIR\\Observation\\component\\code\\',
-                        '\\FHIR\\Observation\\component\\dataAbsentReason\\',
-                        '\\FHIR\\Observation\\component\\interpretation\\',
-                        '\\FHIR\\Observation\\component\\referenceRange\\',
-                        '\\FHIR\\Observation\\component\\valueAttachment\\',
-                        '\\FHIR\\Observation\\component\\valueBoolean\\',
-                        '\\FHIR\\Observation\\component\\valueCodeableConcept\\',
-                        '\\FHIR\\Observation\\component\\valueDateTime\\',
-                        '\\FHIR\\Observation\\component\\valueInteger\\',
-                        '\\FHIR\\Observation\\component\\valuePeriod\\',
-                        '\\FHIR\\Observation\\component\\valueQuantity\\',
-                        '\\FHIR\\Observation\\component\\valueRange\\',
-                        '\\FHIR\\Observation\\component\\valueRatio\\',
-                        '\\FHIR\\Observation\\component\\valueSampledData\\',
-                        '\\FHIR\\Observation\\component\\valueString\\',
-                        '\\FHIR\\Observation\\component\\valueTime\\'],
-                     list(e.modifier_path for e in
-                          sorted(ot.dimension_list(domain=FHIR.ObservationComponentComponent))))
+        self.assertEqual(['\\FHIR\\Observation\\component\\valueBoolean\\',
+                          '\\FHIR\\Observation\\component\\valueDateTime\\',
+                          '\\FHIR\\Observation\\component\\valueInteger\\',
+                          '\\FHIR\\Observation\\component\\valueString\\',
+                          '\\FHIR\\Observation\\component\\valueTime\\'],
+                         list(e.modifier_path for e in
+                              sorted(ot.dimension_list(domain=FHIR.ObservationComponentComponent))))
 
 if __name__ == '__main__':
     unittest.main()

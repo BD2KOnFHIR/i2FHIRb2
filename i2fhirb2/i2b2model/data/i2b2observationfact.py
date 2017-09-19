@@ -31,7 +31,7 @@ from typing import Optional, Tuple, List
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class ObservationFactKey:
@@ -166,7 +166,7 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
         Encoded instance number that allows more than one modifier to be provided for each CONCEPT_CD.
         Each row will have a different MODIFIER_CD but a similar INSTANCE_NUM
         """
-        return self._instance_num if self._instance_num is not None else 1
+        return self._instance_num if self._instance_num is not None else 0
 
     @DynObject.entry(_t)
     def valtype_cd(self) -> str:
@@ -291,3 +291,12 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
         :return: number of records added / modified
         """
         return cls._add_or_update_records(tables.crc_connection, tables.observation_fact, records)
+
+    def _date_val(self, dt: datetime) -> None:
+        """
+        Add a date value
+        :param dt: datetime to add
+        """
+        self._tval_char = dt.strftime('%Y-%m-%d %H:%M')
+        self._nval_num = (dt.year * 10000) + (dt.month * 100) + dt.day + \
+                         (((dt.hour / 100.0) + (dt.minute / 10000.0)) if isinstance(dt, datetime) else 0)

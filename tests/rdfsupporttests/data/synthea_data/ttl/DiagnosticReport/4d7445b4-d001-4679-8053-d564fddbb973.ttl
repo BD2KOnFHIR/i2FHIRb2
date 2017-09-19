@@ -37,7 +37,7 @@
     ] ;
     fhir:DiagnosticReport.result [
         fhir:index "0"^^xsd:integer ;
-        fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:1d52ae90-6721-476c-ad4c-ec978eac4a34> ;
+        fhir:link <http://standardhealthrecord.org/fhir/urn%3Auuid%3A1d52ae90-6721-476c-ad4c-ec978eac4a34> ;
         fhir:Reference.display [
             fhir:value "Cause of Death [US Standard Certificate of Death]"
         ] ;
@@ -49,7 +49,7 @@
         fhir:value "final"
     ] ;
     fhir:DiagnosticReport.subject [
-        fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f> ;
+        fhir:link <http://standardhealthrecord.org/fhir/urn%3Auuid%3A526238ef-dec3-401d-a1c1-2974962df23f> ;
         fhir:Reference.reference [
             fhir:value "urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f"
         ]
@@ -67,7 +67,7 @@
 <http://standardhealthrecord.org/fhir/DiagnosticReport/4d7445b4-d001-4679-8053-d564fddbb973.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
 
-<http://standardhealthrecord.org/fhir/urn:uuid:1d52ae90-6721-476c-ad4c-ec978eac4a34> a fhir:Resource .
+<http://standardhealthrecord.org/fhir/urn%3Auuid%3A1d52ae90-6721-476c-ad4c-ec978eac4a34> a fhir:Resource .
 
-<http://standardhealthrecord.org/fhir/urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f> a fhir:Resource .
+<http://standardhealthrecord.org/fhir/urn%3Auuid%3A526238ef-dec3-401d-a1c1-2974962df23f> a fhir:Resource .
 

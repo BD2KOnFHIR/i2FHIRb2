@@ -1,126 +1,769 @@
 @prefix fhir: <http://hl7.org/fhir/> .
+@prefix identifier-type: <http://hl7.org/fhir/identifier-type> .
+@prefix loinc: <http://loinc.org/owl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix v2-0203: <http://hl7.org/fhir/v2/0203> .
+@prefix v3-Ethnicity: <http://hl7.org/fhir/v3/Ethnicity> .
+@prefix v3-MaritalStatus: <http://hl7.org/fhir/v3/MaritalStatus> .
+@prefix v3-Race: <http://hl7.org/fhir/v3/Race> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://hl7.org/fhir/Bundle/8ff101a0-a8f7-4e04-8aaa-e38eec8d4c6b> a fhir:Bundle ;
-    fhir:Bundle.entry [
-            [fhir:Bundle.entry.fullUrl [
-                    [fhir:value "urn:uuid:a3458f42-f764-44fc-a4cc-2bd359410f7a"
-                ] ;
-                fhir:Bundle.entry.resource [
-                        [fhir:Resource.id [
-                                [fhir:value "a3458f42-f764-44fc-a4cc-2bd359410f7a"
-                            ]
-                        ] ;
-                        fhir:index 1
-                    ],
-                        [
-                            [fhir:Bundle.entry.fullUrl [
-                                    [fhir:value "urn:uuid:e52b01d1-47aa-44aa-9237-08cdc5c9fef1"
-                                ] ;
-                                fhir:Bundle.entry.resource [
-                                        [fhir:Resource.id [
-                                                [fhir:value "e52b01d1-47aa-44aa-9237-08cdc5c9fef1"
-                                            ] ;
-                                            fhir:Resource.meta [
-                                                    [fhir:Meta.profile [
-                                                            [fhir:index 0
-                                                        ]
-                                                    ]
-                                                ] ;
-                                                fhir:index 5
-                                            ],
-                                                [
-                                                    [fhir:Bundle.entry.resource [
-                                                            [
-                                                        ] ;
-                                                        fhir:index 6
-                                                    ],
-                                                        [
-                                                            [fhir:Bundle.entry.fullUrl [
-                                                                    [fhir:value "urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5"
-                                                                ] ;
-                                                                fhir:Bundle.entry.resource [
-                                                                        [fhir:Resource.id [
-                                                                                [fhir:value "0a6a045e-4d0d-49b5-b49b-e81885228cc5"
-                                                                            ] ;
-                                                                            fhir:Resource.meta [
-                                                                                    [fhir:Meta.profile [
-                                                                                            [fhir:index 0
-                                                                                        ]
-                                                                                    ]
-                                                                                ] ;
-                                                                                fhir:index 2
-                                                                            ],
-                                                                                [
-                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                            [fhir:value "urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26"
-                                                                                        ] ;
-                                                                                        fhir:Bundle.entry.resource [
-                                                                                                [fhir:Resource.id [
-                                                                                                        [fhir:value "4d92be03-0b86-46e8-becd-9cc27371bd26"
-                                                                                                    ] ;
-                                                                                                    fhir:Resource.meta [
-                                                                                                            [fhir:Meta.profile [
-                                                                                                                    [fhir:index 0
-                                                                                                                ]
-                                                                                                            ]
-                                                                                                        ] ;
-                                                                                                        fhir:index 0
-                                                                                                    ],
-                                                                                                        [
-                                                                                                            [fhir:Bundle.entry.fullUrl [
-                                                                                                                    [fhir:value "urn:uuid:3cf41443-d862-4f3a-b698-5d827bd7908f"
-                                                                                                                ] ;
-                                                                                                                fhir:Bundle.entry.resource [
-                                                                                                                        [fhir:Resource.id [
-                                                                                                                                [fhir:value "3cf41443-d862-4f3a-b698-5d827bd7908f"
-                                                                                                                            ] ;
-                                                                                                                            fhir:Resource.meta [
-                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                            [fhir:index 0
-                                                                                                                                        ]
-                                                                                                                                    ]
-                                                                                                                                ] ;
-                                                                                                                                fhir:index 3
-                                                                                                                            ],
-                                                                                                                                [
-                                                                                                                                    [fhir:Bundle.entry.resource [
-                                                                                                                                            [fhir:Resource.meta [
-                                                                                                                                                    [fhir:Meta.profile [
-                                                                                                                                                            [fhir:index 0
-                                                                                                                                                        ]
-                                                                                                                                                    ]
-                                                                                                                                                ] ;
-                                                                                                                                                fhir:index 7
-                                                                                                                                            ],
-                                                                                                                                                [
-                                                                                                                                                    [fhir:Bundle.entry.fullUrl [
-                                                                                                                                                            [fhir:value "urn:uuid:f65f01fe-b22e-4f5a-b338-4fd194a05bc0"
-                                                                                                                                                        ] ;
-                                                                                                                                                        fhir:Bundle.entry.resource [
-                                                                                                                                                                [fhir:Resource.id [
-                                                                                                                                                                        [fhir:value "f65f01fe-b22e-4f5a-b338-4fd194a05bc0"
-                                                                                                                                                                    ] ;
-                                                                                                                                                                    fhir:Resource.meta [
-                                                                                                                                                                            [fhir:Meta.profile [
-                                                                                                                                                                                    [fhir:index 0
-                                                                                                                                                                                ]
-                                                                                                                                                                            ]
-                                                                                                                                                                        ] ;
-                                                                                                                                                                        fhir:index 4
-                                                                                                                                                                    ] ;
-                                                                                                                                                                    fhir:Bundle.type [
-                                                                                                                                                                            [fhir:value "collection"
-                                                                                                                                                                        ] ;
-                                                                                                                                                                        fhir:Resource.id [
-                                                                                                                                                                                [fhir:value "8ff101a0-a8f7-4e04-8aaa-e38eec8d4c6b"
-                                                                                                                                                                            ] ;
-                                                                                                                                                                            fhir:nodeRole fhir:treeRoot .
+<http://hl7.org/fhir/CarePlan/aa776b27-9060-4ef4-9f9d-a75744b09e49> a fhir:CarePlan ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:CarePlan.activity [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:710081004 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "710081004"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Smoking cessation therapy"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:CarePlan.activity.detail [
+            fhir:CarePlan.activity.detail.code [
+                fhir:CodeableConcept.coding [
+                    a sct:426990007 ;
+                    fhir:index "0"^^xsd:integer ;
+                    fhir:Coding.code [
+                        fhir:value "426990007"
+                    ] ;
+                    fhir:Coding.display [
+                        fhir:value "Home oxygen therapy (procedure)"
+                    ] ;
+                    fhir:Coding.system [
+                        fhir:value "http://snomed.info/sct"
+                    ]
+                ]
+            ] ;
+            fhir:CarePlan.activity.detail.status [
+                fhir:value "in-progress"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.addresses [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:3cf41443-d862-4f3a-b698-5d827bd7908f> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:3cf41443-d862-4f3a-b698-5d827bd7908f"
+        ]
+    ] ;
+    fhir:CarePlan.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            a sct:412776001 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "412776001"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Chronic obstructive pulmonary disease clinical management plan"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:CarePlan.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5"
+        ]
+    ] ;
+    fhir:CarePlan.period [
+        fhir:Period.start [
+            fhir:value "1985-12-10"^^xsd:date
+        ]
+    ] ;
+    fhir:CarePlan.status [
+        fhir:value "active"
+    ] ;
+    fhir:CarePlan.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "aa776b27-9060-4ef4-9f9d-a75744b09e49"
+    ] .
 
-                                                                                                                                                                        <http://hl7.org/fhir/Bundle/8ff101a0-a8f7-4e04-8aaa-e38eec8d4c6b.ttl> a owl:Ontology ;
-                                                                                                                                                                            owl:imports fhir:fhir.ttl .
+<http://hl7.org/fhir/CarePlan/aa776b27-9060-4ef4-9f9d-a75744b09e49.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Condition/3cf41443-d862-4f3a-b698-5d827bd7908f> a fhir:Condition ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Condition.assertedDate [
+        fhir:value "1985-12-10"^^xsd:date
+    ] ;
+    fhir:Condition.clinicalStatus [
+        fhir:value "active"
+    ] ;
+    fhir:Condition.code [
+        fhir:CodeableConcept.coding [
+            a sct:185086009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "185086009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Chronic obstructive bronchitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ]
+    ] ;
+    fhir:Condition.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5"
+        ]
+    ] ;
+    fhir:Condition.onsetDateTime [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Condition.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26"
+        ]
+    ] ;
+    fhir:Condition.verificationStatus [
+        fhir:value "confirmed"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "3cf41443-d862-4f3a-b698-5d827bd7908f"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-problem-Problem"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Condition/3cf41443-d862-4f3a-b698-5d827bd7908f.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/DiagnosticReport/e52b01d1-47aa-44aa-9237-08cdc5c9fef1> a fhir:DiagnosticReport ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:DiagnosticReport.code [
+        fhir:CodeableConcept.coding [
+            a loinc:69409-1 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "69409-1"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "U.S. standard certificate of death - 2003 revision"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://loinc.org"
+            ]
+        ]
+    ] ;
+    fhir:DiagnosticReport.effectiveDateTime [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:DiagnosticReport.issued [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:DiagnosticReport.performer [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Reference.display [
+            fhir:value "Hospital Lab"
+        ]
+    ] ;
+    fhir:DiagnosticReport.result [
+        fhir:index "0"^^xsd:integer ;
+        fhir:link <http://hl7.org/fhir/urn:uuid:f65f01fe-b22e-4f5a-b338-4fd194a05bc0> ;
+        fhir:Reference.display [
+            fhir:value "Cause of Death [US Standard Certificate of Death]"
+        ] ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:f65f01fe-b22e-4f5a-b338-4fd194a05bc0"
+        ]
+    ] ;
+    fhir:DiagnosticReport.status [
+        fhir:value "final"
+    ] ;
+    fhir:DiagnosticReport.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "e52b01d1-47aa-44aa-9237-08cdc5c9fef1"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
+        ]
+    ] .
+
+<http://hl7.org/fhir/DiagnosticReport/e52b01d1-47aa-44aa-9237-08cdc5c9fef1.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Encounter/0a6a045e-4d0d-49b5-b49b-e81885228cc5> a fhir:Encounter ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Encounter.class [
+        fhir:Coding.code [
+            fhir:value "ambulatory"
+        ]
+    ] ;
+    fhir:Encounter.period [
+        fhir:Period.end [
+            fhir:value "1985-12-10T13:28:25-06:00"^^xsd:dateTime
+        ] ;
+        fhir:Period.start [
+            fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+        ]
+    ] ;
+    fhir:Encounter.serviceProvider [
+        fhir:link <http://hl7.org/fhir/urn:uuid:a3458f42-f764-44fc-a4cc-2bd359410f7a> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:a3458f42-f764-44fc-a4cc-2bd359410f7a"
+        ]
+    ] ;
+    fhir:Encounter.status [
+        fhir:value "finished"
+    ] ;
+    fhir:Encounter.type [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            a sct:308646001 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "308646001"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Death Certification"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "0a6a045e-4d0d-49b5-b49b-e81885228cc5"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-encounter-Encounter"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Encounter/0a6a045e-4d0d-49b5-b49b-e81885228cc5.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/MedicationRequest/6924e77c-79dc-4747-9e0f-e85594a8f7a1> a fhir:MedicationRequest ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:MedicationRequest.context [
+        fhir:link <http://hl7.org/fhir/urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5"
+        ]
+    ] ;
+    fhir:MedicationRequest.dosageInstruction [
+        fhir:index "0"^^xsd:integer
+    ] ;
+    fhir:MedicationRequest.medicationCodeableConcept [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "834060"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Penicillin V Potassium 250 MG"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://www.nlm.nih.gov/research/umls/rxnorm"
+            ]
+        ]
+    ] ;
+    fhir:MedicationRequest.status [
+        fhir:value "active"
+    ] ;
+    fhir:Resource.id [
+        fhir:value "6924e77c-79dc-4747-9e0f-e85594a8f7a1"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-medication-MedicationPrescription"
+        ]
+    ] .
+
+<http://hl7.org/fhir/MedicationRequest/6924e77c-79dc-4747-9e0f-e85594a8f7a1.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Observation/f65f01fe-b22e-4f5a-b338-4fd194a05bc0> a fhir:Observation ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Observation.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
+            ]
+        ]
+    ] ;
+    fhir:Observation.code [
+        fhir:CodeableConcept.coding [
+            a loinc:69453-9 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "69453-9"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Cause of Death [US Standard Certificate of Death]"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://loinc.org"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Cause of Death [US Standard Certificate of Death]"
+        ]
+    ] ;
+    fhir:Observation.effectiveDateTime [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.issued [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.status [
+        fhir:value "final"
+    ] ;
+    fhir:Observation.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26"
+        ]
+    ] ;
+    fhir:Observation.valueCodeableConcept [
+        fhir:CodeableConcept.coding [
+            a sct:185086009 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "185086009"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Chronic obstructive bronchitis (disorder)"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://snomed.info/sct"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Chronic obstructive bronchitis (disorder)"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "f65f01fe-b22e-4f5a-b338-4fd194a05bc0"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-observation-Observation"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Observation/f65f01fe-b22e-4f5a-b338-4fd194a05bc0.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Organization/a3458f42-f764-44fc-a4cc-2bd359410f7a> a fhir:Organization ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Organization.name [
+        fhir:value "Synthetic Provider"
+    ] ;
+    fhir:Organization.type [
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "prov"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Healthcare Provider"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/organization-type"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "Healthcare Provider"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "a3458f42-f764-44fc-a4cc-2bd359410f7a"
+    ] .
+
+<http://hl7.org/fhir/Organization/a3458f42-f764-44fc-a4cc-2bd359410f7a.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/Patient/4d92be03-0b86-46e8-becd-9cc27371bd26> a fhir:Patient ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:DomainResource.extension [
+        fhir:index "3"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "Gennaro931 Pagac384"
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/birthPlace"
+        ] ;
+        fhir:Extension.valueAddress [
+            fhir:Address.city [
+                fhir:value "Douglas"
+            ] ;
+            fhir:Address.country [
+                fhir:value "US"
+            ] ;
+            fhir:Address.state [
+                fhir:value "MA"
+            ]
+        ]
+    ],
+        [
+        fhir:index "5"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-interpreterRequired"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "false"^^xsd:boolean
+        ]
+    ],
+        [
+        fhir:index "6"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-actor-FictionalPerson-extension"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "true"^^xsd:boolean
+        ]
+    ],
+        [
+        fhir:index "4"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+        ] ;
+        fhir:Extension.valueCode [
+            fhir:value "F"
+        ]
+    ],
+        [
+        fhir:index "8"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-SocialSecurityNumber-extension"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "999-71-1414"
+        ]
+    ],
+        [
+        fhir:index "7"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-FathersName-extension"
+        ] ;
+        fhir:Extension.valueHumanName [
+            fhir:HumanName.text [
+                fhir:value "Lorena248 Jones708"
+            ]
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-race"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Race/2054-5> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2054-5"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Black"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Race"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "race"
+            ]
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-ethnicity"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Ethnicity/2186-5> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2186-5"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Nonhispanic"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Ethnicity"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "ethnicity"
+            ]
+        ]
+    ] ;
+    fhir:DomainResource.text [
+        fhir:Narrative.div "<div>Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>. Version identifier: 76199f3c40cd1daebe8563307048500f5a0a78ab</div>" ;
+        fhir:Narrative.status [
+            fhir:value "generated"
+        ]
+    ] ;
+    fhir:Patient.address [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Address.city [
+            fhir:value "Waltham"
+        ] ;
+        fhir:Address.country [
+            fhir:value "US"
+        ] ;
+        fhir:Address.line [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "87260 Hirthe Inlet"
+        ] ;
+        fhir:Address.postalCode [
+            fhir:value "02454"
+        ] ;
+        fhir:Address.state [
+            fhir:value "MA"
+        ] ;
+        fhir:Element.extension [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Element.extension [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "latitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "42.37725881326266"^^xsd:decimal
+                ]
+            ],
+                [
+                fhir:index "1"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "longitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "-71.2472244527981"^^xsd:decimal
+                ]
+            ] ;
+            fhir:Extension.url [
+                fhir:value "http://hl7.org/fhir/StructureDefinition/geolocation"
+            ]
+        ]
+    ] ;
+    fhir:Patient.birthDate [
+        fhir:value "1958-10-19"^^xsd:date
+    ] ;
+    fhir:Patient.communication [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Patient.communication.language [
+            fhir:CodeableConcept.coding [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "en-US"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "English (United States)"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/ValueSet/languages"
+                ]
+            ]
+        ]
+    ] ;
+    fhir:Patient.deceasedDateTime [
+        fhir:value "1985-12-10T13:13:25-06:00"^^xsd:dateTime
+    ] ;
+    fhir:Patient.gender [
+        fhir:value "female"
+    ] ;
+    fhir:Patient.identifier [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "urn:oid:2.16.840.1.113883.4.3.25"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v2/0203/DL> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "DL"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v2/0203"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "S99920263"
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "http://hl7.org/fhir/sid/us-ssn"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/identifier-type/SB> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "SB"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/identifier-type"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "999711414"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "https://github.com/synthetichealth/synthea"
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "6eb796a0-e205-4b3b-8d4c-d902cb75a644"
+        ]
+    ] ;
+    fhir:Patient.maritalStatus [
+        fhir:CodeableConcept.coding [
+            a <http://hl7.org/fhir/v3/MaritalStatus/M> ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "M"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/v3/MaritalStatus"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "M"
+        ]
+    ] ;
+    fhir:Patient.multipleBirthBoolean [
+        fhir:value "false"^^xsd:boolean
+    ] ;
+    fhir:Patient.name [
+        fhir:index "0"^^xsd:integer ;
+        fhir:HumanName.family [
+            fhir:value "Pagac384"
+        ] ;
+        fhir:HumanName.given [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Brennan20"
+        ] ;
+        fhir:HumanName.prefix [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Mrs."
+        ] ;
+        fhir:HumanName.use [
+            fhir:value "official"
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:HumanName.family [
+            fhir:value "Jones708"
+        ] ;
+        fhir:HumanName.given [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Brennan20"
+        ] ;
+        fhir:HumanName.use [
+            fhir:value "maiden"
+        ]
+    ] ;
+    fhir:Patient.photo [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Attachment.contentType [
+            fhir:value "image/png"
+        ] ;
+        fhir:Attachment.data [
+            fhir:value "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"^^xsd:base64Binary
+        ] ;
+        fhir:Attachment.title [
+            fhir:value "Biometrics.Fingerprint"
+        ]
+    ] ;
+    fhir:Patient.telecom [
+        fhir:index "0"^^xsd:integer ;
+        fhir:ContactPoint.system [
+            fhir:value "phone"
+        ] ;
+        fhir:ContactPoint.use [
+            fhir:value "home"
+        ] ;
+        fhir:ContactPoint.value [
+            fhir:value "522-038-5343 x0224"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "4d92be03-0b86-46e8-becd-9cc27371bd26"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-PersonOfRecord"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Patient/4d92be03-0b86-46e8-becd-9cc27371bd26.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/urn:uuid:3cf41443-d862-4f3a-b698-5d827bd7908f> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:a3458f42-f764-44fc-a4cc-2bd359410f7a> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:f65f01fe-b22e-4f5a-b338-4fd194a05bc0> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:0a6a045e-4d0d-49b5-b49b-e81885228cc5> a fhir:Resource .
+
+<http://hl7.org/fhir/urn:uuid:4d92be03-0b86-46e8-becd-9cc27371bd26> a fhir:Resource .
 

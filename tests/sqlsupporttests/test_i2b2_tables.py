@@ -29,6 +29,8 @@ import os
 import unittest
 from sqlalchemy import select
 
+from i2fhirb2.sqlsupport.dbconnection import process_parsed_args
+
 
 def caught_error(message):
     raise ValueError(message)  # reraise an error
@@ -38,12 +40,13 @@ def caught_error(message):
 # the issue is in the location of the db_conf file
 class I2B2TablesTestCase(unittest.TestCase):
     from i2fhirb2.generate_i2b2 import genargs
-    conf_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..', 'conf')
+    conf_file = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..', 'conf', 'db_conf'))
 
-    opts = genargs(['x', '@' + conf_directory + '/db_conf'])
+    opts = genargs(['@' + conf_file])
+    process_parsed_args(opts)
 
     def test_basics(self):
-        from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         self.assertEqual(['concept_path',
@@ -61,7 +64,7 @@ class I2B2TablesTestCase(unittest.TestCase):
             self.assertTrue(e[0] < 2)
 
     def test_as_dict(self):
-        from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         self.assertEqual(x.concept_dimension, x['concept_dimension'])

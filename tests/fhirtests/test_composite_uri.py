@@ -41,10 +41,9 @@ test_list = [("Account.guarantor.period", "Period.end", "Account.guarantor.perio
 class CompositeURITestCase(unittest.TestCase):
     """ Test composite URI construction """
     def test1(self):
-        from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-        from i2fhirb2.fhir.fhirspecific import FHIR
+        from i2fhirb2.fhir.fhirspecific import composite_uri, FHIR
         for parent, mod, rslt in test_list:
-            self.assertEqual(FHIR[rslt], FHIRMetadata.composite_uri(FHIR[parent], FHIR[mod]))
+            self.assertEqual(FHIR[rslt], composite_uri(FHIR[parent], FHIR[mod]))
 
 
 if __name__ == '__main__':

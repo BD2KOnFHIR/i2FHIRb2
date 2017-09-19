@@ -173,5 +173,22 @@ def modifier_name(g: Graph, modifier: URIRef) -> str:
     return full_name.replace('.', ' ')
 
 
+def composite_uri(parent: URIRef, mod: URIRef) -> URIRef:
+    """
+    Return a composite URI consisting of the parent + '.' + the last element in the modifier
+    :param parent: base URI
+    :param mod: modifier URI
+    :return: composite
+    """
+    p1 = split_uri(mod)
+    if len(p1) < 2:
+        print("E1")
+    p2 = p1[1].rsplit('.', 1)
+    if len(p2) < 2:
+        print("E2")
+    last_mod_component = split_uri(mod)[1].rsplit('.', 1)[1]
+    return URIRef(str(parent) + '.' + last_mod_component)
+
+
 def is_w5_uri(uri: URIRef) -> bool:
     return split_uri(uri)[0] == str(W5)

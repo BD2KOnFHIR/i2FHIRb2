@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Optional
 
-from jsonasobj import load
+from jsonasobj import load, JsonObj
 from rdflib import Graph
 
 from i2fhirb2.loaders.fhircollectionloader import FHIRCollection
@@ -35,15 +35,29 @@ from i2fhirb2.loaders.fhirresourceloader import FHIRResource
 
 
 def fhir_json_to_rdf(metavoc: Graph, json_fname: str, base_uri: str, target_graph: Optional[Graph]=None,
-                     add_ontology_header: bool=False) -> Graph:
+                     add_ontology_header: bool=False, do_continuations: bool=True) -> Graph:
+
+    def check_for_continuation(data_: JsonObj) -> Optional[str]:
+        if do_continuations and 'link' in data_ and isinstance(data_.link, list):
+            for link_e in data_.link:
+                if link_e.relation == 'next':
+                    return link_e.url
+        return None
+
     if target_graph is None:
         target_graph = Graph()
-    data = load(json_fname)
-    if 'resourceType' in data and data.resourceType != 'Bundle':
-        FHIRResource(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=add_ontology_header)
-    elif 'entry' in data and isinstance(data.entry, list) and 'resource' in data.entry[0]:
-        FHIRCollection(metavoc, None, base_uri, data, target=target_graph,
-                       add_ontology_header=add_ontology_header if 'resourceType' in data else False)
-    else:
-        print("File does not appear to be a FHIR resource")
+
+    page_fname = json_fname
+    while page_fname:
+        data = load(page_fname)
+        if 'resourceType' in data and data.resourceType != 'Bundle':
+            FHIRResource(metavoc, None, base_uri, data, target=target_graph, add_ontology_header=add_ontology_header)
+            page_fname = check_for_continuation(data)
+        elif 'entry' in data and isinstance(data.entry, list) and 'resource' in data.entry[0]:
+            FHIRCollection(metavoc, None, base_uri, data, target=target_graph,
+                           add_ontology_header=add_ontology_header if 'resourceType' in data else False)
+            page_fname = check_for_continuation(data)
+        else:
+            print("File does not appear to be a FHIR resource")
+            page_fname = None
     return target_graph

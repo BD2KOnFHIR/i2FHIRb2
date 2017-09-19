@@ -22,7 +22,7 @@
         ]
     ] ;
     fhir:Encounter.serviceProvider [
-        fhir:link <http://standardhealthrecord.org/fhir/urn:uuid:9c00d82c-8deb-4e3c-80ee-2e9221addbc0> ;
+        fhir:link <http://standardhealthrecord.org/fhir/urn%3Auuid%3A9c00d82c-8deb-4e3c-80ee-2e9221addbc0> ;
         fhir:Reference.reference [
             fhir:value "urn:uuid:9c00d82c-8deb-4e3c-80ee-2e9221addbc0"
         ]
@@ -59,5 +59,5 @@
 <http://standardhealthrecord.org/fhir/Encounter/ff4f9269-5036-45dc-b0fb-d8133ae13c76.ttl> a owl:Ontology ;
     owl:imports fhir:fhir.ttl .
 
-<http://standardhealthrecord.org/fhir/urn:uuid:9c00d82c-8deb-4e3c-80ee-2e9221addbc0> a fhir:Resource .
+<http://standardhealthrecord.org/fhir/urn%3Auuid%3A9c00d82c-8deb-4e3c-80ee-2e9221addbc0> a fhir:Resource .
 

@@ -59,7 +59,7 @@ from sqlalchemy.dialects.mssql.information_schema import tables
 
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
-from i2fhirb2.sqlsupport.i2b2_tables import I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class VitalStatusCd:

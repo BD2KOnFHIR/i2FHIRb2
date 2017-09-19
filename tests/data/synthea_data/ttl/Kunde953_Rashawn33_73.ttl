@@ -1,35 +1,337 @@
 @prefix fhir: <http://hl7.org/fhir/> .
+@prefix identifier-type: <http://hl7.org/fhir/identifier-type> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix v2-0203: <http://hl7.org/fhir/v2/0203> .
+@prefix v3-Ethnicity: <http://hl7.org/fhir/v3/Ethnicity> .
+@prefix v3-MaritalStatus: <http://hl7.org/fhir/v3/MaritalStatus> .
+@prefix v3-Race: <http://hl7.org/fhir/v3/Race> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://hl7.org/fhir/Bundle/9bcd5247-b8fd-4904-ab06-c3d4e495db16> a fhir:Bundle ;
-    fhir:Bundle.entry [
-            [fhir:Bundle.entry.fullUrl [
-                    [fhir:value "urn:uuid:83c46acb-549a-4803-bc2f-ea3dd012c4d1"
+<http://hl7.org/fhir/Patient/83c46acb-549a-4803-bc2f-ea3dd012c4d1> a fhir:Patient ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:DomainResource.extension [
+        fhir:index "4"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+        ] ;
+        fhir:Extension.valueCode [
+            fhir:value "M"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-race"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Race/2106-3> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2106-3"
                 ] ;
-                fhir:Bundle.entry.resource [
-                        [fhir:Resource.id [
-                                [fhir:value "83c46acb-549a-4803-bc2f-ea3dd012c4d1"
-                            ] ;
-                            fhir:Resource.meta [
-                                    [fhir:Meta.profile [
-                                            [fhir:index 0
-                                        ]
-                                    ]
-                                ] ;
-                                fhir:index 0
-                            ] ;
-                            fhir:Bundle.type [
-                                    [fhir:value "collection"
-                                ] ;
-                                fhir:Resource.id [
-                                        [fhir:value "9bcd5247-b8fd-4904-ab06-c3d4e495db16"
-                                    ] ;
-                                    fhir:nodeRole fhir:treeRoot .
+                fhir:Coding.display [
+                    fhir:value "White"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Race"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "race"
+            ]
+        ]
+    ],
+        [
+        fhir:index "5"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-interpreterRequired"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "false"^^xsd:boolean
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/birthPlace"
+        ] ;
+        fhir:Extension.valueAddress [
+            fhir:Address.city [
+                fhir:value "Lynn"
+            ] ;
+            fhir:Address.country [
+                fhir:value "US"
+            ] ;
+            fhir:Address.state [
+                fhir:value "MA"
+            ]
+        ]
+    ],
+        [
+        fhir:index "3"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "Jillian925 Bayer368"
+        ]
+    ],
+        [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://hl7.org/fhir/StructureDefinition/us-core-ethnicity"
+        ] ;
+        fhir:Extension.valueCodeableConcept [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v3/Ethnicity/2186-5> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "2186-5"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Nonhispanic"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v3/Ethnicity"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "ethnicity"
+            ]
+        ]
+    ],
+        [
+        fhir:index "8"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-SocialSecurityNumber-extension"
+        ] ;
+        fhir:Extension.valueString [
+            fhir:value "999-60-7561"
+        ]
+    ],
+        [
+        fhir:index "7"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-FathersName-extension"
+        ] ;
+        fhir:Extension.valueHumanName [
+            fhir:HumanName.text [
+                fhir:value "Chaim347 Kunde953"
+            ]
+        ]
+    ],
+        [
+        fhir:index "6"^^xsd:integer ;
+        fhir:Extension.url [
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-actor-FictionalPerson-extension"
+        ] ;
+        fhir:Extension.valueBoolean [
+            fhir:value "true"^^xsd:boolean
+        ]
+    ] ;
+    fhir:DomainResource.text [
+        fhir:Narrative.div "<div>Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>. Version identifier: 76199f3c40cd1daebe8563307048500f5a0a78ab</div>" ;
+        fhir:Narrative.status [
+            fhir:value "generated"
+        ]
+    ] ;
+    fhir:Patient.address [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Address.city [
+            fhir:value "Boston"
+        ] ;
+        fhir:Address.country [
+            fhir:value "US"
+        ] ;
+        fhir:Address.line [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "97271 Shields Trail"
+        ],
+            [
+            fhir:index "1"^^xsd:integer ;
+            fhir:value "Suite 760"
+        ] ;
+        fhir:Address.postalCode [
+            fhir:value "02212"
+        ] ;
+        fhir:Address.state [
+            fhir:value "MA"
+        ] ;
+        fhir:Element.extension [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Element.extension [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "latitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "42.322041903861205"^^xsd:decimal
+                ]
+            ],
+                [
+                fhir:index "1"^^xsd:integer ;
+                fhir:Extension.url [
+                    fhir:value "longitude"
+                ] ;
+                fhir:Extension.valueDecimal [
+                    fhir:value "-70.93080152132643"^^xsd:decimal
+                ]
+            ] ;
+            fhir:Extension.url [
+                fhir:value "http://hl7.org/fhir/StructureDefinition/geolocation"
+            ]
+        ]
+    ] ;
+    fhir:Patient.birthDate [
+        fhir:value "1917-01-20"^^xsd:date
+    ] ;
+    fhir:Patient.communication [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Patient.communication.language [
+            fhir:CodeableConcept.coding [
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "en-US"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "English (United States)"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/ValueSet/languages"
+                ]
+            ]
+        ]
+    ] ;
+    fhir:Patient.deceasedDateTime [
+        fhir:value "1990-10-27T06:08:33-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Patient.gender [
+        fhir:value "male"
+    ] ;
+    fhir:Patient.identifier [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "http://hl7.org/fhir/sid/us-ssn"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/identifier-type/SB> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "SB"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/identifier-type"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "999607561"
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "https://github.com/synthetichealth/synthea"
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "c97a652d-6011-4f1d-bfa6-2370a48a5a27"
+        ]
+    ],
+        [
+        fhir:index "2"^^xsd:integer ;
+        fhir:Identifier.system [
+            fhir:value "urn:oid:2.16.840.1.113883.4.3.25"
+        ] ;
+        fhir:Identifier.type [
+            fhir:CodeableConcept.coding [
+                a <http://hl7.org/fhir/v2/0203/DL> ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "DL"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://hl7.org/fhir/v2/0203"
+                ]
+            ]
+        ] ;
+        fhir:Identifier.value [
+            fhir:value "S99940215"
+        ]
+    ] ;
+    fhir:Patient.maritalStatus [
+        fhir:CodeableConcept.coding [
+            a <http://hl7.org/fhir/v3/MaritalStatus/M> ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "M"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/v3/MaritalStatus"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "M"
+        ]
+    ] ;
+    fhir:Patient.multipleBirthBoolean [
+        fhir:value "false"^^xsd:boolean
+    ] ;
+    fhir:Patient.name [
+        fhir:index "0"^^xsd:integer ;
+        fhir:HumanName.family [
+            fhir:value "Kunde953"
+        ] ;
+        fhir:HumanName.given [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Rashawn33"
+        ] ;
+        fhir:HumanName.prefix [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "Mr."
+        ] ;
+        fhir:HumanName.use [
+            fhir:value "official"
+        ]
+    ] ;
+    fhir:Patient.photo [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Attachment.contentType [
+            fhir:value "image/png"
+        ] ;
+        fhir:Attachment.data [
+            fhir:value "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"^^xsd:base64Binary
+        ] ;
+        fhir:Attachment.title [
+            fhir:value "Biometrics.Fingerprint"
+        ]
+    ] ;
+    fhir:Patient.telecom [
+        fhir:index "0"^^xsd:integer ;
+        fhir:ContactPoint.system [
+            fhir:value "phone"
+        ] ;
+        fhir:ContactPoint.use [
+            fhir:value "home"
+        ] ;
+        fhir:ContactPoint.value [
+            fhir:value "1-616-751-8915 x505"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "83c46acb-549a-4803-bc2f-ea3dd012c4d1"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-demographics-PersonOfRecord"
+        ]
+    ] .
 
-                                <http://hl7.org/fhir/Bundle/9bcd5247-b8fd-4904-ab06-c3d4e495db16.ttl> a owl:Ontology ;
-                                    owl:imports fhir:fhir.ttl .
+<http://hl7.org/fhir/Patient/83c46acb-549a-4803-bc2f-ea3dd012c4d1.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
 
