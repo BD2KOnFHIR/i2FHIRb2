@@ -27,10 +27,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Optional, Dict, Tuple
 
-from rdflib import URIRef, Graph, RDF
-
-from i2fhirb2.fhir.fhirspecific import FHIR, FHIR_RESOURCE_RE
-from i2fhirb2.rdfsupport.fhirgraphutils import value, link
+from fhirtordf.rdfsupport.fhirgraphutils import link
+from fhirtordf.rdfsupport.namespaces import FHIR
+from rdflib import URIRef, Graph
 
 
 class FHIR_Resource_type:
@@ -81,7 +80,6 @@ class FHIR_Patient_Dimension_type(FHIR_Resource_type):
 
     def fact_key_for(self, g: Graph, subj: URIRef) -> Tuple[Optional[URIRef], Optional[URIRef], Optional[URIRef]]:
         return subj, None, link(g, subj, FHIR.managingOrganization)[0]
-
 
 
 class FHIR_Bundle_type(FHIR_Resource_type):

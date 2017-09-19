@@ -28,6 +28,7 @@
 from datetime import datetime
 from typing import List, Optional
 
+from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import URIRef, Graph, BNode, RDF, XSD
 from rdflib.term import Node, Literal
 
@@ -35,7 +36,7 @@ from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from i2fhirb2.fhir.fhirproviderdimension import FHIRProviderDimension
-from i2fhirb2.fhir.fhirspecific import concept_code, FHIR, composite_uri
+from i2fhirb2.fhir.fhirspecific import concept_code, composite_uri
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
     valuetype_text, valuetype_date, valuetype_number
@@ -190,7 +191,8 @@ class FHIRObservationFactFactory:
                     rval += self.generate_modifiers(subject, conc, obj)
         return rval
 
-    def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: BNode, parent_inst_num: int=0) -> List[FHIRObservationFact]:
+    def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: BNode,
+                           parent_inst_num: int=0) -> List[FHIRObservationFact]:
         """
         Emit any modifiers for subject/obj.  If there is fhir:index field, this is an indication that this set
         of modifiers can occur multiple times and, as such, must be clustered.  Noting that, at the moment, we
@@ -198,6 +200,7 @@ class FHIRObservationFactFactory:
         :param subject: Resource subject
         :param concept: Concept identifier (first level entry)
         :param obj: inner cluster (usually a BNODE)
+        :param parent_inst_num: instance number passed in recursive call
         :return:
         """
         rval = []               # type: List[FHIRObservationFact]
@@ -222,4 +225,3 @@ class FHIRObservationFactFactory:
             else:
                 rval += self.generate_modifiers(subject, composite_uri(concept, modifier), modifier_object, inst_num)
         return rval
-

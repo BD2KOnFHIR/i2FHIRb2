@@ -125,7 +125,7 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
                                records: List["I2B2_Core_With_Upload_Id"]) -> Tuple[int, int]:
         """
         Add or update the supplied table as needed to reflect the contents of records
-        :param tables: i2b2 sql connection
+        :param table: i2b2 sql connection
         :param records: records to apply
         :return: number of records added / modified
         """

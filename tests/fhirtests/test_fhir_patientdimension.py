@@ -34,8 +34,6 @@ import datetime
 from isodate import FixedOffset
 from rdflib import Graph
 
-from tests.utils.base_test_case import test_data_directory
-
 
 class FHIRPatientDimensionTestCase(unittest.TestCase):
     def test_load_ttl(self):
@@ -55,7 +53,8 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         PatientDimension.upload_id = 12345
 
         g = Graph()
-        g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example.ttl"), format="turtle")
+        g.load(os.path.abspath(os.path.join(os.path.split(__file__)[0], "data", "patient-example.ttl")),
+               format="turtle")
         s = FHIR['Patient/example']
         pd_entry = FHIRPatientDimension(g, s)
 
@@ -96,7 +95,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[0]._freeze())
         self.assertEqual(OrderedDict([
-            ('patient_ide', '100000001'),
+             ('patient_ide', '100000001'),
              ('patient_ide_source', 'HIVE'),
              ('patient_num', 100000001),
              ('patient_ide_status', 'A'),

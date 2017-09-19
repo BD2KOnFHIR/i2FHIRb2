@@ -31,6 +31,7 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 from typing import List, Optional
 
+from fhirtordf.loaders.fhirjsonloader import fhir_json_to_rdf
 from rdflib import Graph
 
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
@@ -42,7 +43,6 @@ from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
-from i2fhirb2.loaders.fhirjsonloader import fhir_json_to_rdf
 
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
@@ -65,7 +65,7 @@ def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
         else:
             fmv = Graph()
             fmv.load(opts.metavoc, format="turtle")
-            fhir_json_to_rdf(fmv, filepath, opts.uribase, g)
+            fhir_json_to_rdf(filepath, opts.uribase, g, metavoc=fmv)
 
     if opts.file:
         load_file(opts.indir if opts.indir else "", opts.file)

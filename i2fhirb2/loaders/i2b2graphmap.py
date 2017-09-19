@@ -29,6 +29,8 @@ from argparse import Namespace
 from datetime import datetime
 from typing import List, Tuple
 
+from fhirtordf.rdfsupport.fhirgraphutils import value
+from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
 from rdflib import Graph, RDF, URIRef
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
@@ -45,8 +47,6 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
-from i2fhirb2.rdfsupport.fhirgraphutils import value
-from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables, change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
@@ -61,6 +61,7 @@ class I2B2GraphMap:
         :param opts: input options
         """
         self._opts = opts
+        self._g = g
         self.num_infrastructure = 0         # Number of infrastructure resources encountered (and not loaded)
         self.num_visit = 0                  # Number of visit resources (to be implemented)
         self.num_provider = 0               # Number of provider resources
@@ -92,7 +93,8 @@ class I2B2GraphMap:
                     self.num_provider += 1
                 elif isinstance(mapped_type, FHIR_Patient_Dimension_type):
                     pm, vd, start_date = self.process_resource_instance(subj, mapped_type)
-                    pd = FHIRPatientDimension(g, subj, pm.patient_num, vd.visit_dimension_entry.encounter_num, start_date)
+                    pd = FHIRPatientDimension(self._g, subj, pm.patient_num,
+                                              vd.visit_dimension_entry.encounter_num, start_date)
                     self.patient_dimensions.append(pd.patient_dimension_entry)
                 elif isinstance(mapped_type, FHIR_Bundle_type):
                     self.num_bundle += 1
@@ -101,11 +103,11 @@ class I2B2GraphMap:
 
     def process_resource_instance(self, subj: URIRef,  mapped_type: FHIR_Resource_type) \
             -> Tuple[FHIRPatientMapping, FHIRVisitDimension, datetime]:
-        patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(g, subj)
+        patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(self._g, subj)
         patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
         pm = FHIRPatientMapping(patient_id, patient_ide_source)
         self.patient_mappings += pm.patient_mapping_entries
-        start_date = value(g, subj, FHIR.Observation.effectiveDateTime)
+        start_date = value(self._g, subj, FHIR.Observation.effectiveDateTime)
         if not start_date:
             start_date = datetime.now()
         vd = FHIRVisitDimension(subj, pm.patient_num, patient_id, patient_ide_source, start_date)

@@ -29,12 +29,13 @@ from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 from typing import Set, Optional, List, Dict, Tuple
 
+from fhirtordf.rdfsupport.namespaces import FHIR
+
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from rdflib import Graph, URIRef, RDF, OWL, RDFS
 
-from i2fhirb2.fhir.fhirspecific import FHIR, w5_infrastructure_categories, fhir_primitives, \
-    composite_uri, is_w5_uri
+from i2fhirb2.fhir.fhirspecific import w5_infrastructure_categories, fhir_primitives, composite_uri, is_w5_uri
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
 

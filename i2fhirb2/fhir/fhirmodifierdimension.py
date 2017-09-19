@@ -27,10 +27,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import List, Optional
 
+from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import RDFS, RDF, OWL, URIRef
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 
 

@@ -4,3 +4,5 @@ python-dateutil
 rdflib>=4.2.2
 psycopg2
 dirlistproc
+fhirtordf>=0.9.3
+isodate

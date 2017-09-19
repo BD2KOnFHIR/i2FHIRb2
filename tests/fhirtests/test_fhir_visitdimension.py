@@ -96,7 +96,7 @@ class FHIRVisitDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[0]._freeze())
         self.assertEqual(OrderedDict([
-            ('encounter_ide', '500000'),
+             ('encounter_ide', '500000'),
              ('encounter_ide_source', 'HIVE'),
              ('project_id', 'fhir'),
              ('encounter_num', 500000),
@@ -109,7 +109,6 @@ class FHIRVisitDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[1]._freeze())
         self.assertEqual(2, len(pd_entry.encounter_mappings.encounter_mapping_entries))
-
 
 
 if __name__ == '__main__':

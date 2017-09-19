@@ -32,13 +32,15 @@ import unittest
 class PatientDimensionLoaderTest(unittest.TestCase):
     def test_loader(self):
         from i2fhirb2.loadfacts import populate_fact_table
-        argstr = "-d ../data/patient_resource_test -mv ../data/fhir_metadata_vocabulary/fhir.ttl -u 421 -o ../data_out/patient_resource_test"
+        argstr = "-d ../data/patient_resource_test -mv ../data/fhir_metadata_vocabulary/fhir.ttl -u " \
+                 "421 -o ../data_out/patient_resource_test"
         populate_fact_table(argstr.split())
         # TODO: Complete this test case
         self.assertTrue(True)
 
     def test_all_fields(self):
-        argstr = "-f ../data/patient_dimension_test/patient_example.json -mv ../data/fhir_metadata_vocabulary/fhir.ttl -u 421 -o ../data_out/patient_resource_test"
+        argstr = "-f ../data/patient_dimension_test/patient_example.json " \
+                 "-mv ../data/fhir_metadata_vocabulary/fhir.ttl -u 421 -o ../data_out/patient_resource_test"
 
 
 if __name__ == '__main__':

@@ -36,6 +36,7 @@ Default_DB_Connection = "postgresql+psycopg2://localhost:5432/i2b2"
 Default_User = "postgres"
 Default_Password = "postgres"
 
+
 def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
     """
     Add the database connection arguments to the supplied parser

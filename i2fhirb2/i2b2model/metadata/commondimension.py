@@ -25,10 +25,11 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+from fhirtordf.rdfsupport.namespaces import namespaces, namespace_for
 from rdflib import URIRef
 from rdflib.namespace import split_uri
 
-from i2fhirb2.fhir.fhirspecific import nsmap, concept_path, concept_code, concept_name
+from i2fhirb2.fhir.fhirspecific import concept_path, concept_code, concept_name
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements
 
@@ -49,7 +50,7 @@ class CommonDimension(I2B2_Core_With_Upload_Id):
         assert(base_path.endswith('\\'))
         self._subject = subject
         self._base_path = base_path
-        self._name_prefix = nsmap.get(split_uri(subject)[0], "base").upper()
+        self._name_prefix = namespace_for(split_uri(subject)[0]).upper()
 
     def path(self) -> str:
         return self._base_path + concept_path(self._subject)

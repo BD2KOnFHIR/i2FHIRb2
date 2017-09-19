@@ -31,7 +31,6 @@ from collections import OrderedDict
 from datetime import datetime
 
 from i2fhirb2.fhir.fhirpatientmapping import PatientNumberGenerator
-from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 from tests.utils.connection_helper import connection_helper
 
 

@@ -28,20 +28,18 @@
 from datetime import datetime
 from typing import Optional, Tuple, List
 
+from fhirtordf.rdfsupport.fhirgraphutils import value, extension, concept_uri, codeable_concept_code
+from fhirtordf.rdfsupport.namespaces import FHIR, SNOMEDCT, V3
+from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
 from rdflib import Graph, URIRef, Literal, XSD
 
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.fhir.fhirspecific import FHIR, V3, SNOMEDCT
+from i2fhirb2.i2b2model.data.i2b2codes import I2B2DemographicsCodes
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
-
-
 # TODO: is there any reason to pull patient_id from Patient.identifier rather than URL?
 # TODO: what of foreign addresses?
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
-from i2fhirb2.rdfsupport.fhirgraphutils import value, extension, concept_uri, codeable_concept_code
-from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
-from i2fhirb2.i2b2model.data.i2b2codes import I2B2DemographicsCodes
 
 
 class FHIRPatientDimension:

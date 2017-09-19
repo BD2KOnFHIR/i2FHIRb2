@@ -27,7 +27,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Optional, List, Tuple
 
-from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
@@ -114,4 +113,3 @@ class EncounterMapping(I2B2_Core_With_Upload_Id):
         :return: number of records added / modified
         """
         return cls._add_or_update_records(tables.crc_connection, tables.encounter_mapping, records)
-

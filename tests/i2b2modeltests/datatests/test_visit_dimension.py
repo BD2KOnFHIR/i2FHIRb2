@@ -30,9 +30,6 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
-from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
-from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
-
 
 class VisitDimensionTestCase(unittest.TestCase):
 
@@ -41,7 +38,8 @@ class VisitDimensionTestCase(unittest.TestCase):
         VisitDimension._clear()
         VisitDimension.update_date = datetime(2017, 1, 3)
         VisitDimension.upload_id = 100143
-        x = VisitDimension(500001, 10000017, ActiveStatusCd(ActiveStatusCd.sd_day, ActiveStatusCd.ed_ongoing), datetime(2007, 10, 4))
+        x = VisitDimension(500001, 10000017, ActiveStatusCd(ActiveStatusCd.sd_day,
+                                                            ActiveStatusCd.ed_ongoing), datetime(2007, 10, 4))
         self.assertEqual(OrderedDict([
              ('encounter_num', 500001),
              ('patient_num', 10000017),

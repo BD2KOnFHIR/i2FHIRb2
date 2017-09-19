@@ -27,12 +27,12 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Dict, Tuple, Optional
 
+from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
 from rdflib import URIRef
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
-from i2fhirb2.rdfsupport.uriutils import uri_to_ide_and_source
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 

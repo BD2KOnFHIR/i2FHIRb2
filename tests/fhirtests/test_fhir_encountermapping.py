@@ -31,7 +31,6 @@ import unittest
 import datetime
 from collections import OrderedDict
 
-from rdflib import URIRef
 
 from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
 from i2fhirb2.fhir.fhirspecific import FHIR

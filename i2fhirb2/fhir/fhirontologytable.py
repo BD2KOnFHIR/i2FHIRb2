@@ -28,12 +28,13 @@
 from collections import OrderedDict
 from typing import Optional, List, cast, Callable, Dict
 
+from fhirtordf.rdfsupport.namespaces import W5
 from rdflib import URIRef, RDFS
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
-from i2fhirb2.fhir.fhirspecific import concept_path, W5, w5_infrastructure_categories, composite_uri, FHIR
+from i2fhirb2.fhir.fhirspecific import concept_path, w5_infrastructure_categories
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
     ModifierOntologyEntry
 
