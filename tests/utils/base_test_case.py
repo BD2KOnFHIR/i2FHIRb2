@@ -31,6 +31,7 @@ from datetime import datetime, timedelta
 from typing import Union
 
 from dateutil.parser import parse
+from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
 from rdflib import Graph
 
 test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
@@ -38,13 +39,13 @@ test_conf_directory = os.path.join(test_directory, 'conf')
 test_data_directory = os.path.join(test_directory, 'data')
 
 
-class FHIRGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        print("Loading graph...", end="")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'w5.ttl'), format="turtle")
-        self.load(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'), format="turtle")
-        print("done")
+def FHIRGraph():
+    print("Loading graph...", end="")
+    mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
+    g = FHIRMetaVoc(os.path.join(mvdir, 'fhir.ttl')).g
+    g.load(os.path.join(mvdir, 'w5.ttl'), format="turtle")
+    print("done")
+    return g
 
 
 class BaseTestCase(unittest.TestCase):

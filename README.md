@@ -3,19 +3,28 @@
 ## Introduction
 This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
 
-## Installation
-1) Clone or download this package from [https://github.com/BD2KOnFHIR/i2FHIRb2](https://github.com/BD2KOnFHIR/i2FHIRb2)
-   ```bash
-   > git clone https://github.com/BD2KOnFHIR/i2FHIRb2
-   > cd i2FHIRb2
-    ```
     
-## Loading i2b2 tables
+## i2b2 requirements
+i2FHIRb2 has been tested with the postgres version of [i2b2 Software](https://www.i2b2.org/software/) release 1.7.08.  While it will theoretically
+work with earlier versions, you may encounter issues, including:
+1) The FHIR data includes UTF-8 characters.  Earlier releases of the i2b2 
+2) This package hasn't been tested with Oracle or Microsoft SQL Server.  We use [sqlalchemy](http://www.sqlalchemy.org/),
+ which should minimize the issues, but you may want to talk with the authors before attempting to run with a 
+ non-postgres back end.
+
+Before you start, you will need to know:
+1) The ip and port of the i2b2 SQL server.  The default for postgres is: **localhost:5432**
+2) A userid/password combination that has write access to the `i2b2demodata` (CRC) and `i2b2metadata` schemas.  The default for postgresql is: **postgres**:[none], but, being a responsible dba, you will have changed these.
+
+You should also have an i2b2 client (we use the web client) that can access and query the installed services.
+    
+## Loading the FHIR ontology into i2b2
 There are two ways to load/update an existing set of i2b2 tables:
 1) Run `generate_i2b2` and load the tables directly
 2) Import the tab separated value (.tsv) tables that have been preloaded as part of this project
 
-### Running `generate_i2b2`
+
+### 1. Running `generate_i2b2`
 
 #### Prerequsites 
 You need a version of [Python 3](https://www.python.org/) (ideally, 3.6) installed on your computer. 
@@ -26,89 +35,76 @@ Python 3.6.1
 >
 ```
 
- 
-1) Download or clone the [FHIR in i2b2 (i2FHIRb2)](https://github.com/BD2KOnFHIR/i2FHIRb2) package.
+If you are running version 3.5 or earlier, you should consider upgrading.  i2FHIRb2 will <u>not</u> run with Python 2.
+
+#### Download the i2FHIRb2 software 
+Download or clone the [FHIR in i2b2 (i2FHIRb2)](https://github.com/BD2KOnFHIR/i2FHIRb2) package into a local directory.
 ```text
 > git clone https://github.com/BD2KonFHIR/i2FHIRb2
 > cd i2FHIRb2
 ```
 
-2) (Optional) Create a virtual environment:
-    1) Install `virtualenv` if needed:
-    ```text
-    > virtualenv --version
-    -bash: virtualenv: command not found    <-- If you get this message ...
-    > pip install virtualenv                <-- ... install virtualenv
-       ...
-    > virtualenv --version
-    15.1.0
-    >
-    ```
-    2) Activate the virtual environment
-    ```text
-    > virtualenv venv -p python3
-    Running virtualenv with interpreter /Library/Frameworks/Python.framework/Versions/3.6/bin/python3
-    Using base prefix '/Library/Frameworks/Python.framework/Versions/3.6'
-       ...
-    > . venv/bin/activate
-    (venv) > 
-    ```
-3) Install dependencies, etc. 
+#### Create a virtual environment
+1) Install `virtualenv` if needed:
+```text
+> virtualenv --version
+-bash: virtualenv: command not found    <-- If you get this message ...
+> pip install virtualenv                <-- ... install virtualenv
+   ...
+> virtualenv --version
+15.1.0
+>
+```
+2) Create a new virtual environment and activate it
+```text
+> virtualenv venv -p python3
+Running virtualenv with interpreter /Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+Using base prefix '/Library/Frameworks/Python.framework/Versions/3.6'
+   ...
+> . venv/bin/activate
+(venv) > 
+```
+
+#### Install i2FHIRb2 in the environment
+
     
-    In the root project directory (i2FHIRb2):
-    ```text
-   (venv) > pip install -e .
-    Obtaining file:///Users/mrf7578/Downloads/i2b2test/i2FHIRb2
-    Collecting SQLAlchemy (from i2FHIRb2==0.0.2)
-    Collecting python_dateutil (from i2FHIRb2==0.0.2)
-      Using cached python_dateutil-2.6.0-py2.py3-none-any.whl
-    Collecting rdflib (from i2FHIRb2==0.0.2)
-      Using cached rdflib-4.2.2-py3-none-any.whl
-       ...
-    (venv) > 
-   ```
-   (Don't miss the period  ('.') in the above command)
-   
-   i2FHIRb2 comes with the python postgresql driver (psycopg2) pre-installed. If you are using an Oracle databae, you need to:
-   ```text
-    (venv) > pip install cx_Oracle --pre       
-       ...
-    (venv) > 
-    ```
-    (Note: these tools haven't been tested with Oracle -- they may not work)
-    
-    There are a number of different dialects available for Microsoft SQL Server. See: http://docs.sqlalchemy.org/en/latest/dialects/mssql.html for details. Note that the same testing caveat applies.
-4) Validate the installation
-    ```bash
-    (venv) > generate_i2b2
-     usage: generate_i2b2 [-h] [-o OUTDIR] [-t TABLE] [-r RESOURCE]
-                     [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
-                     [--list] [-db DBURL] [-u USER] [-p PASSWORD] [--test]
-                     [--crcdb CRCDB] [--crcuser CRCUSER]
-                     [--crcpassword CRCPASSWORD] [--ontdb ONTDB]
-                     [--ontuser ONTUSER] [--ontpassword ONTPASSWORD]
-                     [--onttable ONTTABLE]
-                     indir
-    generate_i2b2: error: the following arguments are required: indir
-   ```
-5) Edit the SQL configuration file.
-      
-   Edit db_conf config file and change the db, user and password parameters. In the i2FHIRb2 root directory:
+In the root project directory (i2FHIRb2):
+```text
+(venv) > pip install -e .
+Obtaining file:///Users/mrf7578/Downloads/i2b2test/i2FHIRb2
+Collecting SQLAlchemy (from i2FHIRb2==0.0.2)
+Collecting python_dateutil (from i2FHIRb2==0.0.2)
+  Using cached python_dateutil-2.6.0-py2.py3-none-any.whl
+Collecting rdflib (from i2FHIRb2==0.0.2)
+  Using cached rdflib-4.2.2-py3-none-any.whl
+   ...
+(venv) > 
+```
+(Don't miss the period  ('.') in the above command)
+
+#### Validate the installation
+```text
+(venv) > generate_i2b2 -v
+Version: 0.1.0              <--- a newer version may print here
+```
+
+#### Edit the SQL configuration file 
+```text
+> cd scripts
+> cp db_conf my_conf
+> (edit) my_conf
+--dburl "postgresql+psycopg2://[[ip]]:[[port]]/i2b2"
+--user [[user]]
+--password [[password]]
+```
+(Note that it is also possible to enter the abovecommand line:
+```text
+(venv) > generate_i2b2 tests/data -l -db "postgresql+psycopg2://localhost:5432/i2b2" -u postgres -p postgres``)
+```
  
-    ```text
-    > cd scripts
-    > edit db_conf
-    --dburl "postgresql+psycopg2://localhost:5432/i2b2"
-    --user postgres
-    --password postgres
-    ```
-    (Note that these parameters can also be entered directly from the command line:
-    ```text
-    (venv) > generate_i2b2 tests/data -l -db "postgresql+psycopg2://localhost:5432/i2b2" -u postgres -p postgres``)
- 
-6) Test the configuration:
-    ```text
-    (venv) > generate_i2b2 ../tests/data/fhir_metadata_vocabulary/ --test @db_conf
+#### Test the configuration
+```text
+(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary/ --test @my_conf
 Validating input files
 	File: ../tests/data/fhir_metadata_vocabulary/fhir.ttl exists
 	File: ../tests/data/fhir_metadata_vocabulary/w5.ttl exists
@@ -126,33 +122,53 @@ Validating target tables
 	Table visit_dimension exists
 Testing write access
 	2 rows updated in table_access table
-     (venv) > 
-    ```
+ (venv) > 
+```
  
  Further instructions for running the various loader functions can be found in the [scripts](scripts) directory.
  
  
-6) Run the FHIR in i2b2 loader
-
+#### Loading the i2b2 ontology tables from the FHIR Metadata Vocabulary
+Lines marked with '++' below will only appear the first time the generator is run.</br>
+Lines marked with '**' will only appear if the generator has been run previously
+The exact numbers will depend on the version of the FMV and/or the loader
 ```text
-(venv) > generate_i2b2 http://build.fhir.org/ -l @db_conf
+(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary/ -l @my_conf
 Loading fhir.ttl
 loading w5.ttl
+** 1 i2b2metadata.table_access record deleted
 1 i2b2metadata.table_access record inserted
-Changing length of concept_dimension.concept_cd from 50 to 200
-1493 i2b2demodata.concept_dimension records inserted
-Changing length of modifier_dimension.modifier_cd from 50 to 200
-2392 i2b2demodata.modifier_dimension records inserted
-Changing length of custom_meta.c_basecode from 50 to 200
-Changing length of custom_meta.c_tooltip from 700 to 1600
-10171 i2b2metadata.custom_meta records inserted
+++ Changing length of concept_dimension.concept_cd from 50 to 200
+** 3396 i2b2demodata.concept_dimension records deleted
+Recursion on :http://hl7.org/fhir/DomainResource.extension.value.extension http://hl7.org/fhir/Extension
+Recursion on :http://hl7.org/fhir/DomainResource.modifierExtension.value.extension http://hl7.org/fhir/Extension
+Recursion on :http://hl7.org/fhir/Task.input.value.extension.value http://hl7.org/fhir/Element
+Recursion on :http://hl7.org/fhir/Task.output.value.extension.value http://hl7.org/fhir/Element
+++ Changing length of modifier_dimension.modifier_cd from 50 to 200
+** 2000 i2b2demodata.modifier_dimension records deleted
+1861 i2b2demodata.modifier_dimension records inserted
+++ Changing length of custom_meta.c_basecode from 50 to 200
+++ Changing length of custom_meta.c_tooltip from 700 to 1600
+** 10222 i2b2metadata.custom_meta records deleted
+** 19 i2b2metadata.custom_meta records deleted
+10175 i2b2metadata.custom_meta records inserted
+++ 1 i2b2metadata.table_access record inserted
 (venv) >
 ```
 
 ### Importing .tsv files
 
+It is also possible to load the i2b2 ontology tables from the set of tab separated value (.tsv) that are included in the
+distribution. 
 
-**NOTE**: Before you load the files below, you may need to adjust the length of the following columns:
+**Note 1:** We do our best to reload these file with each release. Sometimes we don't remember.  Also, the .tsv files
+in the distribution are derived from `../tests/data/fhir_metadata_vocabulary`, which may vary slightly from the FMV that
+can be found at 'http://build.fhir.org/'.  You can regenerate these tables by:
+```text
+(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary -l -od ../i2b2files
+```
+
+**Note 2:**: Before you load the files below, you may need to adjust the length of the following columns:
 <table>
 <tr>
 <td><b>table</b></td>
@@ -186,7 +202,6 @@ Changing length of custom_meta.c_tooltip from 700 to 1600
 </tr>
 </table>
 
-#### TSV Files
 The pre-loaded tsv files can be found in the `i2b2files` subdirectory of the `i2FHIRb2` install:
 
 * **`table_access.tsv`** -- the `table_access` table describes the location and root paths of i2b2 metadata.  This file has one row that states that FHIR resource definitions can be found in the `custom_meta` table with the root '\\FHIR\\'.

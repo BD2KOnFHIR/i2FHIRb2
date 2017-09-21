@@ -36,11 +36,12 @@ def const_f():
     return "Constant Function"
 
 
-class OneClass:
+class OneClass(DynObject):
     _t = DynElements()
     classvalue = "Class Value"
 
     def __init__(self):
+        super().__init__()
         self._rv = "Regular Value"
 
     @classmethod

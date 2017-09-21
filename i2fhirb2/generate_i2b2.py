@@ -290,7 +290,7 @@ def create_parser() -> ArgumentParser:
                         help="Concept dimension base path. (default: \"{}\")".format(Default_Path_Base))
     parser.add_argument("-l", "--load",
                         help="Load i2b2 SQL tables", action="store_true")
-    parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__))
+    parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__), default=None)
     parser.add_argument("--list", help="List table names", action="store_true")
     parser.add_argument("--test", help="Test the confguration", action="store_true")
     # Add the database connection arguments list
@@ -308,7 +308,10 @@ def genargs(argv: List[str]) -> Namespace:
         if not getattr(self, vn):
             setattr(self, vn, default)
 
-    opts = create_parser().parse_args(decode_file_args(argv))
+    parser = create_parser()
+    opts = parser.parse_args(decode_file_args(argv))
+    if not (opts.version or opts.list or opts.test or opts.load):
+        parser.print_help()
     opts.setdefault = lambda *a: setdefault(opts, *a)
     opts.updatedate = datetime.now()
     if not opts.metavoc.endswith(os.sep):

@@ -26,19 +26,23 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from collections import OrderedDict
-from typing import Any, Dict, Tuple, Callable, Union, List
+from typing import Any, Dict, Tuple, Callable, Union, List, Type
 
-DynamicPropType = Union[type(classmethod), type(staticmethod), Callable[[object], object], object]
+DynamicPropType = Union[Type[classmethod], Type[staticmethod], Callable[[object], object], object]
 
 
 class DynElements:
     """
-    An map from an element name either a function that returns an object or an object itself.
+    A map from an element name to either a function that returns an object or an object itself.
     :param parent: parent DynObject
     """
     _delimiter = '\t'
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Type["DynObject"]=None):
+        """
+        Construct a set of dynamic elements
+        :param parent:
+        """
         self.elements = OrderedDict()               # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
         self.override_elements = OrderedDict()      # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
         self.parent_dynelements = parent._t if parent else None

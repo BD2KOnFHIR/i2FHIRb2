@@ -20,7 +20,7 @@ setup(
     description='FHIR in i2b2 model conversion tools',
     long_description='Toolkit to represent the "FHIR Ontology" in i2b2',
     install_requires=requires,
-    scripts=['scripts/generate_i2b2', 'scripts/loadfacts', 'scripts/jsontordf', 'scripts/removefacts'],
+    scripts=['scripts/generate_i2b2', 'scripts/loadfacts', 'scripts/removefacts'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
