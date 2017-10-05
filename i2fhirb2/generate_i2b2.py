@@ -175,9 +175,9 @@ def generate_ontology(g: Graph, opts: Namespace) -> bool:
 def load_fhir_ontology(opts: Namespace) -> Optional[Graph]:
     g = Graph()
     print("Loading fhir.ttl")
-    g.load(opts.metavoc + "fhir.ttl", format="turtle")
+    g.load(opts.metadatavoc + "fhir.ttl", format="turtle")
     print("loading w5.ttl")
-    g.load(opts.metavoc + "w5.ttl", format="turtle")
+    g.load(opts.metadatavoc + "w5.ttl", format="turtle")
     return g
 
 
@@ -192,8 +192,8 @@ def test_configuration(opts: Namespace) -> bool:
     write access to at least some of the tables
     """
     def test_ttl_file(name: str) -> bool:
-        filename = opts.metavoc + name
-        f = Path(opts.metavoc + name)
+        filename = opts.metadatavoc + name
+        f = Path(opts.metadatavoc + name)
         if '://' in str(filename):
             try:
                 request.urlopen(filename)
@@ -202,9 +202,9 @@ def test_configuration(opts: Namespace) -> bool:
             print('\tURL: {} is valid'.format(filename))
         elif f.is_file():
             print("\tFile: {} exists".format(filename))
-            return True
         else:
-            return error("'{}' file not found in {}".format(name, opts.metavoc))
+            return error("'{}' file not found in {}".format(name, opts.metadatavoc))
+        return True
 
     def test_tn(name: str, i2b2tables: I2B2Tables) -> bool:
         if name in [k for k, _ in i2b2tables._tables()]:
@@ -272,7 +272,7 @@ def create_parser() -> ArgumentParser:
     parser = ArgumentParser(description="FHIR in i2b2 metadata generator")
     # For reasons we don't completely understand, the default parser doesn't split the lines...
     parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
-    parser.add_argument("-mv", "--metavoc", metavar="METAVOC URI",
+    parser.add_argument("-mv", "--metadatavoc", metavar="METAVOC URI",
                         help="Input directory or URI of w5.ttl and fhir.ttl files"
                              "(default: {})".format(Default_Metavoc_URI), default=Default_Metavoc_URI)
     parser.add_argument("-od", "--outdir", metavar="TSV OUTPUT DIR",
@@ -314,8 +314,8 @@ def genargs(argv: List[str]) -> Namespace:
         parser.print_help()
     opts.setdefault = lambda *a: setdefault(opts, *a)
     opts.updatedate = datetime.now()
-    if not opts.metavoc.endswith(os.sep):
-        opts.metavoc = os.path.join(opts.metavoc, '')
+    if not opts.metadatavoc.endswith(os.sep):
+        opts.metadatavoc = os.path.join(opts.metadatavoc, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
     i2b2tables.ontology_table = opts.onttable

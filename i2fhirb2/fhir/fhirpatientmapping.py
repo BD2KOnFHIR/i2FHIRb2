@@ -77,7 +77,7 @@ class FHIRPatientMapping:
 
     def __init__(self, patient_id: str, patient_ide_source: str):
         """
-        Create a new patient mapping entry in the FHIR context
+        Create a new patient mapping entry in https://www.dropbox.com/s/zynyact6uowhdgi/Screenshot%202017-09-25%2014.58.44.png?dl=0the FHIR context
         :param patient_id: identifier
         :param patient_ide_source: source -- currently the base URI
         """

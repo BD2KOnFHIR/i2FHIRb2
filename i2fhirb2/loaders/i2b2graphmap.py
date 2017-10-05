@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from fhirtordf.rdfsupport.fhirgraphutils import value
 from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
@@ -73,47 +73,51 @@ class I2B2GraphMap:
         self.visit_dimensions = []          # type: List[VisitDimension]
         self.encounter_mappings = []        # type: List[EncounterMapping]
 
-        for subj in set(g.subjects()):
-            subj_type = g.value(subj, RDF.type)
-            if subj_type and subj_type in FHIR_RESOURCE_MAP:
+        for subj, subj_type in g.subject_objects(RDF.type):
+            if subj_type in FHIR_RESOURCE_MAP:
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]
                 if isinstance(mapped_type, FHIR_Infrastructure_type):
                     self.num_infrastructure += 1
                 elif isinstance(mapped_type, FHIR_Observation_Fact_type):
                     pm, vd, start_date = self.process_resource_instance(subj, mapped_type)
-                    obsfactory = \
-                        FHIRObservationFactFactory(g, ObservationFactKey(pm.patient_num,
-                                                                         vd.visit_dimension_entry.encounter_num,
-                                                                         opts.providerid, start_date), subj)
-                    # TODO: Decide what do do with the other mappings in the observation factory
-                    self.observation_facts += obsfactory.observation_facts
+                    if pm is not None:
+                        obsfactory = \
+                            FHIRObservationFactFactory(g, ObservationFactKey(pm.patient_num,
+                                                                             vd.visit_dimension_entry.encounter_num,
+                                                                             opts.providerid, start_date), subj)
+                        # TODO: Decide what do do with the other mappings in the observation factory
+                        self.observation_facts += obsfactory.observation_facts
                 elif isinstance(mapped_type, FHIR_Visit_Dimension_type):
                     self.num_visit += 1
                 elif isinstance(mapped_type, FHIR_Provider_Dimension_type):
                     self.num_provider += 1
                 elif isinstance(mapped_type, FHIR_Patient_Dimension_type):
-                    pm, vd, start_date = self.process_resource_instance(subj, mapped_type)
-                    pd = FHIRPatientDimension(self._g, subj, pm.patient_num,
-                                              vd.visit_dimension_entry.encounter_num, start_date)
+                    pd = FHIRPatientDimension(self._g, subj)
                     self.patient_dimensions.append(pd.patient_dimension_entry)
+                    self.patient_mappings += pd.patient_mappings.patient_mapping_entries
                 elif isinstance(mapped_type, FHIR_Bundle_type):
                     self.num_bundle += 1
                 else:
                     self.num_unmapped += 1
+        print("---> Graph map phase complete")
 
     def process_resource_instance(self, subj: URIRef,  mapped_type: FHIR_Resource_type) \
-            -> Tuple[FHIRPatientMapping, FHIRVisitDimension, datetime]:
+            -> Tuple[Optional[FHIRPatientMapping], Optional[FHIRVisitDimension], Optional[datetime]]:
         patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(self._g, subj)
-        patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
-        pm = FHIRPatientMapping(patient_id, patient_ide_source)
-        self.patient_mappings += pm.patient_mapping_entries
-        start_date = value(self._g, subj, FHIR.Observation.effectiveDateTime)
-        if not start_date:
-            start_date = datetime.now()
-        vd = FHIRVisitDimension(subj, pm.patient_num, patient_id, patient_ide_source, start_date)
-        self.visit_dimensions.append(vd.visit_dimension_entry)
-        self.encounter_mappings += vd.encounter_mappings.encounter_mapping_entries
-        return pm, vd, start_date
+        if patient_id_uri is not None:
+            patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
+            pm = FHIRPatientMapping(patient_id, patient_ide_source)
+            self.patient_mappings += pm.patient_mapping_entries
+            start_date = value(self._g, subj, FHIR.Observation.effectiveDateTime)
+            if not start_date:
+                start_date = datetime.now()
+            vd = FHIRVisitDimension(subj, pm.patient_num, patient_id, patient_ide_source, start_date)
+            self.visit_dimensions.append(vd.visit_dimension_entry)
+            self.encounter_mappings += vd.encounter_mappings.encounter_mapping_entries
+            return pm, vd, start_date
+        else:
+            # Just a reference to a resource instance -- drop it
+            return None, None, None
 
     def generate_tsv_files(self) -> None:
         self._generate_tsv_file("observation_fact.tsv", ObservationFact, self.observation_facts)

@@ -25,10 +25,12 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+import argparse
 import shlex
 from argparse import ArgumentParser, Namespace
 from typing import List, Tuple
 
+import os
 from sqlalchemy import MetaData, create_engine, Table, Column
 from sqlalchemy.engine import Engine
 
@@ -37,12 +39,40 @@ Default_User = "postgres"
 Default_Password = "postgres"
 
 
+class FileOrURL(argparse.Action):
+    """ Mark an argument as a file or a URL.  This allows decode_file_args to resolve paths that
+    are relative to the configuration file
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        rel_path = getattr(parser, 'rel_path')
+        val_list = values if isinstance(values, list) else [values]
+        if rel_path:
+            val_list = [self.absolutize(rel_path, v) for v in val_list]
+        setattr(namespace, self.dest, val_list if isinstance(values, list) else val_list[0])
+
+    @staticmethod
+    def absolutize(rel_path: str, v: str) -> str:
+        if '://' not in v and not os.path.isabs(v):
+            return os.path.abspath(os.path.join(rel_path, v))
+        else:
+            return v
+
+
+class ConfigFile(argparse.Action):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, nargs, **kwargs)
+
+    def __call__(self, parser: ArgumentParser, namespace: Namespace, values, option_string=None):
+        raise AttributeError("Must preprocess input arguments with decode_file_args function")
+
+
 def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
     """
     Add the database connection arguments to the supplied parser
     :param parser: parser to add arguments to
     :return: parser
     """
+    parser.add_argument("--conf", metavar="CONFIG FILE", help="Configuration file", action=ConfigFile)
     parser.add_argument("-db", "--dburl", help="Default database URL (default: {})".format(Default_DB_Connection),
                         default=Default_DB_Connection)
     parser.add_argument("--user", help="Default user name (default: {})".format(Default_User),
@@ -52,16 +82,17 @@ def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
     parser.add_argument("--crcdb", help="CRC database URL.  (default: dburl)")
     parser.add_argument("--crcuser", help="User name for CRC database. (default: user)")
     parser.add_argument("--crcpassword", help="Password for CRC database. (default: password")
-    parser.add_argument("--ontdb", help="Ontology database URL.  (default: dburl)")
-    parser.add_argument("--ontuser", help="User name for ontology database. (default: user)")
-    parser.add_argument("--ontpassword", help="Password for ontology database. (default: password)")
+    parser.add_argument("--ontodb", help="Ontology database URL.  (default: dburl)")
+    parser.add_argument("--ontouser", help="User name for ontology database. (default: user)")
+    parser.add_argument("--ontopassword", help="Password for ontology database. (default: password)")
     return parser
 
 
-def process_parsed_args(opts: Namespace) -> Namespace:
+def process_parsed_args(opts: Namespace, connect: bool=True) -> Namespace:
     """
     Set the defaults for the crc and ontology schemas
     :param opts: parsed arguments
+    :param connect: actually connect. (For debugging)
     :return: namespace with additional elements added
     """
     def setdefault(vn: str, default: object) -> None:
@@ -72,24 +103,32 @@ def process_parsed_args(opts: Namespace) -> Namespace:
     setdefault('crcdb', opts.dburl)
     setdefault('crcuser', opts.user)
     setdefault('crcpassword', opts.password)
-    setdefault('ontdb', opts.dburl)
-    setdefault('ontuser', opts.user)
-    setdefault('ontpassword', opts.password)
-    opts.tables = I2B2Tables(opts)
+    setdefault('ontodb', opts.dburl)
+    setdefault('ontouser', opts.user)
+    setdefault('ontopassword', opts.password)
+    if connect:
+        opts.tables = I2B2Tables(opts)
     return opts
 
 
-def decode_file_args(argv: List[str]) -> List[str]:
+def decode_file_args(argv: List[str], parser: argparse.ArgumentParser = None) -> List[str]:
     """
-    Preprocess any arguments that begin with an '@' sign.  This replaces the one in Argparse because it
-    a) doesn't process "-x y" correctly and b) ignores bad files
+    Preprocess a configuration file.  The location of the configuration file is stored in the parser so that the
+    FileOrURI action can add relative locations.
     :param argv: raw options list
-    :return: options list with file references replaced
+    :param parser: argument parser.  Used as an anchor for the configuration file location
+    :return: options list with '--conf' references replaced with file contents
     """
-    for arg in [arg for arg in argv if arg[0] == '@']:
-        argv.remove(arg)
-        with open(arg[1:]) as config_file:
-            argv += shlex.split(config_file.read())
+    for i in range(0, len(argv) - 1):
+        if argv[i] == '--conf':
+            del argv[i]
+            conf_file = argv[i]
+            del(argv[i])
+            with open(conf_file) as config_file:
+                argv += shlex.split(config_file.read())
+            # NOTE: relative file locations are not currently handled in nested configuration files
+            if parser:
+                parser.rel_path = os.path.abspath(os.path.split(conf_file)[0])
             return decode_file_args(argv)
     return argv
 
@@ -145,7 +184,7 @@ class I2B2Tables:
         :return: Tuple w/ crc and ontology url
         """
         return opts.crcdb.replace("//", "//{crcuser}:{crcpassword}@".format(**opts.__dict__)),\
-            opts.ontdb.replace("//", "//{ontuser}:{ontpassword}@".format(**opts.__dict__))
+            opts.ontodb.replace("//", "//{ontouser}:{ontopassword}@".format(**opts.__dict__))
 
     def _tables(self) -> List[Tuple[str, str]]:
         """

@@ -42,7 +42,7 @@ class I2B2TablesTestCase(unittest.TestCase):
     from i2fhirb2.generate_i2b2 import genargs
     conf_file = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..', 'conf', 'db_conf'))
 
-    opts = genargs(['@' + conf_file])
+    opts = genargs('-l --conf {} '.format(conf_file).split())
     process_parsed_args(opts)
 
     def test_basics(self):

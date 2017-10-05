@@ -1,0 +1,129 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# - resource -------------------------------------------------------------------
+
+<http://hl7.org/fhir/MedicationDispense/meddisp0308> a fhir:MedicationDispense;
+  fhir:nodeRole fhir:treeRoot;
+  fhir:Resource.id [ fhir:value "meddisp0308"];
+  fhir:DomainResource.text [
+     fhir:Narrative.status [ fhir:value "generated" ];
+     fhir:Narrative.div "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: meddisp0308</p><p><b>contained</b>: </p><p><b>status</b>: completed</p><p><b>medication</b>: Timoptic 5mg/ml solution. Generated Summary: id: med0305; Timoptic 5mg/ml solution <span>(Details : {http://hl7.org/fhir/sid/ndc code '2501-813-16' = '2501-813-16', given as 'Timoptic 5mg/ml solution'})</span></p><p><b>subject</b>: <a>Donald Duck </a></p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td><td><b>OnBehalfOf</b></td></tr><tr><td>*</td><td><a>Practitioner/f006</a></td><td><a>Organization/2.16.840.1.113883.19.5</a></td></tr></table><p><b>authorizingPrescription</b>: <a>MedicationRequest/medrx0330</a></p><p><b>type</b>: Refill - Part Fill <span>(Details : {http://hl7.org/fhir/v3/ActCode code 'RFP' = 'Refill - Part Fill', given as 'Refill - Part Fill'})</span></p><p><b>quantity</b>: 10 mL<span> (Details: UCUM code mL = 'mL')</span></p><p><b>daysSupply</b>: 30 Day<span> (Details: UCUM code d = 'd')</span></p><p><b>whenPrepared</b>: 25/06/2015 7:13:00 AM</p><p><b>whenHandedOver</b>: 26/06/2015 7:13:00 AM</p><p><b>dosageInstruction</b>: </p></div>"
+  ];
+  fhir:DomainResource.contained [
+     a fhir:Medication;
+     fhir:index 0;
+     fhir:Resource.id [ fhir:value "med0305" ];
+     fhir:Medication.code [
+       fhir:CodeableConcept.coding [
+         fhir:index 0;
+         fhir:Coding.system [ fhir:value "http://hl7.org/fhir/sid/ndc" ];
+         fhir:Coding.code [ fhir:value "2501-813-16" ];
+         fhir:Coding.display [ fhir:value "Timoptic 5mg/ml solution" ]
+       ]
+     ]
+  ];
+  fhir:MedicationDispense.status [ fhir:value "completed"];
+  fhir:MedicationDispense.medicationReference [
+     fhir:Reference.reference [ fhir:value "#med0305" ];
+     fhir:Reference.display [ fhir:value "Timoptic 5mg/ml solution" ]
+  ];
+  fhir:MedicationDispense.subject [
+     fhir:link <http://hl7.org/fhir/Patient/pat1>;
+     fhir:Reference.reference [ fhir:value "Patient/pat1" ];
+     fhir:Reference.display [ fhir:value "Donald Duck " ]
+  ];
+  fhir:MedicationDispense.performer [
+     fhir:index 0;
+     fhir:MedicationDispense.performer.actor [
+       fhir:link <http://hl7.org/fhir/Practitioner/f006>;
+       fhir:Reference.reference [ fhir:value "Practitioner/f006" ]
+     ];
+     fhir:MedicationDispense.performer.onBehalfOf [
+       fhir:link <http://hl7.org/fhir/Organization/2.16.840.1.113883.19.5>;
+       fhir:Reference.reference [ fhir:value "Organization/2.16.840.1.113883.19.5" ]
+     ]
+  ];
+  fhir:MedicationDispense.authorizingPrescription [
+     fhir:index 0;
+     fhir:link <http://hl7.org/fhir/MedicationRequest/medrx0330>;
+     fhir:Reference.reference [ fhir:value "MedicationRequest/medrx0330" ]
+  ];
+  fhir:MedicationDispense.type [
+     fhir:CodeableConcept.coding [
+       fhir:index 0;
+       fhir:Coding.system [ fhir:value "http://hl7.org/fhir/v3/ActCode" ];
+       fhir:Coding.code [ fhir:value "RFP" ];
+       fhir:Coding.display [ fhir:value "Refill - Part Fill" ]
+     ]
+  ];
+  fhir:MedicationDispense.quantity [
+     fhir:Quantity.value [ fhir:value "10"^^xsd:decimal ];
+     fhir:Quantity.unit [ fhir:value "mL" ];
+     fhir:Quantity.system [ fhir:value "http://unitsofmeasure.org" ];
+     fhir:Quantity.code [ fhir:value "mL" ]
+  ];
+  fhir:MedicationDispense.daysSupply [
+     fhir:Quantity.value [ fhir:value "30"^^xsd:decimal ];
+     fhir:Quantity.unit [ fhir:value "Day" ];
+     fhir:Quantity.system [ fhir:value "http://unitsofmeasure.org" ];
+     fhir:Quantity.code [ fhir:value "d" ]
+  ];
+  fhir:MedicationDispense.whenPrepared [ fhir:value "2015-06-25T07:13:00+05:00"^^xsd:dateTime];
+  fhir:MedicationDispense.whenHandedOver [ fhir:value "2015-06-26T07:13:00+05:00"^^xsd:dateTime];
+  fhir:MedicationDispense.dosageInstruction [
+     fhir:index 0;
+     fhir:Dosage.sequence [ fhir:value "1"^^xsd:integer ];
+     fhir:Dosage.text [ fhir:value "Instil one drop in each eye twice daily" ];
+     fhir:Dosage.timing [
+       fhir:Timing.repeat [
+         fhir:Timing.repeat.frequency [ fhir:value "2"^^xsd:integer ];
+         fhir:Timing.repeat.period [ fhir:value "1"^^xsd:decimal ];
+         fhir:Timing.repeat.periodUnit [ fhir:value "d" ]
+       ]
+     ];
+     fhir:Dosage.route [
+       fhir:CodeableConcept.coding [
+         fhir:index 0;
+         a sct:54485002;
+         fhir:Coding.system [ fhir:value "http://snomed.info/sct" ];
+         fhir:Coding.code [ fhir:value "54485002" ];
+         fhir:Coding.display [ fhir:value "Ophthalmic route (qualifier value)" ]
+       ]
+     ];
+     fhir:Dosage.method [
+       fhir:CodeableConcept.coding [
+         fhir:index 0;
+         a sct:421538008;
+         fhir:Coding.system [ fhir:value "http://snomed.info/sct" ];
+         fhir:Coding.code [ fhir:value "421538008" ];
+         fhir:Coding.display [ fhir:value "Instill - dosing instruction imperative (qualifier value)" ]
+       ]
+     ];
+     fhir:Dosage.doseQuantity [
+       fhir:Quantity.value [ fhir:value "1"^^xsd:decimal ];
+       fhir:Quantity.unit [ fhir:value "OPDROP" ];
+       fhir:Quantity.system [ fhir:value "http://hl7.org/fhir/v3/orderableDrugForm" ];
+       fhir:Quantity.code [ fhir:value "OPDROP" ]
+     ]
+  ] .
+
+<http://hl7.org/fhir/Patient/pat1> a fhir:Patient .
+
+<http://hl7.org/fhir/Practitioner/f006> a fhir:Practitioner .
+
+<http://hl7.org/fhir/Organization/2.16.840.1.113883.19.5> a fhir:Organization .
+
+<http://hl7.org/fhir/MedicationRequest/medrx0330> a fhir:MedicationRequest .
+
+# - ontology header ------------------------------------------------------------
+
+<http://hl7.org/fhir/MedicationDispense/meddisp0308.ttl> a owl:Ontology;
+  owl:imports fhir:fhir.ttl;
+  owl:versionIRI <http://hl7.org/fhir/MedicationDispense/meddisp0308.ttl> .
+
+# -------------------------------------------------------------------------------------
+

@@ -76,6 +76,7 @@ def gYearMonth_val(val: Literal) -> datetime:
 def time_val(val: Literal) -> datetime:
     return datetime.strptime(val.value, '%H:%M:%S')
 
+
 # Conversion table from XSD data type to corresponding i2b2 field
 literal_conversions = {
     XSD.base64Binary: (literal_val, valuetype_blob),

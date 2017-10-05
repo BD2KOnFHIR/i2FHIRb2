@@ -81,7 +81,7 @@ class FHIRPatientDimension:
         :param g: Graph carrying additional facts about the patient
         :param patient: URI of the actual patient
         """
-        if not g.value(patient, FHIR.animal):       # i2b2 doesn't do animals
+        if not g.value(patient, FHIR.Patient.animal):       # i2b2 doesn't do animals
             # gender
             gender = value(g, patient, FHIR.Patient.gender)
             if gender == "male":

@@ -29,9 +29,11 @@ from datetime import datetime
 from operator import or_
 from typing import Optional, List, Tuple, Callable, Dict
 
+import sys
 from sqlalchemy import Table, and_, update, delete, select
 from sqlalchemy.engine import Connection
 
+from i2fhirb2.i2b2model.shared.listchunker import ListChunker
 from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements, DynamicPropType
 
 
@@ -169,9 +171,6 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
                             for v in vals[1:]:
                                 inserts.remove(v)
             # TODO: refactor this to load on a per-resource basis.  Temporary fix
-            while inserts:
-                num_inserts += conn.execute(table.insert(), inserts[:500]).rowcount
-                inserts = inserts[500:]
-                print(".", end='')
-            print('\n')
+            for insert in ListChunker(inserts, 500):
+                num_inserts += conn.execute(table.insert(), insert).rowcount
         return num_inserts, num_updates

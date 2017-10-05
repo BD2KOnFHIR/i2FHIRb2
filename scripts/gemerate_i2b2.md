@@ -5,11 +5,9 @@ into the i2b2 `concept_dimension`, `modifier_dimension` and `ontology` tables.
 
 
 ## Use
-See [Setup Instructions](../setup.md) for installation instructions
 
 ```text
-> python generate_i2b2 -h
-usage: generate_i2b2 [-h] [-mv METAVOC URI] [-od TSV OUTPUT DIR]
+> usage: generate_i2b2 [-h] [-mv METAVOC URI] [-od TSV OUTPUT DIR]
                      [-t I2B2 TABLE] [-r RESOURCE]
                      [--sourcesystem SOURCESYSTEM_CD] [--base BASE] [-l] [-v]
                      [--list] [--test] [-db DBURL] [--user USER]
@@ -60,25 +58,26 @@ optional arguments:
 >
 ```
 
-Note that some or all of the parameters can be recorded in a configuration file that is referenced with an '@[filename]' on the command line.  As an example, the [db_conf](db_conf) file in the [scripts](.\scripts) directory has the default setting for a MAC OSX PostgreSQL install.
-
-### Generating loadable tab separated value (.tsv) files:
+Note that any or all of the parameters described above can be recorded in a configuration file that is referenced with an '@[filename]' on the command line.  As an example, if you had a file named `latest` with:
 ```text
-> generate_i2b2 -o ../i2b2files
-Loading fhir.ttl
-loading w5.ttl
-writing ../i2b2files/table_access.tsv (1) records written
-Recursion on :http://hl7.org/fhir/DomainResource.extension.value.extension http://hl7.org/fhir/Extension
-Recursion on :http://hl7.org/fhir/DomainResource.modifierExtension.value.extension http://hl7.org/fhir/Extension
-Recursion on :http://hl7.org/fhir/Task.input.value.extension.value http://hl7.org/fhir/Element
-Recursion on :http://hl7.org/fhir/Task.output.value.extension.value http://hl7.org/fhir/Element
-writing ../i2b2files/concept_dimension.tsv (3380) records written
-writing ../i2b2files/modifier_dimension.tsv (1875) records written
-writing ../i2b2files/ontology.tsv (10185) records written
+-mv http://build.fhir.org/
+-l
+--dburl postgresql+psycopg2://localhost:5432/i2b2
+--user postgres
+--password postgres
+```
+
+You could load the latest FHIR Metadata Vocabluary into the local i2b2 tables by:
+```text
+(venv) > generate_i2b2 @latest
 ```
 
 ### Testing the i2b2 database configuration
-You can test the configuration and accessibility of the i2b2, including write access by:
+You can test the local database configuration with the `--test` option.  This option:
+1) Makes sure that the FHIR W5 and Metata Vocabulary Files exist
+2) That the SQL connection parameters are valid
+3) That all of the necessary tables can be accessed
+4) That the user has at least *some* write access on the tables.
 ```text
 > generate_i2b2 --test @db_conf
 Validating input files
@@ -96,27 +95,38 @@ Validating target tables
 	Table provider_dimension exists
 	Table table_access exists
 	Table visit_dimension exists
+Testing write access
+	2 rows updated in table_access table 
 >
 ```
 
 
-### Loading i2b2 tables
+### Loading i2b2 ontology tables
+
 ```text
 > cat db_conf 
+-mv ../tests/data/fhir_metadata_vocabulary
 --dburl postgresql+psycopg2://localhost:5432/i2b2
 --user postgres
 --password postgres
-> generate_i2b2 http://build.fhir.org/ -l @db_conf
-Loading fhir.ttl
-loading w5.ttl
+> generate_i2b2 -l @db_conf
+** 1 i2b2metadata.table_access record deleted
 1 i2b2metadata.table_access record inserted
-Changing length of concept_dimension.concept_cd from 50 to 200
-1493 i2b2demodata.concept_dimension records inserted
-Changing length of modifier_dimension.modifier_cd from 50 to 200
-2392 i2b2demodata.modifier_dimension records inserted
-Changing length of custom_meta.c_basecode from 50 to 200
-Changing length of custom_meta.c_tooltip from 700 to 1600
-10171 i2b2metadata.custom_meta records inserted
+++ Changing length of concept_dimension.concept_cd from 50 to 200
+** 3396 i2b2demodata.concept_dimension records deleted
+Recursion on :http://hl7.org/fhir/DomainResource.extension.value.extension http://hl7.org/fhir/Extension
+Recursion on :http://hl7.org/fhir/DomainResource.modifierExtension.value.extension http://hl7.org/fhir/Extension
+Recursion on :http://hl7.org/fhir/Task.input.value.extension.value http://hl7.org/fhir/Element
+Recursion on :http://hl7.org/fhir/Task.output.value.extension.value http://hl7.org/fhir/Element
+++ Changing length of modifier_dimension.modifier_cd from 50 to 200
+** 2000 i2b2demodata.modifier_dimension records deleted
+1861 i2b2demodata.modifier_dimension records inserted
+++ Changing length of custom_meta.c_basecode from 50 to 200
+++ Changing length of custom_meta.c_tooltip from 700 to 1600
+** 10222 i2b2metadata.custom_meta records deleted
+** 19 i2b2metadata.custom_meta records deleted
+10175 i2b2metadata.custom_meta records inserted
+++ 1 i2b2metadata.table_access record inserted
 ```
 
 ## Mapping

@@ -29,8 +29,13 @@ import os
 import sys
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
+from random import randint
 from typing import List, Optional
+from urllib.request import Request, urlopen
+from i2fhirb2 import __version__
 
+from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
+from fhirtordf.fhirtordf import add_argument
 from fhirtordf.loaders.fhirjsonloader import fhir_json_to_rdf
 from rdflib import Graph
 
@@ -46,7 +51,12 @@ from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
+    FileOrURL
+
+
+# TODO: Add support for non-turtle RDF files
+# TODO: Add continuation headers for RDF
 
 
 def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
@@ -56,58 +66,78 @@ def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
     :return: Loaded graph or None if errors were encountered
     """
     g = Graph()
+    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc, 'fhir.ttl'))
 
-    def load_file(dirname, fname):
-        filepath = os.path.join(dirname, fname)
+    def read_rdf_uri(uri: str) -> str:
+        req = Request(uri)
+        req.add_header("Accept", "application/turtle, text/turtle;q=0.9")
+        with urlopen(req) as response:
+            return response.read().decode()
+
+    def load_file(dirname: str, fname: str) -> None:
+        filepath = fname if '://' in fname else os.path.join(dirname, fname)
         print("--> loading {}".format(filepath))
-        if opts.filetype == 'rdf':
-            g.load(filepath, format="turtle")
+        if '://' in fname:
+            if opts.filetype == 'rdf':
+                rdf_str = read_rdf_uri(fname)
+                if not rdf_str:
+                    print("   Read Failed")
+                g.parse(data=rdf_str, format="turtle")
+            else:
+                fhir_json_to_rdf(fname, opts.uribase, g, metavoc=fmv)
         else:
-            fmv = Graph()
-            fmv.load(opts.metavoc, format="turtle")
-            fhir_json_to_rdf(filepath, opts.uribase, g, metavoc=fmv)
+            if filepath.endswith('.json'):
+                fhir_json_to_rdf(filepath, opts.uribase, g, metavoc=fmv)
+            else:
+                g.load(filepath, format="turtle")
 
-    if opts.file:
-        load_file(opts.indir if opts.indir else "", opts.file)
+    if opts.infile:
+        [load_file(opts.indir if opts.indir else "", fn) for fn in opts.infile]
     else:
         for dirpath, _, filenames in os.walk(opts.indir):
             for filename in filenames:
-                if filename.endswith(opts.file_suffix):
+                if (opts.filetype == 'json' and filename.endswith('.json')) or filename.endswith('.ttl'):
                     load_file(dirpath, filename)
-
     return g
 
 
 def create_parser() -> ArgumentParser:
     """
-    Create a command line parser
+    Create a command line argument parser
     :return: parser
     """
     parser = ArgumentParser(description="Load FHIR Resource Data into i2b2 CRC tables", fromfile_prefix_chars='@')
-    parser.add_argument("-f", "--file", metavar="Input file", help="URL or name of input file")
-    parser.add_argument("-d", "--indir", metavar="Input directory", help="URI of server or directory of input files")
-    parser.add_argument("-o", "--outdir", metavar="Output directory", help="Output directory to store .tsv files. "
-                                                  "If not specified, no .tsv files are generated.")
-    parser.add_argument("-t", "--filetype", help="Type of files to load. Default: json", choices=['rdf', 'json'])
-    parser.add_argument("-mv", "--metavoc", help="Name of FHIR Metavocabulary file (default: {}".format(DEFAULT_FMV),
-                        default=DEFAULT_FMV)
-    parser.add_argument("--sourcesystem", metavar="Source system code",
-                        default=Default_Sourcesystem_Code,
-                        help="Sourcesystem code.  (default: \"{}\")".format(Default_Sourcesystem_Code))
-    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
-                        help="Upload identifer -- uniquely identifies this batch", type=int,
-                        required=True)
-    parser.add_argument("--base", metavar="concept identifier base (default: {})".format(Default_Path_Base),
-                        default=Default_Path_Base,
-                        help="Concept dimension and ontology base path. (default:\"{}\")".format(Default_Path_Base))
-    parser.add_argument("-ub", "--uribase", help="Resource URI base. Default: {}".format(FHIR), default=str(FHIR))
-    parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
-    parser.add_argument("-rm", "--remove", help="Remove existing entries for the upload identifier and/or"
-                                                " clear target tsv files", action="store_true")
-    parser.add_argument("-p", "--providerid", metavar="Default provider id",
-                        help="Default provider id (default: {})".format(DEFAULT_PROVIDER_ID),
-                        default=DEFAULT_PROVIDER_ID)
-    parser.add_argument("--dupcheck", help="Check for duplicate records before add.", action="store_true")
+    parser.file_actions = []
+    add_argument(parser, "-v", "--version", help="Current version number", action="store_true")
+    add_argument(parser, "-l", "--load", help="Load SQL Tables", action="store_true")
+    parser.file_actions.append(
+        add_argument(parser, "-i", "--infile", metavar="Input files", help="URLs and/or name(s) of input file(s)",
+                 nargs='*', action=FileOrURL))
+    parser.file_actions.append(
+        add_argument(parser, "-id", "--indir", metavar="Input directory",
+                     help="URI of server or directory of input files"))
+    parser.file_actions.append(
+        add_argument(parser, "-od", "--outdir", metavar="Output directory",
+                     help="Output directory to store .tsv files."))
+    add_argument(parser, "-t", "--filetype",
+                         help="Type of file to ask for / load - only applies for URL's and directories.",
+                         choices=['json', 'rdf'], default='rdf')
+    parser.file_actions.append(
+        add_argument(parser, "-mv", "--metadatavoc", help="Location of FHIR Metavocabulary file", default=DEFAULT_FMV,
+                 action=FileOrURL))
+    add_argument(parser, "--sourcesystem", metavar="Source system code", default=Default_Sourcesystem_Code,
+                         help="Sourcesystem code")
+    add_argument(parser, "-u", "--uploadid", metavar="Upload identifier",
+                         help="Upload identifer -- uniquely identifies this batch", type=int)
+    add_argument(parser, "--base", metavar="concept identifier base (default: {})".format(Default_Path_Base),
+                         default=Default_Path_Base,
+                         help="Concept dimension and ontology base path")
+    add_argument(parser, "-ub", "--uribase", help="Resource URI base", default=str(FHIR))
+    add_argument(parser, "-rm", "--remove", help="Remove existing entries for the upload identifier and/or"
+                                                 " clear target tsv files", action="store_true")
+    add_argument(parser, "-p", "--providerid", metavar="Default provider id", help="Default provider id",
+                         default=DEFAULT_PROVIDER_ID)
+    add_argument(parser, "--dupcheck", help="Check for duplicate records before add.", action="store_true")
     return parser
 
 
@@ -117,48 +147,43 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
     :param argv: input arguments
     :return: options if success or None of parameters aren't valid
     """
-    opts = add_connection_args(create_parser()).parse_args(decode_file_args(argv))
-    if not (opts.file or opts.indir):
-        print("Either an input file or input directory must be supplied", file=sys.stderr)
-        return None
+    parser = add_connection_args(create_parser())
+    opts = parser.parse_args(decode_file_args(argv, parser))
+    if opts.version:
+        print("FHIR i2b2 CRC loader -- Version {}".format(__version__))
+    elif not opts.load or opts.outdir:
+        parser.error("Either load option (-l) or output directory must be specified")
+    if not (opts.infile or opts.indir or opts.version):
+        parser.error("Either a list of input files or input directory must be supplied")
     if opts.remove and not opts.load:
-        print("Remove existing option not yet implemented for tsv files")
-        return None
-    if opts.file and not opts.filetype:
-        if opts.file.endswith(".json"):
-            opts.filetype = "json"
-        elif opts.file.endswith(".ttl"):
-            opts.filetype = "ttl"
-        else:
-            print("Unable to determine file type from input file name")
-            return None
-    if (opts.file and opts.file.endswith('.ttl') and opts.filetype == "json") or \
-            (opts.file and opts.file.endswith('.json') and opts.filetype == "rdf"):
-        print("Supplied file type ({}) doesnt match file suffix ({})"
-              .format(opts.filetype, opts.file.rsplit('.', 1)[1]))
-        return None
-    if opts.indir and not opts.filetype:
-        opts.filetype = "json"
-
-    opts.file_suffix = ".json" if opts.filetype == "json" else '.ttl' if opts.filetype == "rdf" else "."
-
-    opts.updatedate = datetime.now()
-    if opts.indir and not opts.indir.endswith(os.sep):
-        opts.indir = os.path.join(opts.indir, '')
-    if opts.outdir and not opts.outdir.endswith(os.sep):
-        opts.outdir = os.path.join(opts.outdir, '')
-    opts.updatedate = datetime.now()
-    if opts.load:
-        process_parsed_args(opts)
-
-    if opts.sourcesystem:
+        parser.error("Remove existing upload id only implemented for LOAD option")
+    if opts.infile:
+        for fn in opts.infile:
+            if '://' not in fn and not (fn.endswith('.ttl') or fn.endswith(".json")):
+                parser.error("Unrecognized file type: {}".format(fn))
+    if opts.load or opts.outdir:
+        if not opts.uploadid:
+            # TODO: find a more rational way to do this
+            # TODO: uploadid to description map
+            opts.uploadid = randint(200000, 500000)
+        opts.updatedate = datetime.now()
+        if opts.indir and not opts.indir.endswith(os.sep):
+            opts.indir = os.path.join(opts.indir, '')
+        if opts.outdir and not opts.outdir.endswith(os.sep):
+            opts.outdir = os.path.join(opts.outdir, '')
+        if opts.load:
+            process_parsed_args(opts)
         I2B2_Core_With_Upload_Id.sourcesystem_cd = opts.sourcesystem
-    I2B2_Core_With_Upload_Id.upload_id = opts.uploadid
-
-    return opts
+        I2B2_Core_With_Upload_Id.upload_id = opts.uploadid
+        return opts
+    return None
 
 
 def print_rdf_summary(g: Graph()) -> None:
+    """
+    Summarize the number of resources and other information that was actually loaded
+    :param g: Graph of loaded RDF
+    """
     # TODO: Figure out how to count the number of resources
     # num_resources = len(list(g.subject_objects(FHIR.resourceType)))
     num_triples = len(g)
@@ -167,15 +192,20 @@ def print_rdf_summary(g: Graph()) -> None:
 
 
 def load_graph_map(opts: Namespace) -> Optional[I2B2GraphMap]:
+    """
+    Transform the input URI(s) and/or file(s) into an I2B2GraphMap
+    :param opts: input options
+    :return: I2B2GraphMap if success otherwise None
+    """
     opts.tables = I2B2Tables(opts) if opts.load else None
     print("upload_id: {}".format(opts.uploadid))
     if opts.tables:
         print("  Starting encounter number: {}"
-             .format(FHIREncounterMapping.refresh_encounter_number_generator(opts.tables,
-                                                                             opts.uploadid if opts.remove else None)))
+              .format(FHIREncounterMapping.refresh_encounter_number_generator(opts.tables,
+                                                                              opts.uploadid if opts.remove else None)))
         print("  Starting patient number: {}"
-            .format(FHIRPatientMapping.refresh_patient_number_generator(opts.tables,
-                                                                        opts.uploadid if opts.remove else None)))
+              .format(FHIRPatientMapping.refresh_patient_number_generator(opts.tables,
+                                                                          opts.uploadid if opts.remove else None)))
     g = load_rdf_graph(opts)
     if g:
         update_dt = datetime.now()
@@ -188,7 +218,7 @@ def load_graph_map(opts: Namespace) -> Optional[I2B2GraphMap]:
     return None
 
 
-def populate_fact_table(argv: List[str]) -> bool:
+def load_facts(argv: List[str]) -> bool:
     """
     Convert a set of FHIR resources into their corresponding i2b2 counterparts.
     :param argv: Command line arguments.  See: create_parser for details
@@ -211,4 +241,4 @@ def populate_fact_table(argv: List[str]) -> bool:
 
 
 if __name__ == "__main__":
-    populate_fact_table(sys.argv[1:])
+    load_facts(sys.argv[1:])

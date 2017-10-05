@@ -27,14 +27,16 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from argparse import Namespace, ArgumentParser
 
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args
 from tests.utils.base_test_case import test_conf_directory
 
 
 def connection_helper() -> Namespace:
-    parser = ArgumentParser(description="Test connection", fromfile_prefix_chars='@')
+    parser = ArgumentParser(description="Test connection")
     parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
     parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
                         help="Upload identifer -- uniquely identifies this batch", type=int, required=True)
-    opts = add_connection_args(parser).parse_args(['-u', '41712', '@' + test_conf_directory + '/db_conf'])
+    parser.add_argument("-mv", "--metavoc", help="Unused")
+    opts = add_connection_args(parser)\
+        .parse_args(decode_file_args(['-u', '41712', '--conf', test_conf_directory + '/db_conf']))
     return process_parsed_args(opts)

@@ -25,6 +25,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+import argparse
 from argparse import ArgumentParser
 import shlex
 from typing import List
@@ -32,7 +33,7 @@ from typing import List
 import sys
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables, decode_file_args
 
 
 def create_parser() -> ArgumentParser:
@@ -41,26 +42,10 @@ def create_parser() -> ArgumentParser:
     :return: parser
     """
     parser = ArgumentParser(description="Clear data from FHIR observation fact table")
-    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
-                        help="Upload identifer -- uniquely identifies this batch", type=int, required=True)
-    # Add the database connection arguments
-    add_connection_args(parser)
+    parser.add_argument("uploadid", metavar="Upload identifiers",
+                        help="Upload identifer(s) -- unique batch identifiers", type=int, nargs='+')
+    parser.add_argument("-mv", "--metavoc", help="Metavocabulary directory - ignored")
     return parser
-
-
-def decode_file_args(argv: List[str]) -> List[str]:
-    """
-    Preprocess any arguments that begin with an '@' sign.  This replaces the one in Argparse because it
-    a) doesn't process "-x y" correctly and b) ignores bad files
-    :param argv: raw options list
-    :return: options list with file references replaced
-    """
-    for arg in [arg for arg in argv if arg[0] == '@']:
-        argv.remove(arg)
-        with open(arg[1:]) as config_file:
-            argv += shlex.split(config_file.read())
-            return decode_file_args(argv)
-    return argv
 
 
 def remove_facts(argv: List[str]) -> bool:
@@ -69,11 +54,14 @@ def remove_facts(argv: List[str]) -> bool:
     :param argv: Command line arguments.  See: create_parser for details
     :return:
     """
-    opts = create_parser().parse_args(decode_file_args(argv))
+    parser = add_connection_args(create_parser())
+    opts = parser.parse_args(decode_file_args(argv, parser))
     if opts is None:
         return False
     process_parsed_args(opts)           # Update CRC and Meta table connection information
-    I2B2GraphMap.clear_i2b2_tables(I2B2Tables(opts), opts.uploadid)
+    for uploadid in opts.uploadid:
+        print("---> Removing entries for id {}".format(uploadid))
+        I2B2GraphMap.clear_i2b2_tables(I2B2Tables(opts), uploadid)
     return True
 
 

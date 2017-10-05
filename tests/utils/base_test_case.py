@@ -34,7 +34,7 @@ from dateutil.parser import parse
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
 from rdflib import Graph
 
-test_directory = os.path.join(os.path.split(os.path.abspath(__file__))[0], '..')
+test_directory = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..'))
 test_conf_directory = os.path.join(test_directory, 'conf')
 test_data_directory = os.path.join(test_directory, 'data')
 
@@ -44,7 +44,7 @@ def FHIRGraph():
     mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
     g = FHIRMetaVoc(os.path.join(mvdir, 'fhir.ttl')).g
     g.load(os.path.join(mvdir, 'w5.ttl'), format="turtle")
-    print("done")
+    print("done\n")
     return g
 
 

@@ -80,8 +80,6 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 12345)]), pd_entry.patient_dimension_entry._freeze())
 
-        if len(pd_entry.patient_mappings.patient_mapping_entries) == 0:
-            print("----> HERE!")
         self.assertEqual(2, len(pd_entry.patient_mappings.patient_mapping_entries))
         self.assertEqual(OrderedDict([
              ('patient_ide', 'example'),

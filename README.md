@@ -7,7 +7,7 @@ This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It 
 ## i2b2 requirements
 i2FHIRb2 has been tested with the postgres version of [i2b2 Software](https://www.i2b2.org/software/) release 1.7.08.  While it will theoretically
 work with earlier versions, you may encounter issues, including:
-1) The FHIR data includes UTF-8 characters.  Earlier releases of the i2b2 
+1) The FHIR data includes UTF-8 characters.  Earlier releases of the i2b2 used `SQL_ASCII` encoding which won't work.
 2) This package hasn't been tested with Oracle or Microsoft SQL Server.  We use [sqlalchemy](http://www.sqlalchemy.org/),
  which should minimize the issues, but you may want to talk with the authors before attempting to run with a 
  non-postgres back end.
@@ -17,8 +17,14 @@ Before you start, you will need to know:
 2) A userid/password combination that has write access to the `i2b2demodata` (CRC) and `i2b2metadata` schemas.  The default for postgresql is: **postgres**:[none], but, being a responsible dba, you will have changed these.
 
 You should also have an i2b2 client (we use the web client) that can access and query the installed services.
-    
-## Loading the FHIR ontology into i2b2
+
+## Quick Summary
+The sections below tell you how to:
+1) [Load the FHIR Metadata Vocabulary as an i2b2 ontology](#loading-the-FHIR-metadata-vocabulary-into-i2b2)
+2) [Load FHIR data as observation facts]()
+3) [Run i2b2 queries across FHIR data]()
+
+## Loading the FHIR Metadata Vocabulary into i2b2
 There are two ways to load/update an existing set of i2b2 tables:
 1) Run `generate_i2b2` and load the tables directly
 2) Import the tab separated value (.tsv) tables that have been preloaded as part of this project
@@ -202,6 +208,7 @@ can be found at 'http://build.fhir.org/'.  You can regenerate these tables by:
 </tr>
 </table>
 
+#### TSV Files
 The pre-loaded tsv files can be found in the `i2b2files` subdirectory of the `i2FHIRb2` install:
 
 * **`table_access.tsv`** -- the `table_access` table describes the location and root paths of i2b2 metadata.  This file has one row that states that FHIR resource definitions can be found in the `custom_meta` table with the root '\\FHIR\\'.
@@ -217,10 +224,16 @@ All of these tables have tab-separated values and the first row of each table ha
  ```
 </sub>
 
-## Testing the installation
+### Testing the installation
 Open the i2b2 browser and navigate to the `FHIR Resources`.  As you drill down it should look like:
 
 ![Protege Screenshot](images/SampleBrowser.png)
+
+## Loading FHIR Resource Data
+The `loadfacts` program is used to load select FHIR Resource instances in to the i2b2 CRC tables. It requires a number of input parameters:
+1) The i2b2 SQL connection information, including the database URL, user name and password.
+2) The upload identifier -- an integer that identifies this particular `run`.  It is saved as the `upload_id` in all of the i2b2 CRC tables, allowing you to determine what operation caused the data to be loaded and to undo (via `removefacts`) and reload data if problems are encountered.
+3) 
 
 
 ## Current State of the Project

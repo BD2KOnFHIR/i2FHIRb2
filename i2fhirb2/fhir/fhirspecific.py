@@ -32,7 +32,7 @@ from rdflib.namespace import split_uri
 
 
 # TODO: move this to a stable version when R4 is adopted
-DEFAULT_FMV = "http://build.fhir.org/fhir.ttl"
+DEFAULT_FMV = "http://build.fhir.org/"
 DEFAULT_PROVIDER_ID = "FHIR:DefaultProvider"
 
 
