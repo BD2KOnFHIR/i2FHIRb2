@@ -39,23 +39,24 @@ Default_User = "postgres"
 Default_Password = "postgres"
 
 
-class FileOrURL(argparse.Action):
-    """ Mark an argument as a file or a URL.  This allows decode_file_args to resolve paths that
-    are relative to the configuration file
-    """
-    def __call__(self, parser, namespace, values, option_string=None):
-        rel_path = getattr(parser, 'rel_path')
-        val_list = values if isinstance(values, list) else [values]
-        if rel_path:
-            val_list = [self.absolutize(rel_path, v) for v in val_list]
-        setattr(namespace, self.dest, val_list if isinstance(values, list) else val_list[0])
+class FileAwareParser(argparse.ArgumentParser):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.file_args = []
 
-    @staticmethod
-    def absolutize(rel_path: str, v: str) -> str:
-        if '://' not in v and not os.path.isabs(v):
-            return os.path.abspath(os.path.join(rel_path, v))
+    def add_file_argument(self, *args, **kwargs):
+        rval = self.add_argument(*args, **kwargs)
+        self.file_args.append(rval)
+        return rval
+
+    def add_argument(self, *args, **kwargs):
+        defhelp = kwargs.pop("help", None)
+        default = kwargs.pop("default", None)
+        if not defhelp or default is None or kwargs.get('action') == 'help':
+            return super().add_argument(*args, help=defhelp, default=default, **kwargs)
         else:
-            return v
+            return super().add_argument(*args, help=defhelp + " (default: {})".format(default),
+                                        default=default, **kwargs)
 
 
 class ConfigFile(argparse.Action):
@@ -66,22 +67,22 @@ class ConfigFile(argparse.Action):
         raise AttributeError("Must preprocess input arguments with decode_file_args function")
 
 
-def add_connection_args(parser: ArgumentParser) -> ArgumentParser:
+def add_connection_args(parser: FileAwareParser) -> FileAwareParser:
     """
     Add the database connection arguments to the supplied parser
     :param parser: parser to add arguments to
     :return: parser
     """
-    parser.add_argument("--conf", metavar="CONFIG FILE", help="Configuration file", action=ConfigFile)
-    parser.add_argument("-db", "--dburl", help="Default database URL (default: {})".format(Default_DB_Connection),
+    parser.add_file_argument("--conf", metavar="CONFIG FILE", help="Configuration file", action=ConfigFile)
+    parser.add_argument("-db", "--dburl", help="Default database URL",
                         default=Default_DB_Connection)
-    parser.add_argument("--user", help="Default user name (default: {})".format(Default_User),
+    parser.add_argument("--user", help="Default user name",
                         default=Default_User)
-    parser.add_argument("--password", help="Default password (default: {})".format(Default_Password),
+    parser.add_argument("--password", help="Default password",
                         default=Default_Password)
-    parser.add_argument("--crcdb", help="CRC database URL.  (default: dburl)")
+    parser.add_argument("--crcdb", help="CRC database URL. (default: dburl)")
     parser.add_argument("--crcuser", help="User name for CRC database. (default: user)")
-    parser.add_argument("--crcpassword", help="Password for CRC database. (default: password")
+    parser.add_argument("--crcpassword", help="Password for CRC database. (default: password)")
     parser.add_argument("--ontodb", help="Ontology database URL.  (default: dburl)")
     parser.add_argument("--ontouser", help="User name for ontology database. (default: user)")
     parser.add_argument("--ontopassword", help="Password for ontology database. (default: password)")
@@ -120,17 +121,33 @@ def decode_file_args(argv: List[str], parser: argparse.ArgumentParser = None) ->
     :return: options list with '--conf' references replaced with file contents
     """
     for i in range(0, len(argv) - 1):
+        # TODO: take prefix into account
         if argv[i] == '--conf':
             del argv[i]
             conf_file = argv[i]
             del(argv[i])
             with open(conf_file) as config_file:
-                argv += shlex.split(config_file.read())
-            # NOTE: relative file locations are not currently handled in nested configuration files
-            if parser:
-                parser.rel_path = os.path.abspath(os.path.split(conf_file)[0])
+                conf_args = shlex.split(config_file.read())
+                if parser:
+                    argv += fix_rel_paths(conf_args, parser, conf_file)
             return decode_file_args(argv)
     return argv
+
+
+def fix_rel_paths(conf_args: List[str], parser: FileAwareParser, conf_file: str) -> List[str]:
+    base_path = os.path.abspath(os.path.split(conf_file)[0])
+    rval = []
+    is_file_arg = False
+    for conf_arg in conf_args:
+        if any(conf_arg.startswith(prefix) for prefix in parser.prefix_chars):
+            rval.append(conf_arg)
+            is_file_arg = any(conf_arg in file_action.option_strings for file_action in parser.file_args)
+            # TODO: recursive config files
+        elif is_file_arg and ('://' not in conf_arg and not os.path.isabs(conf_arg)):
+                rval.append(os.path.abspath(os.path.join(base_path, conf_arg)))
+        else:
+            rval.append(conf_arg)
+    return rval
 
 
 class I2B2Tables:

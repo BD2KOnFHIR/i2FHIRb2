@@ -1,0 +1,61 @@
+usage: _jb_unittest_runner.py [-h] [-v] [-l]
+                              [-i [Input files [Input files ...]]]
+                              [-id Input directory] [-od Output directory]
+                              [-t {json,rdf}] [-mv METADATAVOC]
+                              [--sourcesystem Source system code]
+                              [-u Upload identifier]
+                              [--base concept identifier base default: \FHIR\]
+                              [-ub URIBASE] [-rm] [-p Default provider id]
+                              [--dupcheck] [--conf CONFIG FILE] [-db DBURL]
+                              [--user USER] [--password PASSWORD]
+                              [--crcdb CRCDB] [--crcuser CRCUSER]
+                              [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
+                              [--ontouser ONTOUSER]
+                              [--ontopassword ONTOPASSWORD]
+
+Load FHIR Resource Data into i2b2 CRC tables
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         Current version number
+  -l, --load            Load SQL Tables
+  -i [Input files [Input files ...]], --infile [Input files [Input files ...]]
+                        URLs and/or name(s) of input file(s)
+  -id Input directory, --indir Input directory
+                        URI of server or directory of input files
+  -od Output directory, --outdir Output directory
+                        Output directory to store .tsv files.
+  -t {json,rdf}, --filetype {json,rdf}
+                        Type of file to ask for / load - only applies for
+                        URL's and directories. (default: rdf)
+  -mv METADATAVOC, --metadatavoc METADATAVOC
+                        Location of FHIR Metavocabulary file (default:
+                        http://build.fhir.org/)
+  --sourcesystem Source system code
+                        Sourcesystem code (default: FHIR STU3)
+  -u Upload identifier, --uploadid Upload identifier
+                        Upload identifer -- uniquely identifies this batch
+  --base concept identifier base (default: \FHIR\)
+                        Concept dimension and ontology base path (default:
+                        \FHIR\)
+  -ub URIBASE, --uribase URIBASE
+                        Resource URI base (default: http://hl7.org/fhir/)
+  -rm, --remove         Remove existing entries for the upload identifier
+                        and/or clear target tsv files
+  -p Default provider id, --providerid Default provider id
+                        Default provider id (default: FHIR:DefaultProvider)
+  --dupcheck            Check for duplicate records before add.
+  --conf CONFIG FILE    Configuration file
+  -db DBURL, --dburl DBURL
+                        Default database URL (default:
+                        postgresql+psycopg2://localhost:5432/i2b2)
+  --user USER           Default user name (default: postgres)
+  --password PASSWORD   Default password (default: postgres)
+  --crcdb CRCDB         CRC database URL. (default: dburl)
+  --crcuser CRCUSER     User name for CRC database. (default: user)
+  --crcpassword CRCPASSWORD
+                        Password for CRC database. (default: password)
+  --ontodb ONTODB       Ontology database URL. (default: dburl)
+  --ontouser ONTOUSER   User name for ontology database. (default: user)
+  --ontopassword ONTOPASSWORD
+                        Password for ontology database. (default: password)

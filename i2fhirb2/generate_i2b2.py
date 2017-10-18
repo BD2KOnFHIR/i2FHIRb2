@@ -50,7 +50,7 @@ from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
 from i2fhirb2.i2b2model.shared.tablenames import i2b2tables
 from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
-    change_column_length
+    change_column_length, FileAwareParser
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
 Default_Metavoc_URI = "http://build.fhir.org/"
@@ -262,14 +262,14 @@ def test_configuration(opts: Namespace) -> bool:
     return success
 
 
-def create_parser() -> ArgumentParser:
+def create_parser() -> FileAwareParser:
     """
     Create a command line parser
     :return: parser
     """
     metadata_tables = [i2b2tables.concept_dimension, i2b2tables.modifier_dimension, i2b2tables.ontology_table,
                        i2b2tables.table_access]
-    parser = ArgumentParser(description="FHIR in i2b2 metadata generator")
+    parser = FileAwareParser(description="FHIR in i2b2 metadata generator")
     # For reasons we don't completely understand, the default parser doesn't split the lines...
     parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
     parser.add_argument("-mv", "--metadatavoc", metavar="METAVOC URI",
@@ -340,6 +340,7 @@ def generate_i2b2(argv: List[str]) -> bool:
         return g is not None and generate_i2b2_files(g, opts)
     else:
         return True
+
 
 if __name__ == "__main__":
     generate_i2b2(sys.argv[1:])

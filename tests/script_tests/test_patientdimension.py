@@ -44,6 +44,7 @@ class PatientDimensionTestCase(unittest.TestCase):
         from i2fhirb2.removefacts import remove_facts
         remove_facts("{} --conf {}".format(id, conf_file).split())
 
+    @unittest.skip
     def test1(self):
         from i2fhirb2.loadfacts import load_facts
         self.clear_upload_id(med_desp_upload_id)
@@ -51,6 +52,7 @@ class PatientDimensionTestCase(unittest.TestCase):
         load_facts("-i {} -l --conf {} -u {}".format(data_file, conf_file, med_desp_upload_id).split())
         self.assertEqual(True, False)
 
+    @unittest.skip
     def test2(self):
         from i2fhirb2.loadfacts import load_facts
         self.clear_upload_id(pat_upload_id)

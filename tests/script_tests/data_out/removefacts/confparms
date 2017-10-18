@@ -1,0 +1,6 @@
+---> Removing entries for id 123450
+Deleted 0 patient_dimension records
+Deleted 0 patient_mapping records
+Deleted 0 observation_fact records
+Deleted 0 visit_dimension records
+Deleted 0 encounter_mapping records

@@ -33,15 +33,16 @@ from typing import List
 import sys
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables, decode_file_args
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables, decode_file_args, \
+    FileAwareParser
 
 
-def create_parser() -> ArgumentParser:
+def create_parser() -> FileAwareParser:
     """
     Create a command line parser
     :return: parser
     """
-    parser = ArgumentParser(description="Clear data from FHIR observation fact table")
+    parser = FileAwareParser(description="Clear data from FHIR observation fact table")
     parser.add_argument("uploadid", metavar="Upload identifiers",
                         help="Upload identifer(s) -- unique batch identifiers", type=int, nargs='+')
     parser.add_argument("-mv", "--metavoc", help="Metavocabulary directory - ignored")

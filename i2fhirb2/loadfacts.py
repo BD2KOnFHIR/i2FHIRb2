@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import sys
-from argparse import ArgumentParser, Namespace
+from argparse import Namespace
 from datetime import datetime
 from random import randint
 from typing import List, Optional
@@ -35,7 +35,6 @@ from urllib.request import Request, urlopen
 from i2fhirb2 import __version__
 
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
-from fhirtordf.fhirtordf import add_argument
 from fhirtordf.loaders.fhirjsonloader import fhir_json_to_rdf
 from rdflib import Graph
 
@@ -52,7 +51,7 @@ from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
 from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
-    FileOrURL
+    FileAwareParser
 
 
 # TODO: Add support for non-turtle RDF files
@@ -101,43 +100,38 @@ def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
     return g
 
 
-def create_parser() -> ArgumentParser:
+def create_parser() -> FileAwareParser:
     """
     Create a command line argument parser
     :return: parser
     """
-    parser = ArgumentParser(description="Load FHIR Resource Data into i2b2 CRC tables", fromfile_prefix_chars='@')
-    parser.file_actions = []
-    add_argument(parser, "-v", "--version", help="Current version number", action="store_true")
-    add_argument(parser, "-l", "--load", help="Load SQL Tables", action="store_true")
-    parser.file_actions.append(
-        add_argument(parser, "-i", "--infile", metavar="Input files", help="URLs and/or name(s) of input file(s)",
-                 nargs='*', action=FileOrURL))
-    parser.file_actions.append(
-        add_argument(parser, "-id", "--indir", metavar="Input directory",
-                     help="URI of server or directory of input files"))
-    parser.file_actions.append(
-        add_argument(parser, "-od", "--outdir", metavar="Output directory",
-                     help="Output directory to store .tsv files."))
-    add_argument(parser, "-t", "--filetype",
-                         help="Type of file to ask for / load - only applies for URL's and directories.",
-                         choices=['json', 'rdf'], default='rdf')
-    parser.file_actions.append(
-        add_argument(parser, "-mv", "--metadatavoc", help="Location of FHIR Metavocabulary file", default=DEFAULT_FMV,
-                 action=FileOrURL))
-    add_argument(parser, "--sourcesystem", metavar="Source system code", default=Default_Sourcesystem_Code,
-                         help="Sourcesystem code")
-    add_argument(parser, "-u", "--uploadid", metavar="Upload identifier",
-                         help="Upload identifer -- uniquely identifies this batch", type=int)
-    add_argument(parser, "--base", metavar="concept identifier base (default: {})".format(Default_Path_Base),
-                         default=Default_Path_Base,
-                         help="Concept dimension and ontology base path")
-    add_argument(parser, "-ub", "--uribase", help="Resource URI base", default=str(FHIR))
-    add_argument(parser, "-rm", "--remove", help="Remove existing entries for the upload identifier and/or"
-                                                 " clear target tsv files", action="store_true")
-    add_argument(parser, "-p", "--providerid", metavar="Default provider id", help="Default provider id",
-                         default=DEFAULT_PROVIDER_ID)
-    add_argument(parser, "--dupcheck", help="Check for duplicate records before add.", action="store_true")
+    parser = FileAwareParser(description="Load FHIR Resource Data into i2b2 CRC tables")
+    parser.add_argument("-v", "--version", help="Current version number", action="store_true")
+    parser.add_argument("-l", "--load", help="Load SQL Tables", action="store_true")
+    parser.add_file_argument("-i", "--infile",
+                             metavar="Input files", help="URLs and/or name(s) of input file(s)", nargs='*')
+    parser.add_file_argument("-id", "--indir", metavar="Input directory",
+                             help="URI of server or directory of input files")
+    parser.add_file_argument("-od", "--outdir", metavar="Output directory",
+                             help="Output directory to store .tsv files.")
+    parser.add_argument("-t", "--filetype",
+                        help="Type of file to ask for / load - only applies for URL's and directories.",
+                        choices=['json', 'rdf'], default='rdf')
+    parser.add_file_argument("-mv", "--metadatavoc", help="Location of FHIR Metavocabulary file",
+                             default=DEFAULT_FMV)
+    parser.add_argument("--sourcesystem", metavar="Source system code", default=Default_Sourcesystem_Code,
+                        help="Sourcesystem code")
+    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
+                        help="Upload identifer -- uniquely identifies this batch", type=int)
+    parser.add_argument("--base", metavar="concept identifier base (default: {})".format(Default_Path_Base),
+                        default=Default_Path_Base,
+                        help="Concept dimension and ontology base path")
+    parser.add_argument("-ub", "--uribase", help="Resource URI base", default=str(FHIR))
+    parser.add_argument("-rm", "--remove", help="Remove existing entries for the upload identifier and/or"
+                        " clear target tsv files", action="store_true")
+    parser.add_argument("-p", "--providerid", metavar="Default provider id", help="Default provider id",
+                        default=DEFAULT_PROVIDER_ID)
+    parser.add_argument("--dupcheck", help="Check for duplicate records before add.", action="store_true")
     return parser
 
 
