@@ -209,7 +209,7 @@ class FHIRObservationFactFactory:
         pred_obj_list = \
             sorted([(p, o) for p, o in self.g.predicate_objects(obj) if p not in self.special_processing_list])
 
-        if fhir_index is not None and len(pred_obj_list) > 1:
+        if fhir_index is not None and len(pred_obj_list):
             self._inst_num += 1
             inst_num = self._inst_num
         else:

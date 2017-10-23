@@ -29,6 +29,7 @@ from argparse import Namespace
 from datetime import datetime
 from typing import List, Tuple, Optional
 
+import sys
 from fhirtordf.rdfsupport.fhirgraphutils import value
 from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
 from rdflib import Graph, RDF, URIRef
@@ -72,9 +73,11 @@ class I2B2GraphMap:
         self.patient_mappings = []          # type: List[PatientMapping]
         self.visit_dimensions = []          # type: List[VisitDimension]
         self.encounter_mappings = []        # type: List[EncounterMapping]
-
+        nresources = 0
         for subj, subj_type in g.subject_objects(RDF.type):
             if subj_type in FHIR_RESOURCE_MAP:
+                print("{}: ({}) - {}".format(nresources, str(subj_type).split('/')[-1], subj))
+                nresources += 1
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]
                 if isinstance(mapped_type, FHIR_Infrastructure_type):
                     self.num_infrastructure += 1

@@ -50,7 +50,8 @@ class FHIR_Observation_Fact_type(FHIR_Resource_type):
 
     def fact_key_for(self, g: Graph, subj: URIRef) -> Tuple[Optional[URIRef], Optional[URIRef], Optional[URIRef]]:
         pat_uri, pat_type = link(g, subj, self.patient_ref)
-        if pat_type and pat_type != FHIR.Patient:
+        # TODO: what should be done about unknown resources (Type RESOURCE)
+        if pat_type and pat_type not in (FHIR.Patient, FHIR.Resource):
             return None, None, None
         if self.encounter_ref:
             encounter_uri, encounter_type = link(g, subj, self.encounter_ref)
