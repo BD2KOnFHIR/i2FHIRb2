@@ -982,15 +982,6 @@
 
 <http://hl7.org/fhir/Observation/1d52ae90-6721-476c-ad4c-ec978eac4a34> a fhir:Observation ;
     fhir:nodeRole fhir:treeRoot ;
-    fhir:Observation.category [
-        fhir:index "0"^^xsd:integer ;
-        fhir:CodeableConcept.coding [
-            fhir:index "0"^^xsd:integer ;
-            fhir:Coding.system [
-                fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
-            ]
-        ]
-    ] ;
     fhir:Observation.code [
         fhir:CodeableConcept.coding [
             a loinc:69453-9 ;
@@ -1007,21 +998,6 @@
         ] ;
         fhir:CodeableConcept.text [
             fhir:value "Cause of Death [US Standard Certificate of Death]"
-        ]
-    ] ;
-    fhir:Observation.effectiveDateTime [
-        fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
-    ] ;
-    fhir:Observation.issued [
-        fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
-    ] ;
-    fhir:Observation.status [
-        fhir:value "final"
-    ] ;
-    fhir:Observation.subject [
-        fhir:link <http://hl7.org/fhir/urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f> ;
-        fhir:Reference.reference [
-            fhir:value "urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f"
         ]
     ] ;
     fhir:Observation.valueCodeableConcept [
@@ -1042,8 +1018,32 @@
             fhir:value "Pulmonary emphysema (disorder)"
         ]
     ] ;
+    fhir:Observation.effectiveDateTime [
+        fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.issued [
+        fhir:value "1991-10-02T12:59:14-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.status [
+        fhir:value "final"
+    ] ;
+    fhir:Observation.subject [
+        fhir:link <http://hl7.org/fhir/urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:526238ef-dec3-401d-a1c1-2974962df23f"
+        ]
+    ] ;
     fhir:Resource.id [
         fhir:value "1d52ae90-6721-476c-ad4c-ec978eac4a34"
+    ] ;
+        fhir:Observation.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
+            ]
+        ]
     ] ;
     fhir:Resource.meta [
         fhir:Meta.profile [

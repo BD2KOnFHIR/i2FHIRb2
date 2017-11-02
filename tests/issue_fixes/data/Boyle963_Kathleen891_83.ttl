@@ -1,0 +1,152 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix identifier-type: <http://hl7.org/fhir/identifier-type> .
+@prefix loinc: <http://loinc.org/owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix sid_cvx: <http://hl7.org/fhir/sid/cvx> .
+@prefix v2: <http://hl7.org/fhir/v2/> .
+@prefix v2-0203: <http://hl7.org/fhir/v2/0203> .
+@prefix v3: <http://hl7.org/fhir/v3/> .
+@prefix v3-Ethnicity: <http://hl7.org/fhir/v3/Ethnicity> .
+@prefix v3-MaritalStatus: <http://hl7.org/fhir/v3/MaritalStatus> .
+@prefix v3-Race: <http://hl7.org/fhir/v3/Race> .
+@prefix w5: <http://hl7.org/fhir/w5#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+<http://hl7.org/fhir/Observation/85468763-8d87-4d02-b733-9eaa007ad4ea> a fhir:Observation ;
+    fhir:nodeRole fhir:treeRoot ;
+    fhir:Observation.category [
+        fhir:index "0"^^xsd:integer ;
+        fhir:CodeableConcept.coding [
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "vital-signs"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://hl7.org/fhir/ValueSet/observation-category"
+            ]
+        ] ;
+        fhir:CodeableConcept.text [
+            fhir:value "vital-signs"
+        ]
+    ] ;
+    fhir:Observation.code [
+        fhir:CodeableConcept.coding [
+            a loinc:55284-4 ;
+            fhir:index "0"^^xsd:integer ;
+            fhir:Coding.code [
+                fhir:value "55284-4"
+            ] ;
+            fhir:Coding.display [
+                fhir:value "Blood Pressure"
+            ] ;
+            fhir:Coding.system [
+                fhir:value "http://loinc.org"
+            ]
+        ]
+    ] ;
+    fhir:Observation.component [
+        fhir:index "1"^^xsd:integer ;
+        fhir:Observation.component.code [
+            fhir:CodeableConcept.coding [
+                a loinc:8462-4 ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "8462-4"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Diastolic Blood Pressure"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://loinc.org"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "Diastolic Blood Pressure"
+            ]
+        ] ;
+        fhir:Observation.component.valueQuantity [
+            fhir:Quantity.code [
+                fhir:value "mmHg"
+            ] ;
+            fhir:Quantity.system [
+                fhir:value "http://unitsofmeasure.org/"
+            ] ;
+            fhir:Quantity.unit [
+                fhir:value "mmHg"
+            ] ;
+            fhir:Quantity.value [
+                fhir:value "116"^^xsd:decimal
+            ]
+        ]
+    ],
+        [
+        fhir:index "0"^^xsd:integer ;
+        fhir:Observation.component.code [
+            fhir:CodeableConcept.coding [
+                a loinc:8480-6 ;
+                fhir:index "0"^^xsd:integer ;
+                fhir:Coding.code [
+                    fhir:value "8480-6"
+                ] ;
+                fhir:Coding.display [
+                    fhir:value "Systolic Blood Pressure"
+                ] ;
+                fhir:Coding.system [
+                    fhir:value "http://loinc.org"
+                ]
+            ] ;
+            fhir:CodeableConcept.text [
+                fhir:value "Systolic Blood Pressure"
+            ]
+        ] ;
+        fhir:Observation.component.valueQuantity [
+            fhir:Quantity.code [
+                fhir:value "mmHg"
+            ] ;
+            fhir:Quantity.system [
+                fhir:value "http://unitsofmeasure.org/"
+            ] ;
+            fhir:Quantity.unit [
+                fhir:value "mmHg"
+            ] ;
+            fhir:Quantity.value [
+                fhir:value "172"^^xsd:decimal
+            ]
+        ]
+    ] ;
+    fhir:Observation.effectiveDateTime [
+        fhir:value "2010-04-09T09:55:27-05:00"^^xsd:dateTime
+    ] ;
+    fhir:Observation.status [
+        fhir:value "final"
+    ] ;
+    fhir:Observation.subject [
+        fhir:link <http://hl7.org/fhir/urn%3Auuid%3A04f2583f-d570-4328-867b-121694255d74> ;
+        fhir:Reference.reference [
+            fhir:value "urn:uuid:04f2583f-d570-4328-867b-121694255d74"
+        ]
+    ] ;
+    fhir:Resource.id [
+        fhir:value "85468763-8d87-4d02-b733-9eaa007ad4ea"
+    ] ;
+    fhir:Resource.meta [
+        fhir:Meta.profile [
+            fhir:index "1"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-vital-BloodPressure"
+        ],
+            [
+            fhir:index "0"^^xsd:integer ;
+            fhir:value "http://standardhealthrecord.org/fhir/StructureDefinition/shr-observation-Observation"
+        ]
+    ] .
+
+<http://hl7.org/fhir/Observation/85468763-8d87-4d02-b733-9eaa007ad4ea.ttl> a owl:Ontology ;
+    owl:imports fhir:fhir.ttl .
+
+<http://hl7.org/fhir/urn%3Auuid%3A04f2583f-d570-4328-867b-121694255d74> a fhir:Resource .
+

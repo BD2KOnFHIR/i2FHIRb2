@@ -73,7 +73,7 @@ class BaseTestCase(unittest.TestCase):
 def make_and_clear_directory(dirbase: str):
     import shutil
     safety_file = os.path.join(dirbase, "generated")
-    if not os.path.exists(safety_file):
+    if os.path.exists(dirbase) and not os.path.exists(safety_file):
         raise FileExistsError("{} not found in test directory".format(safety_file))
     shutil.rmtree(dirbase)
     os.makedirs(dirbase)

@@ -193,7 +193,7 @@ class FHIRObservationFactFactory:
         return rval
 
     def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: BNode,
-                           parent_inst_num: int=0) -> List[FHIRObservationFact]:
+                           parent_inst_num: int=0, same_subject: bool=False) -> List[FHIRObservationFact]:
         """
         Emit any modifiers for subject/obj.  If there is fhir:index field, this is an indication that this set
         of modifiers can occur multiple times and, as such, must be clustered.  Noting that, at the moment, we
@@ -202,10 +202,11 @@ class FHIRObservationFactFactory:
         :param concept: Concept identifier (first level entry)
         :param obj: inner cluster (usually a BNODE)
         :param parent_inst_num: instance number passed in recursive call
+        :param same_subject: True means same parent -- don't revisit instance number
         :return:
         """
         rval = []               # type: List[FHIRObservationFact]
-        fhir_index = self.g.value(obj, FHIR.index, any=False)
+        fhir_index = self.g.value(obj, FHIR.index, any=False) if not same_subject else None
         pred_obj_list = \
             sorted([(p, o) for p, o in self.g.predicate_objects(obj) if p not in self.special_processing_list])
 
@@ -224,5 +225,6 @@ class FHIRObservationFactFactory:
                 obsfact = FHIRObservationFact(self.g, self.ofk, concept, modifier, modifier_object, inst_num)
                 rval.append(obsfact)
             else:
-                rval += self.generate_modifiers(subject, composite_uri(concept, modifier), modifier_object, inst_num)
+                rval += self.generate_modifiers(subject, composite_uri(concept, modifier), modifier_object,
+                                                inst_num, same_subject=True)
         return rval

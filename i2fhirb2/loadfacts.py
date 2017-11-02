@@ -145,7 +145,7 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
     opts = parser.parse_args(decode_file_args(argv, parser))
     if opts.version:
         print("FHIR i2b2 CRC loader -- Version {}".format(__version__))
-    elif not opts.load or opts.outdir:
+    elif not (opts.load or opts.outdir):
         parser.error("Either load option (-l) or output directory must be specified")
     if not (opts.infile or opts.indir or opts.version):
         parser.error("Either a list of input files or input directory must be supplied")
