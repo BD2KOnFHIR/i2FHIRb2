@@ -27,20 +27,22 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import sys
-from argparse import ArgumentParser, Namespace, Action
+from argparse import Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any, Union
 from urllib import request
 from urllib.error import HTTPError
 
+from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
+
+from i2fhirb2.i2b2model.metadata.commondimension import CommonDimension
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
-from rdflib import Graph, URIRef
+from rdflib import Graph
 from sqlalchemy import delete, Table, update
 
 from i2fhirb2 import __version__
-from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
@@ -56,6 +58,8 @@ Default_Sourcesystem_Code = 'FHIR STU3'
 Default_Base = 'FHIR'
 Default_Path_Base = '\\{}\\'.format(Default_Base)
 
+DIMENSION_LIST = Union[List[ConceptDimension], List[ModifierDimension], List[OntologyEntry]]
+
 
 def pluralize(cnt: int, base: Any) -> str:
     """
@@ -67,24 +71,70 @@ def pluralize(cnt: int, base: Any) -> str:
     return str(base) + ('s' if cnt != 1 else '')
 
 
-def generate_output(o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef], file: str) -> bool:
-    v = o.dimension_list(resource)
-    return write_tsv(opts.outdir, file, o.tsv_header(), v)
+def initialize_table_defaults(g: Graph, opts: Namespace) -> None:
+    """
+    Initialize all of the table defaults
+    :param opts: input options
+    """
+    # TODO: This is kind of messy -- we've refactored so we should be able to consolidate this
+    CommonDimension.graph = g
+
+    ConceptDimension._clear()
+    ConceptDimension.sourcesystem_cd = opts.sourcesystem
+    ConceptDimension.update_date = opts.updatedate
+
+    ConceptDimensionRoot._clear()
+    ConceptDimensionRoot.sourcesystem_cd = opts.sourcesystem
+    ConceptDimensionRoot.update_date = opts.updatedate
+
+    ModifierDimension._clear()
+    ModifierDimension.sourcesystem_cd = opts.sourcesystem
+    ModifierDimension.update_date = opts.updatedate
+
+    OntologyEntry._clear()
+    OntologyEntry.sourcesystem_cd = opts.sourcesystem
+    OntologyEntry.update_date = opts.updatedate
+
+    OntologyRoot._clear()
+    OntologyRoot.sourcesystem_cd = opts.sourcesystem
+    OntologyRoot.update_date = opts.updatedate
 
 
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
-    return ((opts.table and opts.table != i2b2tablenames.table_access) or generate_table_access(opts)) and \
-           ((opts.table and opts.table != i2b2tablenames.concept_dimension) or generate_concept_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2tablenames.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2tablenames.ontology_table) or generate_ontology(g, opts))
+    """
+    Generate the requested i2b2 files as listed in opts
+    :param g: Graph of the data to be generated
+    :param opts: supplied options
+    :return: success indicator
+    """
+    if not opts.table or opts.table in (i2b2tablenames.concept_dimension,
+                                        i2b2tablenames.concept_dimension,
+                                        i2b2tablenames.ontology_table):
+        resource = FHIR[opts.resource] if opts.resource else None
+        initialize_table_defaults(g, opts)
+        dimset = FHIROntologyTable(g, name_base=opts.base).dimension_list(resource)
+
+        return \
+            output_table_access(opts) and \
+            output_concept_dimension(opts, dimset.concept_dimension) and \
+            output_modifier_dimension(opts, dimset.modifier_dimension) and \
+            output_ontology(opts, dimset.ontology_dimension)
 
 
-def generate_table_access(opts: Namespace) -> bool:
-    table_access = TableAccess()
-    if opts.outdir:
-        return write_tsv(opts.outdir, 'table_access', table_access._header(), [table_access])
+def output_table_access(opts: Namespace) -> bool:
+    """
+    Generate the table access entries if requested
+    :param opts: user options
+    :return: True if success or generation is not needed
+    """
+    if not opts.table or opts.table == i2b2tablenames.table_access:
+        table_access = TableAccess()
+        if opts.outdir:
+            return write_tsv(opts.outdir, 'table_access', table_access._header(), [table_access])
+        else:
+            return update_table_access_table(opts, opts.tables.table_access, [table_access._freeze()])
     else:
-        return update_table_access_table(opts, opts.tables.table_access, [table_access._freeze()])
+        return True
 
 
 def update_table_access_table(opts: Namespace, table: Table, records: List[Dict[str, Any]]) -> bool:
@@ -96,92 +146,96 @@ def update_table_access_table(opts: Namespace, table: Table, records: List[Dict[
     return True
 
 
-def generate_concept_dimension(g: Graph, opts: Namespace) -> bool:
-    resource = FHIR[opts.resource] if opts.resource else None
-
-    ConceptDimension._clear()
-    ConceptDimension.sourcesystem_cd = opts.sourcesystem
-    ConceptDimension.update_date = opts.updatedate
-
-    ConceptDimensionRoot._clear()
-    ConceptDimensionRoot.sourcesystem_cd = opts.sourcesystem
-    ConceptDimensionRoot.update_date = opts.updatedate
-
-    if opts.outdir:
-        return generate_output(FHIRConceptDimension(g, name_base=opts.base), opts, resource,
-                               i2b2tablenames.concept_dimension)
+def output_concept_dimension(opts: Namespace, output: List[ConceptDimension]) -> bool:
+    """
+    Generate the concept dimension output if required
+    :param opts: input options
+    :param output: output list
+    :return: success indicator
+    """
+    table = opts.tables.concept_dimension
+    if not opts.table or opts.table == table:
+        if opts.outdir:
+            return write_tsv(opts.outdir, table, ConceptDimension._header(), output)
+        else:
+            change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
+            return update_dimension_table(output, opts, table, 'concept_path', [opts.base])
     else:
-        table = opts.tables.concept_dimension
-        change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
-        return update_dimension_table(FHIRConceptDimension(g, name_base=opts.base), opts, table,
-                                      'concept_path', [opts.base], resource)
+        return True
 
 
-def update_dimension_table(fo: FHIRMetadata, opts: Namespace, table: Table, table_key: str,
-                           key_match: List[str], resource: Optional[URIRef]) -> bool:
+def output_modifier_dimension(opts: Namespace, output: List[ModifierDimension]) -> bool:
+    """
+    Generate the modifier dimension output if required
+    :param opts: input options
+    :param output: output list
+    :return: success indicator
+    """
+    table = opts.tables.modifier_dimension
+    if not opts.table or opts.table == table:
+        if opts.outdir:
+            return write_tsv(opts.outdir, table, ModifierDimension._header(), output)
+        else:
+            change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
+            return update_dimension_table(output, opts, table, 'modifier_path', [opts.base])
+    else:
+        return True
+
+
+def output_ontology(opts: Namespace, output: List[OntologyEntry]) -> bool:
+    """
+    Generate the i2b2 ontology output if required
+    :param opts: input options
+    :param output: set of ontology entries
+    :return: success indicator
+    """
+    table = opts.tables.ontology_table
+    if not opts.table or opts.table == table:
+        if opts.outdir:
+            return write_tsv(opts.outdir, table, OntologyEntry._header(), output)
+        else:
+            change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
+            # MedicationStatement is 1547 long
+            change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
+            return update_dimension_table(output, opts, table, 'c_basecode', [opts.base.replace('\\', '') + ':', 'W5'])
+    else:
+        return True
+
+
+def update_dimension_table(output: DIMENSION_LIST, opts: Namespace, table: Table, table_key: str, key_match: List[str])\
+        -> bool:
+    """
+    Update the supplied dimension table, removing all existing records
+    :param output: list of dimension entries
+    :param opts: input options
+    :param table: table to be updated
+    :param table_key: key to use for removing existing entries
+    :param key_match: list of key roots (delete all keys that start with this)
+    :return: Success indicator
+    """
     for km in key_match:
         q = delete(table).where(table.c[table_key].startswith(km.replace('\\', '\\\\')))
         ndel = opts.tables.crc_connection.execute(q).rowcount
         if ndel > 0:
             print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
-    nins = opts.tables.crc_connection.execute(table.insert(), [e._freeze()
-                                                               for e in fo.dimension_list(resource)]).rowcount
+    nins = opts.tables.crc_connection.execute(table.insert(), [e._freeze() for e in output]).rowcount
     print("{} {} {} inserted".format(nins, table, pluralize(nins, "record")))
     return True
 
 
-def generate_modifier_dimension(g: Graph, opts: Namespace) -> bool:
-    resource = URIRef(opts.resource) if opts.resource else None
-
-    ModifierDimension._clear()
-    ModifierDimension.sourcesystem_cd = opts.sourcesystem
-    ModifierDimension.update_date = opts.updatedate
-
-    if opts.outdir:
-        return generate_output(FHIRModifierDimension(g, name_base=opts.base), opts, resource,
-                               i2b2tablenames.modifier_dimension)
-    else:
-        table = opts.tables.modifier_dimension
-        change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
-        return update_dimension_table(FHIRModifierDimension(g, name_base=opts.base), opts, table,
-                                      'modifier_path', [opts.base], resource)
-
-
-def generate_ontology(g: Graph, opts: Namespace) -> bool:
-    resource = URIRef(opts.resource) if opts.resource else None
-
-    OntologyEntry._clear()
-    OntologyEntry.sourcesystem_cd = opts.sourcesystem
-    OntologyEntry.update_date = opts.updatedate
-
-    OntologyRoot._clear()
-    OntologyRoot.sourcesystem_cd = opts.sourcesystem
-    OntologyRoot.update_date = opts.updatedate
-
-    if opts.outdir:
-        return generate_output(FHIROntologyTable(g, name_base=opts.base), opts, resource, "ontology")
-    else:
-        table = opts.tables.ontology_table
-        change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
-        # MedicationStatement is 1547 long
-        change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
-        return update_dimension_table(FHIROntologyTable(g, name_base=opts.base), opts, table, 'c_basecode',
-                                      [opts.base.replace('\\', '') + ':', 'W5'], resource)
-
-
-def load_fhir_ontology(opts: Namespace) -> Optional[Graph]:
-    g = Graph()
+def load_fhir_ontology(opts: Namespace) -> Graph:
+    """
+    Load the fhir specification ontology and w5
+    :param opts: User options
+    :return: Graph containing the ontology
+    """
     print("Loading fhir.ttl")
-    g.load(opts.metadatavoc + "fhir.ttl", format="turtle")
+    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc, 'fhir.ttl'))
+    print(" (cached)" if fmv.from_cache else "(from disc)")
     print("loading w5.ttl")
-    g.load(opts.metadatavoc + "w5.ttl", format="turtle")
-    return g
-
-
-class LoadFromFile (Action):
-    def __call__(self, parser: ArgumentParser, namespace: Namespace, value: str, option_string=None):
-        with open(value) as f:
-            parser.parse_args(f.read().split(), namespace)
+    fmv.g.load(os.path.join(opts.metadatavoc, 'w5.ttl'), format="turtle")
+    print(" done\n")
+    return fmv.g
 
 
 def test_configuration(opts: Namespace) -> bool:
@@ -264,7 +318,9 @@ def create_parser() -> FileAwareParser:
     Create a command line parser
     :return: parser
     """
-    metadata_tables = [i2b2tablenames.concept_dimension, i2b2tablenames.modifier_dimension, i2b2tablenames.ontology_table,
+    metadata_tables = [i2b2tablenames.concept_dimension,
+                       i2b2tablenames.modifier_dimension,
+                       i2b2tablenames.ontology_table,
                        i2b2tablenames.table_access]
     parser = FileAwareParser(description="FHIR in i2b2 metadata generator")
     # For reasons we don't completely understand, the default parser doesn't split the lines...
@@ -297,6 +353,11 @@ def create_parser() -> FileAwareParser:
 
 
 def genargs(argv: List[str]) -> Namespace:
+    """
+    Generate the list of input arguments
+    :param argv: input argument list
+    :return: argparser namespace
+    """
 
     def setdefault(self: Namespace, vn: str, default: object) -> None:
         assert vn in self, "Unknown option"
@@ -319,18 +380,30 @@ def genargs(argv: List[str]) -> Namespace:
 
 
 def generate_i2b2(argv: List[str]) -> bool:
+    """
+    Generate a set of i2b2 metadata tables
+    :param argv: input arguments
+    :return: Success indicator
+    """
     opts = genargs(argv)
 
+    # configuration test option
     if opts.test:
         if not test_configuration(opts):
             return False
-    opts.tables = I2B2Tables(opts) if (opts.load or opts.list) and not opts.test else None
+
+    # Load the ontology if actually generating output
     if opts.load or opts.outdir:
         g = load_fhir_ontology(opts)
     else:
         g = None
+
+    # list table names
+    opts.tables = I2B2Tables(opts) if (opts.load or opts.list) and not opts.test else None
     if opts.list:
         print('\n'.join(["{} : {}".format(tn, tp) for tn, tp in opts.tables._tables()]))
+
+    # Generate actual output if requested
     if opts.load or opts.outdir:
         return g is not None and generate_i2b2_files(g, opts)
     else:

@@ -25,10 +25,8 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional, List, cast, Dict, Tuple, NamedTuple
+from typing import Optional, List, cast, Dict, NamedTuple, Set
 
-from fhirtordf.rdfsupport.fhirgraphutils import concept_uri
-from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import URIRef, Graph
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
@@ -50,11 +48,12 @@ class FHIROntologyTable(FHIRMetadata):
     """  The set of i2b2 ontology table entries for the supplied subject or all root concepts
     """
     def __init__(self, g: Graph, name_base: str=None, modifier_base: str = None) -> None:
-        super().__init__(g, name_base=name_base, modifier_base = modifier_base)
+        super().__init__(g, name_base=name_base, modifier_base=modifier_base)
         OntologyEntry.graph = g
 
     def _modifier_ontology_list(self, parent_path: str, parent_uri: URIRef, modifier_base_path: str, node: FMVGraphNode,
-                                modifier_dims: Dict[str, ModifierDimension], in_multiple_elements: bool, depth: int=1) \
+                                modifier_dims: Dict[str, ModifierDimension], in_multiple_elements: bool,
+                                inside: Set[URIRef] = None, depth: int=1) \
             -> List[ModifierOntologyEntry]:
         """
         Return a list of modifier ontology entries for the supplied base and graph node
@@ -63,9 +62,12 @@ class FHIROntologyTable(FHIRMetadata):
         :param modifier_base_path: Root of modifier path
         :param node: Graph node for URI
         :param in_multiple_elements:
+        :param inside: Modifier types already being visited (to prevent recursion)
         :param depth: modifier depth
         :return:
         """
+        if inside is None:
+            inside = set()
         ontology_modifiers: List[ModifierOntologyEntry] = []
         for edge in node.edges:
             if edge.type_node.is_primitive or in_multiple_elements:
@@ -78,19 +80,24 @@ class FHIROntologyTable(FHIRMetadata):
                                           parent_path,      # modifier path
                                           edge.type_node.is_primitive,  # is leaf
                                           edge.predicate,   #
-                                          edge.type_node.node)) # actual type of modifier
+                                          edge.type_node.node))  # actual type of modifier
                 if edge.type_node.is_primitive:
-                    if modifier_path not in modifier_dims:
-                        modifier_dims[modifier_path] = ModifierDimension(edge.predicate, self._modifier_base)
+                    modifier_entry = ModifierDimension(edge.predicate, self._name_base)
+                    if modifier_entry.modifier_path not in modifier_dims:
+                        modifier_dims[modifier_entry.modifier_path] = modifier_entry
                 elif in_multiple_elements:
-                    ontology_modifiers += \
-                        self._modifier_ontology_list(parent_path,
-                                                     parent_uri,
-                                                     modifier_base_path + rightmost_element(edge.predicate)[1:],
-                                                     edge.type_node,
-                                                     modifier_dims,
-                                                     True,
-                                                     depth+1)
+                    if edge.type_node not in inside:
+                        inside.add(edge.type_node)
+                        ontology_modifiers += \
+                            self._modifier_ontology_list(parent_path,
+                                                         parent_uri,
+                                                         modifier_base_path + rightmost_element(edge.predicate)[1:],
+                                                         edge.type_node,
+                                                         modifier_dims,
+                                                         True,
+                                                         inside,
+                                                         depth + 1)
+                        inside.remove(edge.type_node)
 
         return ontology_modifiers
 
@@ -132,13 +139,12 @@ class FHIROntologyTable(FHIRMetadata):
                                                  primitive_type=conc_node.node if conc_node.is_primitive else None))
                         if conc_node.is_primitive:
                             concept_dimension_entries[ontological_path] = ConceptDimension(conc_uri, self._name_base)
-                        if "Observation\\" in navigational_path:
-                            ontology_entries += self._modifier_ontology_list(navigational_path,
-                                                                             conc_uri,
-                                                                             concept_path(conc_uri),
-                                                                             conc_node,
-                                                                             modifier_dimension_entries,
-                                                                             conc_node_ent.is_multiple)
+                        ontology_entries += self._modifier_ontology_list(navigational_path,
+                                                                         conc_uri,
+                                                                         concept_path(conc_uri),
+                                                                         conc_node,
+                                                                         modifier_dimension_entries,
+                                                                         conc_node_ent.is_multiple)
 
         return DimensionSet(ontology_entries,
                             list(concept_dimension_entries.values()),

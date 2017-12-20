@@ -20,6 +20,12 @@
 | | test_threeargs | Test output when supplied with 3 upload identifiers | data_out/removefacts/threeargs |
 | | test_config_params | test with config file | data/db_conf |
 | | | | data_out/removefacts/confparms |
+| test_generate_i2b2.py | | | |
+| test_generate_i2b2_script.py | test_no_args | Invocation with no arguments | data_out/generatei2b2/noargs|
+| | test_help | generate_i2b2 -h |data_out/generatei2b2/help |
+| | test_version | generate_i2b2 -v |data_out/generatei2b2/version |
+| | test_test | generate_i2b2 --conf (conf) --test | data_out/generatei2b2/list
+| | | | tests/conf/db_conf |
 
 
 

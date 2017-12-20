@@ -25,39 +25,50 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
 import unittest
+from typing import Callable, List
 
 import os
+import io
 
-from i2fhirb2.removefacts import remove_facts
-from tests.script_tests.script_test_base import ScriptTestBase
+from tests.fhirtests.test_fhirmetadatavocabulary import save_output
+from tests.utils.output_redirector import OutputRedirector
 
 
-class RemoveFactsTestCase(ScriptTestBase):
+class ScriptTestBase(unittest.TestCase, OutputRedirector):
     dirname, _ = os.path.split(os.path.abspath(__file__))
+    save_output: bool = False              # Override this to save output
+    tst_dir: str = None
+    tst_fcn: Callable[[List[str]], bool] = None
 
     @classmethod
-    def setUpClass(cls):
-        ScriptTestBase.save_output = False
-        ScriptTestBase.tst_dir = "removefacts"
-        ScriptTestBase.tst_fcn = remove_facts
-
-    def test_no_args(self):
-        self.check_error_output("", "noargs")
-
-    def test_help(self):
-        self.check_output_output("-h", "help", exception=True)
-
-    def test_onearg(self):
-        self.check_output_output("123450", "onearg")
-
-    def test_threeargs(self):
-        self.check_output_output("123450 123460 123470", "threeargs")
-
-    def test_config_parms(self):
-        self.check_output_output("--conf {} 123450".format(os.path.join(self.dirname, 'data', 'db_conf')), "confparms")
+    def call_tst_fcn(cls, args: str):
+        return cls.tst_fcn(args.split())
 
 
-if __name__ == '__main__':
-    unittest.main()
+    def check_output(self, test_file: str, output: io.StringIO) -> None:
+        fullfilename = os.path.join(self.dirname, 'data_out', self.tst_dir, test_file)
+        if self.save_output:
+            with open(fullfilename, 'w') as outf:
+                outf.write(output.getvalue())
+        self.maxDiff = None
+        with open(fullfilename) as testf:
+            self.assertEqual(testf.read(), output.getvalue())
+        self.assertFalse(self.save_output, "save_output is true")
+
+    def check_output_output(self, args: str,  test_file: str, exception: bool=False) -> None:
+        self._push_stdout()
+        if exception:
+            with self.assertRaises(SystemExit):
+                self.call_tst_fcn(args)
+        else:
+            self.call_tst_fcn(args)
+        output = self._pop_stdout()
+        self.check_output(test_file, output)
+
+    def check_error_output(self, args: str, test_file: str) -> None:
+        self._push_stderr()
+        with self.assertRaises(SystemExit):
+            self.call_tst_fcn(args)
+        output = self._pop_stderr()
+        self.check_output(test_file, output)

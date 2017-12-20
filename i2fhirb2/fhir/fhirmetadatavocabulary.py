@@ -25,15 +25,15 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Set, Dict, List
+from typing import Set, Dict, List, Union, Tuple
 
 import sys
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
 from fhirtordf.rdfsupport.namespaces import FHIR
-from rdflib import Graph, URIRef, RDFS, RDF, OWL
+from rdflib import Graph, URIRef, RDFS, RDF, OWL, BNode
 from rdflib.collection import Collection
 
-from i2fhirb2.fhir.fhirspecific import is_primitive
+from i2fhirb2.fhir.fhirspecific import is_primitive, skip_fhir_predicates
 from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
 
 # TODO: This shouldn't be here, but, if we treat Reference as a non-primitive we end up in an endless loop on
@@ -62,8 +62,16 @@ def fns(uri: URIRef) -> str:
     return str_uri.replace(FHIR_str, 'fhir:') if FHIR_str in str_uri else "<{}>".format(str_uri)
 
 
+def predicate_and_type_for(g: Graph, restriction_node: Union[URIRef, BNode]) -> Tuple[URIRef, URIRef]:
+    predicate = g.value(restriction_node, OWL.onProperty)
+    predicate_type = g.value(restriction_node, OWL.allValuesFrom)
+    if predicate_type is None:
+        predicate_type = g.value(restriction_node, OWL.someValuesFrom)
+    return predicate, predicate_type
+
+
 class FMVGraphEdge:
-    def __init__(self, g: Graph, restriction_node: URIRef):
+    def __init__(self, g: Graph, restriction_node: Union[URIRef, BNode]):
         """
         An edge (predicate) in an FMV graph.  Determined by parsing either an existential (OWL:someValuesFrom)
          or universal (OWL:allValuesFrom) element in an OWL:Restriction node.
@@ -76,10 +84,7 @@ class FMVGraphEdge:
         :param g: Graph containing FMV
         :param restriction_node: Restriction entry
         """
-        self.predicate = g.value(restriction_node, OWL.onProperty)
-        predicate_type = g.value(restriction_node, OWL.allValuesFrom)
-        if predicate_type is None:
-            predicate_type = g.value(restriction_node, OWL.someValuesFrom)
+        self.predicate, predicate_type = predicate_and_type_for(g, restriction_node)
         self.multiple_entries = int(g.value(restriction_node, OWL.maxCardinality,
                                             default=int(g.value(restriction_node, OWL.cardinality,
                                                                 default=sys.maxsize)))) > 1
@@ -89,9 +94,12 @@ class FMVGraphEdge:
             self.type_node = FMVGraphNode._known_nodes[predicate_type]
 
     def as_indented_str(self, indent: int) -> str:
-        print(self.predicate)
-        return (4 * indent * ' ') + fns(self.predicate) + " " + \
-            self.type_node.as_indented_str(indent, self.multiple_entries)
+        rval = 4 * indent * ' '
+        if indent > 10:
+            return rval + '   ...'
+        else:
+            return rval + fns(self.predicate) + " " + \
+                self.type_node.as_indented_str(indent, self.multiple_entries)
 
     def __lt__(self, other: "FMVGraphEdge") -> bool:
         return str(self.predicate) < str(other.predicate)
@@ -122,11 +130,15 @@ class FMVGraphNode:
                 unionof_value = g.value(sc, OWL.unionOf)
                 if unionof_value:
                     for union_sc in Collection(g, unionof_value):
-                        self.edges.append(FMVGraphEdge(g, union_sc))
+                        predicate, _ = predicate_and_type_for(g, union_sc)
+                        if predicate not in skip_fhir_predicates:
+                            self.edges.append(FMVGraphEdge(g, union_sc))
                 else:
                     for sc_type in g.objects(sc, RDF.type):
                         if sc_type == OWL.Restriction:
-                            self.edges.append(FMVGraphEdge(g, sc))
+                            predicate, _ = predicate_and_type_for(g, sc)
+                            if predicate not in skip_fhir_predicates:
+                                self.edges.append(FMVGraphEdge(g, sc))
                         elif sc_type != OWL.Class:
                             self.edges += self._known_nodes[sc_type].edges \
                                 if sc_type in FMVGraphNode._known_nodes else FMVGraphNode(g, sc_type).edges

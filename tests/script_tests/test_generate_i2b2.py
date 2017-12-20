@@ -25,25 +25,14 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional, List, cast
 
-from rdflib import URIRef
-
-from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension, ConceptDimensionRoot
+import unittest
 
 
-class FHIRConceptDimension(FHIRMetadata):
-    """ A list of all FHIR resources, as identified by the DomainResource tag """
-    def dimension_list(self, subject: Optional[URIRef]=None) -> List[ConceptDimension]:
-        """
-        Generate the complete set of FHIR concept entries -- the first level deep in all FHIR definitions.
-        :param subject: Specific target subject.  (Debugging -- not used in production)
-        :return: A list of FHIR concept dimension entries for loading into i2b2 tables
-        """
-        return [cast(ConceptDimension, ConceptDimensionRoot('FHIR'))] + \
-               [ConceptDimension(subj, self._name_base) for subj in self.fhir_concepts(subject).keys()]
+class MyTestCase(unittest.TestCase):
+    def test_something(self):
+        self.assertEqual(True, False)
 
-    @staticmethod
-    def tsv_header() -> str:
-        return ConceptDimension._header()
+
+if __name__ == '__main__':
+    unittest.main()

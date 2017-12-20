@@ -50,7 +50,7 @@ DEFAULT_ONTOLOGY_TABLE = "custom_meta"      # Default metadata ontology table
 w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
 
 # List of predicates that aren't a direct part of the i2b2 structure
-skip_fhir_predicates = {FHIR.index, FHIR.nodeRole, FHIR['id']}
+skip_fhir_predicates = {FHIR.index, FHIR.nodeRole, FHIR['id'], FHIR.extension}
 
 # List of FHIR 'primitive' types, not to be further expanded
 # TODO: FHIR.Reference shouldn't be in this list

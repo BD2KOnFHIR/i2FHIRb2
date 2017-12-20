@@ -31,41 +31,18 @@ import unittest
 import os
 import io
 
+from tests.script_tests.script_test_base import ScriptTestBase
 from tests.utils.output_redirector import OutputRedirector
 from i2fhirb2.loadfacts import load_facts
 
-save_output = False              # True means update output files
 
+class LoadFactsTestCase(ScriptTestBase):
 
-class LoadFactsTestCase(unittest.TestCase, OutputRedirector):
-    dirname, _ = os.path.split(os.path.abspath(__file__))
-
-    def check_output(self, filename: str, output: io.StringIO) -> None:
-        fullfilename = os.path.join(self.dirname, 'data_out', 'loadfacts', filename)
-        if save_output:
-            with open(fullfilename, 'w') as outf:
-                outf.write(output.getvalue())
-        self.maxDiff = None
-        with open(fullfilename) as testf:
-            self.assertEqual(testf.read(), output.getvalue())
-        self.assertFalse(save_output, "save_output is true")
-
-    def check_error_output(self, args: str, filename: str) -> None:
-        self._push_stderr()
-        with self.assertRaises(SystemExit):
-            load_facts(args.split())
-        output = self._pop_stderr()
-        self.check_output(filename, output)
-
-    def check_output_output(self, args: str, filename: str, exception: bool=False) -> None:
-        self._push_stdout()
-        if exception:
-            with self.assertRaises(SystemExit):
-                load_facts(args.split())
-        else:
-            load_facts(args.split())
-        output = self._pop_stdout()
-        self.check_output(filename, output)
+    @classmethod
+    def setUpClass(cls):
+        ScriptTestBase.save_output = False
+        ScriptTestBase.tst_dir = "loadfacts"
+        ScriptTestBase.tst_fcn = load_facts
 
     def test_no_args(self):
         self.check_error_output("", "noargs")

@@ -25,60 +25,36 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# import unittest
-#
-# from i2fhirb2.sqlsupport.tablebase import ColumnsBase
-#
-#
-# def const_fun():
-#     return "Constant Function"
-#
-#
-# class OneClass(ColumnsBase):
-#     classvalue = "Class Value"
-#     const_f = const_fun
-#     const = 1173
-#
-#     _columns = ["class_method", "static_method", "regular_method", "const_f", "const"]
-#
-#     def __init__(self):
-#         self._rv = "Regular Value"
-#
-#     @classmethod
-#     def class_method(cls):
-#         return cls.classvalue
-#
-#     @staticmethod
-#     def static_method():
-#         return "Static Value"
-#
-#     def regular_method(self):
-#         return self._rv
-#
-#
-# class MiddleClass(OneClass):
-#     classvalue = "Middle Class Value"
-#
-#     def __init__(self):
-#         super().__init__()
-#         self._av = "Another Value"
-#
-#     @classmethod
-#     def class_method(cls):
-#         return cls.classvalue
-#
-#     def another_method(self):
-#         return self._av
-#
-#     OneClass._columns.append(["another_method"])
-#
-#
-#
-# class TableBaseTestCase(unittest.TestCase):
-#     def test_basics(self):
-#         self.assertEqual(True, False)
-#
-#
-# if __name__ == '__main__':
-#     unittest.main()
+
+import unittest
+
+import os
+
+from i2fhirb2.generate_i2b2 import generate_i2b2
+from tests.script_tests.script_test_base import ScriptTestBase
+
+
+class GenerateI2B2TestCase(ScriptTestBase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.save_output = True
+        cls.tst_dir = "generatei2b2"
+        cls.tst_fcn = generate_i2b2
+        cls.conf_file_loc = "--conf {}".format(os.path.join(cls.dirname, 'data', 'db_conf'))
+
+    def test_no_args(self):
+        self.check_output_output("", "noargs")
+
+    def test_help(self):
+        self.check_output_output("-h", "help", exception=True)
+
+    def test_version(self):
+        self.check_output_output("-v", "version", exception=True)
+
+    def test_test(self):
+        self.check_output_output("--list " + self.conf_file_loc, "list")
+
+
+if __name__ == '__main__':
+    unittest.main()

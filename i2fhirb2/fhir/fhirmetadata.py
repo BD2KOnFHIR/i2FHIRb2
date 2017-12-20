@@ -93,8 +93,6 @@ class FHIRMetadata(metaclass=ABCMeta):
 
     def _add_modifier(self, modifier: FMVGraphEdge, target: Dict[URIRef, FMVGraphNode],
                       seen: Set[FMVGraphNode], depth: int=0) -> None:
-        if depth > 15:
-            print("HERE")
         if modifier.type_node not in seen:
             if modifier.type_node.is_primitive:
                 target[modifier.predicate] = modifier.type_node
