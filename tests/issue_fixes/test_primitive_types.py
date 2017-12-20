@@ -34,14 +34,16 @@ class PrimitiveIssueTestCase(unittest.TestCase):
     of FHIR.Primitive -- the current conversion tools are putting them in with a visual attribute of "DA"
     """
     def test_primitive(self):
-        from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
-        from i2fhirb2.fhir.fhirspecific import FHIR
+        from i2fhirb2.fhir.fhirspecific import FHIR, is_primitive
         from tests.utils.shared_graph import shared_graph
-        mdt = FHIROntologyTable(shared_graph)
-        self.assertTrue(mdt.is_primitive(FHIR.string))
-        self.assertFalse(mdt.is_primitive(FHIR.CodeableConcept))
-        self.assertTrue(mdt.is_primitive(FHIR.uri))
-        self.assertTrue(mdt.is_primitive(FHIR.index))
+
+        self.assertTrue(is_primitive(shared_graph, FHIR.string))
+        self.assertFalse(is_primitive(shared_graph, FHIR.CodeableConcept))
+        self.assertTrue(is_primitive(shared_graph, FHIR.uri))
+        self.assertTrue(is_primitive(shared_graph, FHIR.index))
+        self.assertTrue(is_primitive(shared_graph, FHIR.Reference))
+        self.assertTrue(is_primitive(shared_graph, FHIR.code))
+        self.assertFalse(is_primitive(shared_graph, FHIR.Observation))
 
 
 if __name__ == '__main__':

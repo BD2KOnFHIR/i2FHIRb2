@@ -34,25 +34,27 @@ class OutputRedirector:
     save_stdout = []
     save_stderr = []
 
-    def _push_stdout(self) -> io.StringIO:
+    def _push_stdout(self) -> None:
         self.save_stdout.append(sys.stdout)
-        output = io.StringIO()
-        sys.stdout = output
-        return output
+        sys.stdout = io.StringIO()
 
-    def _pop_stdout(self) -> None:
+    def _pop_stdout(self) -> io.StringIO:
+        sys.stdout.flush()
+        rval = sys.stdout
         if self.save_stdout:
             sys.stdout = self.save_stdout.pop()
+        return rval
 
-    def _push_stderr(self) -> io.StringIO:
-        self.save_stderr.append(sys.stdout)
-        output = io.StringIO()
-        sys.stderr = output
-        return output
+    def _push_stderr(self) -> None:
+        self.save_stderr.append(sys.stderr)
+        sys.stderr = io.StringIO()
 
-    def _pop_stderr(self) -> None:
+    def _pop_stderr(self) -> io.StringIO:
+        sys.stderr.flush()
+        rval = sys.stderr
         if self.save_stderr:
             sys.stderr = self.save_stderr.pop()
+        return rval
 
     def tearDown(self):
         self._pop_stdout()

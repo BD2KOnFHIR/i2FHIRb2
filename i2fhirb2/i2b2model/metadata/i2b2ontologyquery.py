@@ -40,19 +40,34 @@ class Query:
                  numeric_key: bool,
                  where_subj: str,
                  where_pred: str,
-                 where_obj: Optional[Union[int, str, datetime.datetime]]):
+                 where_obj: Optional[Union[int, str, datetime.datetime]]) -> None:
         assert where_pred != 'like' or not numeric_key, "'like' queries not allowed on numeric keys"
-        self.table = table
-        self.key = key
-        self.numeric_key = numeric_key
-        self.where_subj = where_subj
-        self.where_pred = where_pred
-        self.where_obj = where_obj
+        if where_obj is not None:
+            self.table = table
+            self.key = key
+            self.numeric_key = numeric_key
+            self.where_subj = where_subj
+            self.where_pred = where_pred
+            self.where_obj = where_obj
+        else:
+            self.table = self.key = self.where_subj = self.where_pred = self.where_obj = ""
+            self.numeric_key = False
 
     def __str__(self):
         where_text = "{where_obj}" if self.numeric_key else "'{where_obj}'"
         return ("SELECT {key}\nFROM {table}\n"
                 "WHERE {where_subj} {where_pred} " + where_text).format(**self.__dict__)
+
+
+class EmptyQuery(Query):
+    """
+    No query - default values for all the elements
+    """
+    def __init__(self) -> None:
+        super().__init__("", "", False, "", "", "")
+
+    def __str__(self):
+        return "NO QUERY"
 
 
 class ConceptQuery(Query):
@@ -70,7 +85,7 @@ class ConceptQuery(Query):
                          "concept_cd",
                          False,
                          "concept_path",
-                         "like",
+                         "=",
                          where_obj)
 
 

@@ -43,7 +43,7 @@ class FHIR_Infrastructure_type(FHIR_Resource_type):
 
 
 class FHIR_Observation_Fact_type(FHIR_Resource_type):
-    def __init__(self, patient_ref: URIRef, encounter_ref: Optional[URIRef], provider_ref: Optional[URIRef]):
+    def __init__(self, patient_ref: URIRef, encounter_ref: Optional[URIRef], provider_ref: Optional[URIRef]) -> None:
         self.patient_ref = patient_ref
         self.encounter_ref = encounter_ref
         self.provider_ref = provider_ref

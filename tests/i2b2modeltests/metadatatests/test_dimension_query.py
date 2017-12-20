@@ -36,16 +36,30 @@ class DimensionQueryTestCase(unittest.TestCase):
         from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
 
         q = ConceptQuery("foo")
-        self.assertEqual("SELECT concept_cd\nFROM concept_dimension\nWHERE concept_path like 'foo'", str(q))
+        self.assertEqual("SELECT concept_cd\nFROM concept_dimension\nWHERE concept_path = 'foo'", str(q))
         q.where_obj = '\\path\\%'
-        self.assertEqual("SELECT concept_cd\nFROM concept_dimension\nWHERE concept_path like '\\path\\%'", str(q))
+        self.assertEqual("SELECT concept_cd\nFROM concept_dimension\nWHERE concept_path = '\\path\\%'", str(q))
         o = OntologyEntry("\\PATH\\subpath\\", ConceptQuery('\\PATH\\subpath\\'), None, "74400008")
         self.assertEqual(o.c_facttablecolumn, 'concept_cd')
         self.assertEqual(o.c_tablename, 'concept_dimension')
         self.assertEqual(o.c_columndatatype, 'T')
         self.assertEqual(o.c_columnname, 'concept_path')
-        self.assertEqual(o.c_operator, 'like')
+        self.assertEqual(o.c_operator, '=')
         self.assertEqual(o.c_dimcode, '\\PATH\\subpath\\')
+
+    def test_empty_query(self):
+        from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import EmptyQuery
+        from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
+
+        q = EmptyQuery()
+        self.assertEqual("NO QUERY", str(q))
+        o = OntologyEntry("\\PATH\\subpath\\", EmptyQuery(), None, "74400008")
+        self.assertEqual(o.c_facttablecolumn, '')
+        self.assertEqual(o.c_tablename, '')
+        self.assertEqual(o.c_columndatatype, 'T')
+        self.assertEqual(o.c_columnname, '')
+        self.assertEqual(o.c_operator, '')
+        self.assertEqual(o.c_dimcode, '')
 
     def test_modifier_query(self):
         from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import ModifierQuery

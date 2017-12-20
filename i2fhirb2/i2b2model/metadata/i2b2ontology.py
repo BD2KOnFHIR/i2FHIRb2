@@ -30,10 +30,10 @@ from typing import Optional
 from rdflib import URIRef, Graph
 from rdflib.namespace import DC
 
-from i2fhirb2.fhir.fhirspecific import concept_path, concept_code, modifier_path, modifier_code, modifier_name, \
+from i2fhirb2.fhir.fhirspecific import concept_path, concept_code, modifier_code, modifier_name, \
     concept_name
 from i2fhirb2.i2b2model.metadata.dimensionmetadata import metadata_xml
-from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import Query, ModifierQuery, ConceptQuery
+from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import Query, ModifierQuery, ConceptQuery, EmptyQuery
 from i2fhirb2.i2b2model.metadata.i2b2ontologyvisualattributes import VisualAttributes
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
@@ -137,7 +137,7 @@ class OntologyEntry(I2B2_Core):
 
     @DynObject.entry(_t)
     def m_applied_path(self) -> str:
-        return '@' if not isinstance(self._query, ModifierQuery) else self.c_fullname[:-1].rsplit('\\', 1)[0] + '\\%'
+        return '@'
 
     DynObject._after_root(_t)
 
@@ -174,6 +174,8 @@ class OntologyRoot(OntologyEntry):
         Initialize an ontology header.
         :param kwargs: Additional arguments for i2b2_core
         """
+        if base.startswith('\\'):
+            base = base[1:-1]
         path = '\\' + base + '\\'
         super().__init__(path, ConceptQuery(path), VisualAttributes("CA"), sourcesystem_cd=base, **kwargs)
         self._base = base
@@ -198,25 +200,26 @@ class ModifierOntologyEntry(OntologyEntry):
                  depth: int,
                  subject: URIRef,
                  mod: URIRef,
-                 full_concept_path: str,
-                 modifier_base_path: str,
+                 full_path: str,
+                 applied_path: str,
                  is_leaf: bool,
                  mod_pred: URIRef,
-                 mod_type: URIRef):
+                 mod_type: URIRef) -> None:
         """
         Construct a concept entry in the ontology space
         :param depth: Relative one-based depth of entry
         :param subject: URI of concept being modified
         :param mod: URI of modifier itself
-        :param full_concept_path: concept path to which this modifier applies.  Unchanged.
-        :param modifier_base_path: base path for the modifier dimension query.
+        :param full_path: modifier path
+        :param applied_path: path that modifier applies to
         :param is_leaf: true if there are no additional children
         :param mod_pred: real modifier predicate (for dimcode)
         :param mod_type: Actual type of path
         """
         assert(depth > 0)
 
-        query = ModifierQuery(modifier_base_path + concept_path(mod_pred))
+        # TODO: Fix the hard coded reference below
+        query = ModifierQuery('\\FHIR\\' + concept_path(mod_pred)) if is_leaf else EmptyQuery()
 
         visattr = VisualAttributes()
         visattr.leaf = is_leaf
@@ -224,13 +227,12 @@ class ModifierOntologyEntry(OntologyEntry):
         visattr.draggable = True
         visattr.editable = False
 
-        full_path = '\\' + concept_path(subject) + (modifier_path(mod) if subject != mod else '')
         super().__init__(full_path, query, visattr, modifier_code(mod), mod_type)
 
         self._subject = subject
         self._mod = mod
         self._depth = depth
-        self._m_applied_path = full_concept_path
+        self._m_applied_path = applied_path
         self._mod_pred = mod_pred
 
     # Levels in ontology modifier references start at 1
@@ -289,9 +291,10 @@ class ConceptOntologyEntry(OntologyEntry):
         visattr.draggable = is_draggable
         visattr.editable = False
 
-        full_path = navigational_path + concept_path(subject)
+        full_path = navigational_path
+        self._m_applied_path = '@'
 
-        query = ConceptQuery(ontological_path + concept_path(subject))
+        query = ConceptQuery(ontological_path) if is_leaf else EmptyQuery()
         super().__init__(full_path, query, visattr, concept_code(subject), primitive_type)
 
     # Level in ontology concept references are relative to base path

@@ -29,6 +29,7 @@ from typing import Optional
 
 from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import ConceptQuery
 from i2fhirb2.i2b2model.metadata.i2b2ontologyvisualattributes import VisualAttributes
+from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
 from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements
 
 
@@ -43,7 +44,7 @@ class TableAccess(DynObject):
 
     @DynObject.entry(_t)
     def c_table_name(self) -> str:
-        return "custom_meta"
+        return i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
 
     @DynObject.entry(_t)
     def c_protected_access(self) -> str:

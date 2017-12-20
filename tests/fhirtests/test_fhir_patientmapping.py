@@ -35,7 +35,7 @@ from tests.utils.connection_helper import connection_helper
 
 
 class FHIRPatientMappingTestCase(unittest.TestCase):
-    def test_1(self):
+    def test_patient_mapping(self):
         from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 

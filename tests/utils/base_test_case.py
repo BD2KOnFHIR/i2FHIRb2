@@ -37,15 +37,16 @@ from rdflib import Graph
 test_directory = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..'))
 test_conf_directory = os.path.join(test_directory, 'conf')
 test_data_directory = os.path.join(test_directory, 'data')
+mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
 
 
 def FHIRGraph():
-    print("Loading graph...", end="")
-    mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
-    g = FHIRMetaVoc(os.path.join(mvdir, 'fhir.ttl')).g
-    g.load(os.path.join(mvdir, 'w5.ttl'), format="turtle")
-    print("done\n")
-    return g
+    print("Loading graph", end="")
+    fmv = FHIRMetaVoc(os.path.join(mvdir, 'fhir.ttl'))
+    print(" (cached)" if fmv.from_cache else "(from disc)", end="")
+    fmv.g.load(os.path.join(mvdir, 'w5.ttl'), format="turtle")
+    print(" done\n")
+    return fmv.g
 
 
 class BaseTestCase(unittest.TestCase):

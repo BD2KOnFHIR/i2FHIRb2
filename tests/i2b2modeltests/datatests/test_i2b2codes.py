@@ -46,6 +46,5 @@ class I2B2CodesTestCase(unittest.TestCase):
         self.assertEqual('DEM|SEX:m', I2B2DemographicsCodes().sex_male)
 
 
-
 if __name__ == '__main__':
     unittest.main()

@@ -29,6 +29,8 @@
 import unittest
 from collections import OrderedDict
 
+from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
+
 
 class TableAccessTestCase(unittest.TestCase):
     def test(self):
@@ -41,7 +43,7 @@ class TableAccessTestCase(unittest.TestCase):
                           'valuetype_cd'), ta._header())
         self.assertEqual(OrderedDict([
              ('c_table_cd', 'FHIR'),
-             ('c_table_name', 'custom_meta'),
+             ('c_table_name', DEFAULT_ONTOLOGY_TABLE),
              ('c_protected_access', 'N'),
              ('c_hlevel', 1),
              ('c_fullname', '\\FHIR\\'),
@@ -55,7 +57,7 @@ class TableAccessTestCase(unittest.TestCase):
              ('c_dimtablename', 'concept_dimension'),
              ('c_columnname', 'concept_path'),
              ('c_columndatatype', 'T'),
-             ('c_operator', 'like'),
+             ('c_operator', '='),
              ('c_dimcode', '\\FHIR\\'),
              ('c_comment', None),
              ('c_tooltip', 'FHIR Resource'),

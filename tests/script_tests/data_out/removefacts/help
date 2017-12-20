@@ -4,6 +4,7 @@ usage: _jb_unittest_runner.py [-h] [-mv METAVOC] [--conf CONFIG FILE]
                               [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                               [--ontouser ONTOUSER]
                               [--ontopassword ONTOPASSWORD]
+                              [--onttable ONTOLOGY TABLE NAME]
                               Upload identifiers [Upload identifiers ...]
 
 Clear data from FHIR observation fact table
@@ -29,3 +30,6 @@ optional arguments:
   --ontouser ONTOUSER   User name for ontology database. (default: user)
   --ontopassword ONTOPASSWORD
                         Password for ontology database. (default: password)
+  --onttable ONTOLOGY TABLE NAME
+                        Ontology table name (default: custom_meta) (default:
+                        custom_meta)

@@ -29,17 +29,12 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
-from rdflib import Namespace
-
 from i2fhirb2.fhir.fhirspecific import W5, FHIR
 from tests.utils.base_test_case import BaseTestCase
 from tests.utils.shared_graph import shared_graph
 
 
 class ConceptDimensionTestCase(BaseTestCase):
-
-    w5ns = Namespace("http://hl7.org/fhir/w5#")
-    fhirns = Namespace("http://hl7.org/fhir/")
 
     def test_basics(self):
         from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
@@ -91,6 +86,7 @@ class ConceptDimensionTestCase(BaseTestCase):
                          'download_date\timport_date\tsourcesystem_cd\tupload_id', ConceptDimension._header())
 
     def test_fhir_conceptdimensionroot(self):
+        # TODO: is conceptdimensionroot needed?
         from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot, ConceptDimension
         ConceptDimensionRoot._clear()
         ConceptDimension._clear()
@@ -106,6 +102,7 @@ class ConceptDimensionTestCase(BaseTestCase):
              ('import_date', datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'Unspecified'),
              ('upload_id', None)]), cdr._freeze())
+
 
 if __name__ == '__main__':
     unittest.main()

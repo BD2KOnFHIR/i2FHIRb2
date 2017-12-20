@@ -1,3 +1,0 @@
-patient_ide	patient_ide_source	patient_num	patient_ide_status	project_id	update_date	download_date	import_date	sourcesystem_cd	upload_id
-100000214	HIVE	100000214	A	fhir	2017-08-04 10:00:00	2017-08-04 10:00:00	2017-08-04 10:00:00	SMARTONFHIR	1134281
-SMART-1134281	http://hl7.org/fhir/	100000214	A	fhir	2017-08-04 10:00:00	2017-08-04 10:00:00	2017-08-04 10:00:00	SMARTONFHIR	1134281

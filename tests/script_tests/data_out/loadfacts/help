@@ -12,6 +12,7 @@ usage: _jb_unittest_runner.py [-h] [-v] [-l]
                               [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                               [--ontouser ONTOUSER]
                               [--ontopassword ONTOPASSWORD]
+                              [--onttable ONTOLOGY TABLE NAME]
 
 Load FHIR Resource Data into i2b2 CRC tables
 
@@ -59,3 +60,6 @@ optional arguments:
   --ontouser ONTOUSER   User name for ontology database. (default: user)
   --ontopassword ONTOPASSWORD
                         Password for ontology database. (default: password)
+  --onttable ONTOLOGY TABLE NAME
+                        Ontology table name (default: custom_meta) (default:
+                        custom_meta)

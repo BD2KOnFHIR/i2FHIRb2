@@ -46,6 +46,7 @@ class FullPathTestCase(unittest.TestCase):
         print("list 2: {}".format(', '.join(str(e) for e in l2 if e not in l1)))
         return False
 
+    @unittest.skip
     def test_path(self):
         g = Graph()
         fot = FHIROntologyTable(g)

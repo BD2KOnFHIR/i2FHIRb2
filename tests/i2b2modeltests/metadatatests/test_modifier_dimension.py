@@ -25,12 +25,11 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import os
 import unittest
 from collections import OrderedDict
 from datetime import datetime
 
-from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
+from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import W5, FHIR
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from tests.utils.base_test_case import BaseTestCase
@@ -38,7 +37,6 @@ from tests.utils.shared_graph import shared_graph
 
 
 class ModifierDimensionTestCase(BaseTestCase):
-    dirname, _ = os.path.split(os.path.abspath(__file__))
     g = shared_graph
 
     def test_basics(self):
@@ -75,36 +73,6 @@ class ModifierDimensionTestCase(BaseTestCase):
                                 ('upload_id', None)])
         self.assertEqual(expected, md._freeze())
 
-    def test_deep_nesting_1(self):
-
-        ModifierDimension._clear()
-        ModifierDimension.sourcesystem_cd = "FHIR STU3"
-        ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
-
-        ot = FHIRModifierDimension(self.g)
-        self.assertEqual([
-            ('\\FHIR\\CodeableConcept\\coding\\',
-             'FHIR:CodeableConcept.coding',
-             'FHIR CodeableConcept coding'),
-            ('\\FHIR\\CodeableConcept\\text\\',
-             'FHIR:CodeableConcept.text',
-             'FHIR CodeableConcept text')],
-            list((e.modifier_path, e.modifier_cd, e.name_char) for e in
-                 sorted(ot.dimension_list(domain=FHIR.CodeableConcept))))
-
-    def test_deep_nesting_2(self):
-        ModifierDimension._clear()
-        ModifierDimension.sourcesystem_cd = "FHIR STU3"
-        ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
-
-        ot = FHIRModifierDimension(self.g)
-        self.assertEqual(['\\FHIR\\Observation\\component\\valueBoolean\\',
-                          '\\FHIR\\Observation\\component\\valueDateTime\\',
-                          '\\FHIR\\Observation\\component\\valueInteger\\',
-                          '\\FHIR\\Observation\\component\\valueString\\',
-                          '\\FHIR\\Observation\\component\\valueTime\\'],
-                         list(e.modifier_path for e in
-                              sorted(ot.dimension_list(domain=FHIR.ObservationComponentComponent))))
 
 if __name__ == '__main__':
     unittest.main()

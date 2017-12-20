@@ -28,76 +28,104 @@
 import os
 import unittest
 from datetime import datetime
+from typing import List, Tuple
 
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
-
-from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
 from i2fhirb2.fhir.fhirspecific import FHIR
-from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyRoot
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
+from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyRoot, OntologyEntry
 from tests.utils.base_test_case import BaseTestCase
 from tests.utils.shared_graph import shared_graph
 
 # True means create the output file -- false means test it
-create_output_files = False
+create_output_files = True         # Be very careful when setting this to 'true'
 
 
 class FHIROntologyTestCase(BaseTestCase):
+    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))
 
-    @staticmethod
-    def esc_output(txt: str) -> str:
-        return txt.replace('\r\n', '').replace('\r', '').replace('\n', '')
+    def setUp(self):
+        from i2fhirb2.i2b2model.metadata import dimensionmetadata
+        ref_datetime = datetime(2017, 5, 25, 13, 0)
+        dimensionmetadata.creation_date = ref_datetime
 
-    def tst_output(self, o: FHIRMetadata, outfname: str):
-        full_outfname = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data', outfname)
-        v = o.dimension_list(FHIR.Observation)
-        if create_output_files:
-            with open(full_outfname, 'w') as outf:
-                outf.write(o.tsv_header() + '\n')
-                for e in sorted(v):
-                    outf.write(self.esc_output(repr(e)) + '\n')
-        self.maxDiff = None
-        with open(full_outfname, 'r') as outf:
-            self.assertEqual(outf.readline().strip(), o.tsv_header(), "Header mismatch")
-            line_number = 1
-            for e in sorted(v):
-                line_number += 1
-                self.assertEqual(outf.readline().strip('\r\n'), self.esc_output(repr(e)),
-                                 "Mismatch on line {}".format(line_number))
-            self.assertEqual(outf.read(), "")
-        self.assertFalse(create_output_files, "Test fails if generating the output file")
+        from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
+        OntologyEntry._clear()
+        OntologyEntry.sourcesystem_cd = "FHIR STU3"
+        OntologyEntry.update_date = OntologyRoot.update_date = ref_datetime
+        OntologyRoot.sourcesystem_cd = "FHIR STU3"
 
-    def test_concept_dimension(self):
-        from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
+        from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
+        ModifierDimension._clear()
+        ModifierDimension.sourcesystem_cd = "FHIR STU3"
+        ModifierDimension.update_date = ref_datetime
+        ModifierDimension.graph = shared_graph
+
         from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
         ConceptDimension._clear()
         ConceptDimension.sourcesystem_cd = "FHIR STU3"
         ConceptDimension.update_date = ConceptDimension.import_date = ConceptDimension.download_date = \
-            datetime(2017, 5, 25, 13, 0)
-        ConceptDimensionRoot.update_date = datetime(2017, 5, 25, 13, 0)
+            ref_datetime
+        ConceptDimension.graph = shared_graph
 
-        self.tst_output(FHIRConceptDimension(shared_graph), 'fhir_concept_dimension.tsv')
+    @staticmethod
+    def esc_output(txt: str) -> str:
+        return txt.replace('\r\n', '').replace('\r', '').replace('\n', '').strip('\t')
 
-    def test_modifier_dimension(self):
-        from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
-        from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-        ModifierDimension._clear()
-        ModifierDimension.sourcesystem_cd = "FHIR STU3"
-        ModifierDimension.update_date = datetime(2017, 5, 25, 13, 0)
+    def tst_dimension(self, header: str, dimension_entries: List, fname: str) -> None:
+        """
+        Test dimension entries against the supplied output file
+        :param header: Expected header line
+        :param dimension_entries: Dimension list
+        :param fname: output file name base (no .tsv)
+        """
+        full_fname = os.path.join(FHIROntologyTestCase.output_dir, fname + '.tsv')
+        if create_output_files:
+            with open(full_fname, 'w') as outf:
+                outf.write(header + '\n')
+                for e in sorted(dimension_entries):
+                    outf.write(self.esc_output(repr(e)) + '\n')
+            self.maxDiff = None
+            with open(full_fname, 'r') as outf:
+                self.assertEqual(outf.readline().strip(), header, "Header mismatch")
+                line_number = 1
+                for e in sorted(dimension_entries):
+                    line_number += 1
+                    self.assertEqual(outf.readline().strip('\r\n\t'), self.esc_output(repr(e)),
+                                     "Mismatch on line {}".format(line_number))
+                self.assertEqual(outf.read(), "")
 
-        self.tst_output(FHIRModifierDimension(shared_graph), 'fhir_modifier_dimension.tsv')
+    def tst_output(self, dimensions: Tuple[List[OntologyEntry], List[ConceptDimension], List[ModifierDimension]],
+                   resource_name: str) -> None:
+        """
+        Test the output of FHIROntologyTable.dimension_list as generated against resource
+        :param dimensions: ontology, concept and modifier dimension entries
+        :param resource_name: name of specific test file (e.g. 'observation', 'domain_resource', etc.)
+        """
+        self.tst_dimension(OntologyEntry._header(), dimensions[0], 'fhir_ontology_' + resource_name)
+        self.tst_dimension(ConceptDimension._header(), dimensions[1], 'fhir_concept_dimension_' + resource_name)
+        self.tst_dimension(ModifierDimension._header(), dimensions[2], 'fhir_modifier_dimension_' + resource_name)
 
     def test_ontology(self):
+        """
+        Test the FHIROntologyTable dimension_list function against the Observation, DomainResource and Resource elements
+        """
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
-        from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
-        from i2fhirb2.i2b2model.metadata import dimensionmetadata
-        dimensionmetadata.creation_date = datetime(2017, 5, 25, 13, 0)
-        OntologyEntry._clear()
-        OntologyEntry.sourcesystem_cd = "FHIR STU3"
-        OntologyEntry.update_date = datetime(2017, 5, 25, 13, 0)
-        OntologyRoot.sourcesystem_cd = "FHIR STU3"
-        OntologyRoot.update_date = datetime(2017, 5, 25, 13, 0)
 
-        self.tst_output(FHIROntologyTable(shared_graph), 'fhir_ontology.tsv')
+        self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.Observation), "observation")
+        self.assertFalse(True, "DomainResource and Resource aren't correctly generated")
+        self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.DomainResource), "domain_resource")
+        self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.Resource), "resource")
+        self.assertFalse(create_output_files, "New output files generated")
+
+    def test_complete_load(self):
+        """
+        Load a complete set of tables to test for recursion and other issues
+        :return:
+        """
+        from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
+        FHIROntologyTable(shared_graph).dimension_list()
+        self.assertTrue(True)
 
 if __name__ == '__main__':
     unittest.main()

@@ -25,16 +25,26 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+from typing import Optional
 
 from fhirtordf.rdfsupport.namespaces import W5, FHIR, namespace_for
 from rdflib import Graph, URIRef
-from rdflib.namespace import split_uri
+from rdflib.namespace import split_uri, RDFS
+from rdflib.term import Node, BNode, Literal
 
 
 # TODO: move this to a stable version when R4 is adopted
+
 DEFAULT_FMV = "http://build.fhir.org/"
 DEFAULT_PROVIDER_ID = "FHIR:DefaultProvider"
 
+DEFAULT_NAME_BASE = '\\FHIR\\'              # Default hame base
+DEFAULT_PROJECT_ID = 'fhir'                 # Default project id for mapping tables
+DEFAULT_ENCOUNTER_NUMBER_START = 500000     # Default starting encounter number if none is present
+DEFAULT_PATIENT_NUMBER_START = 100000001    # Default starting patient number if none is present
+IDE_SOURCE_HIVE = "HIVE"                    # Source for number to id mapping
+
+DEFAULT_ONTOLOGY_TABLE = "custom_meta"      # Default metadata ontology table
 
 # List of W5 categores that should not be included in the output
 w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}
@@ -43,9 +53,17 @@ w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.informatio
 skip_fhir_predicates = {FHIR.index, FHIR.nodeRole, FHIR['id']}
 
 # List of FHIR 'primitive' types, not to be further expanded
-fhir_primitives = {FHIR.Reference}
+# TODO: FHIR.Reference shouldn't be in this list
+fhir_primitives = {FHIR.Reference, FHIR.index, FHIR.nodeRole, FHIR.value}
 
-ide_source_hive = "HIVE"        # Identity source for patient and encounter mapping tables
+
+def concept_path_sans_root(subject: URIRef) -> str:
+    """
+    Generate a concept path without the root node (e.g. Observation//component//code --> component//code
+    :param subject: URI to trim
+    :return: resulting path
+    """
+    return concept_path(subject).split('\\', 1)[1]
 
 
 def concept_path(subject: URIRef) -> str:
@@ -78,7 +96,7 @@ def concept_name(g: Graph, subject: URIRef) -> str:
     Return the i2b2 concept name for subject
     :param g: Graph - used to access label
     :param subject: concept subject
-    :return: Name derived from lable if it exists otherwise the URI itself
+    :return: Name derived from label if it exists otherwise the URI itself
     """
     # Note - labels appear to have '.' in them as well
     return str(g.label(subject, split_uri(subject)[1])).replace('.', ' ')
@@ -87,12 +105,24 @@ def concept_name(g: Graph, subject: URIRef) -> str:
 def modifier_path(modifier: URIRef) -> str:
     """
     Convert modifier uri into an i2b2 modifier path fragment, removing the first part of the name
-    Example: CodedEntry.code.text --> code\\text\\
+    Example: CodedEntry.code.text --> code\text\
     :param modifier: FHIR URI
     :return: i2b2 path fragment
     """
     path = split_uri(modifier)[1]
     return (path.split('.', 1)[1].replace('.', '\\') if '.' in path else path) + '\\'
+
+
+def rightmost_element(uri: URIRef) -> str:
+    """
+    Isolate the rightmost element in a URI path.
+    Example: CodedEntry.code.text --> \text\
+             CodedEntry           --> \
+    :param uri: input URI
+    :return: rightmost element in path form
+    """
+    uri_path = split_uri(uri)[1]
+    return '\\' + ((uri_path.rsplit('.', 1)[1] + '\\') if '.' in uri_path else "")
 
 
 def modifier_code(modifier: URIRef) -> str:
@@ -125,15 +155,33 @@ def composite_uri(parent: URIRef, mod: URIRef) -> URIRef:
     :param mod: modifier URI
     :return: composite
     """
-    p1 = split_uri(mod)
-    if len(p1) < 2:
-        print("E1")
-    p2 = p1[1].rsplit('.', 1)
-    if len(p2) < 2:
-        print("E2")
-    last_mod_component = split_uri(mod)[1].rsplit('.', 1)[1]
-    return URIRef(str(parent) + '.' + last_mod_component)
+    p1 = split_uri(mod)[1]
+    return URIRef(str(parent) + '.' + (p1.rsplit('.', 1)[1] if '.' in p1 else p1))
 
 
 def is_w5_uri(uri: URIRef) -> bool:
     return split_uri(uri)[0] == str(W5)
+
+
+def is_primitive(g: Graph, subj: Node) -> bool:
+    """
+    Determine whether subj is an instance of a FHIR primitive type
+    :param g: Graph context for testing
+    :param subj: element to test
+    :return:
+    """
+    parents = set(g.objects(subj, RDFS.subClassOf))
+    return FHIR.Primitive in parents or subj in fhir_primitives
+
+
+def instance_is_primitive(g: Graph, obj: Optional[Node]) -> bool:
+    """
+    Determine whether obj is a FHIR 'primitive', which we can identify by testing for a fhir:value entry
+    :param g: Graph context for testing
+    :param obj: object to test
+    :return:
+    """
+    if obj is None or not isinstance(obj, BNode):
+        return False
+    obj_vals = list(g.objects(obj, FHIR.value))
+    return len(obj_vals) == 1 and isinstance(obj_vals[0], Literal)

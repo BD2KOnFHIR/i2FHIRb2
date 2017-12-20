@@ -48,7 +48,8 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
-from i2fhirb2.sqlsupport.dbconnection import I2B2Tables, change_column_length
+from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+from i2fhirb2.sqlsupport.i2b2tables import change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
 
@@ -75,7 +76,7 @@ class I2B2GraphMap:
         self.encounter_mappings = []        # type: List[EncounterMapping]
         nresources = 0
         for subj, subj_type in g.subject_objects(RDF.type):
-            if subj_type in FHIR_RESOURCE_MAP:
+            if isinstance(subj, URIRef) and subj_type in FHIR_RESOURCE_MAP:
                 print("{}: ({}) - {}".format(nresources, str(subj_type).split('/')[-1], subj))
                 nresources += 1
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]

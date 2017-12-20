@@ -37,12 +37,11 @@ med_desp_upload_id = 2020
 pat_upload_id = 2021
 
 
-
 class PatientDimensionTestCase(unittest.TestCase):
     @staticmethod
-    def clear_upload_id(id: int) -> None:
+    def clear_upload_id(id_: int) -> None:
         from i2fhirb2.removefacts import remove_facts
-        remove_facts("{} --conf {}".format(id, conf_file).split())
+        remove_facts("{} --conf {}".format(id_, conf_file).split())
 
     @unittest.skip
     def test1(self):

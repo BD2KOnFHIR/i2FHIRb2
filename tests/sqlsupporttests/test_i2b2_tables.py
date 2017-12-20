@@ -30,6 +30,7 @@ import unittest
 from sqlalchemy import select
 
 from i2fhirb2.sqlsupport.dbconnection import process_parsed_args
+from tests.utils.base_test_case import test_conf_directory
 
 
 def caught_error(message):
@@ -40,7 +41,7 @@ def caught_error(message):
 # the issue is in the location of the db_conf file
 class I2B2TablesTestCase(unittest.TestCase):
     from i2fhirb2.generate_i2b2 import genargs
-    conf_file = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..', 'conf', 'db_conf'))
+    conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
 
     opts = genargs('-l --conf {} '.format(conf_file).split())
     process_parsed_args(opts)
@@ -58,7 +59,7 @@ class I2B2TablesTestCase(unittest.TestCase):
                           'import_date',
                           'sourcesystem_cd',
                           'upload_id'], x.concept_dimension.columns.keys())
-        s = select([x.i2b2]).order_by(x.i2b2.c.c_hlevel).limit(10)
+        s = select([x.ontology_table]).order_by(x.ontology_table.c.c_hlevel).limit(10)
 
         for e in x.crc_engine.execute(s).fetchall():
             self.assertTrue(e[0] < 2)
@@ -68,6 +69,7 @@ class I2B2TablesTestCase(unittest.TestCase):
         x = I2B2Tables(self.opts)
 
         self.assertEqual(x.concept_dimension, x['concept_dimension'])
+        self.assertEqual('custom_meta', x['ontology_table'].name)
 
 
 if __name__ == '__main__':

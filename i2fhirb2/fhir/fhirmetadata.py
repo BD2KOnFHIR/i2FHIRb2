@@ -26,36 +26,18 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from abc import ABCMeta, abstractmethod
-from collections import OrderedDict
-from typing import Set, Optional, List, Dict, Tuple
+from typing import Optional, List, Dict, Tuple, Set, NamedTuple
 
-from fhirtordf.rdfsupport.namespaces import FHIR
+from i2fhirb2.fhir.fhirmetadatavocabulary import FHIRMetaDataVocabulary, FMVGraphNode, FMVGraphEdge
+from rdflib import Graph, URIRef
 
-from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-from rdflib import Graph, URIRef, RDF, OWL, RDFS
-
-from i2fhirb2.fhir.fhirspecific import w5_infrastructure_categories, fhir_primitives, composite_uri, is_w5_uri
-from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
+from i2fhirb2.fhir.fhirspecific import composite_uri, concept_path, modifier_path
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
 
 
-class ModifierPath:
-    """
-    Structure for carrying information about a modifier and its depth
-    """
-    def __init__(self, hlevel: int, fullname: URIRef, dimcode: URIRef, type_: URIRef):
-        """
-        Ontology c_hlevel, c_fullnmae, c_dimcode combination for modifier entry
-        :param hlevel:  depth
-        :param fullname: URI of full path
-        :param dimcode:  URI for type
-        :param type_: target type
-        """
-        self.hlevel = hlevel
-        self.fullname = fullname
-        self.dimcode = dimcode
-        self.type = type_
+class FMVGraphNodeWithMultiplicity(NamedTuple):
+    graph_node: "FMVGraphNode"
+    is_multiple: bool
 
 
 class FHIRMetadata(metaclass=ABCMeta):
@@ -63,154 +45,102 @@ class FHIRMetadata(metaclass=ABCMeta):
     The W5 OntologyEntry in i2b2 space
     """
 
-    # fhir_concepts is a map from a concept_code URI to a tuple consisting of:
-    #   a type URI -- for generating modifier entries in the ontology table
-    #   a parent URI if the concept URI is not in the FHIR meta vocabulary
-    _fhir_concepts = OrderedDict()  # type: Dict[URIRef, Tuple[URIRef, Optional[URIRef]]]
-
-    def __init__(self, g: Graph, name_base: str = "\\FHIR\\"):
+    def __init__(self, g: Graph, name_base: Optional[str]=None, modifier_base: Optional[str]=None) -> None:
         """
         Create a FHIR i2b2 generator
         :param g: Graph containing fhir.ttl information
-        :param name_base: Base for concept_dimension / modifier_dimension and non-modifier ontology paths
+        :param name_base: Base for concept_dimension / modifier dimension and non-modifier ontology paths
+        :param modifier_base: base for modifier ontology paths (m_applied_path != '@')
         """
-        assert(name_base.endswith('\\'))
-        self.g = g
-        self._name_base = name_base
-        ConceptDimension.graph = g
-        ModifierDimension.graph = g
-        OntologyEntry.graph = g
-
-    def w5_concepts(self) -> Set[URIRef]:
-        """
-        Return the uris for the w5 (classification) classes. These become the i2b2 navigational concepts.
-        """
-        return {subj for subj in self.g.subjects(RDF.type, OWL.Class)
-                if isinstance(subj, URIRef) and is_w5_uri(subj) and not self.w5_infrastructure_category(subj)}
-
-    def w5_infrastructure_category(self, subj: URIRef) -> bool:
-        """
-        Determine whether subj belongs to a w5 infrastructure category
-        :param subj: FHIR Element
-        :return:
-        """
-        return bool(set(self.g.transitive_objects(subj, RDFS.subClassOf)).intersection(w5_infrastructure_categories))
-
-    def fhir_resource_concepts(self) -> Set[URIRef]:
-        """
-        Return the uris for the set of all qualifying FHIR resources
-        :return: URIs of all FHIR resources
-        """
-        return {subj for subj in self.g.transitive_subjects(RDFS.subClassOf, FHIR.Resource)
-                if isinstance(subj, URIRef) and not self.w5_infrastructure_category(subj)}
-
-    def fhir_concepts(self, resource: Optional[URIRef]=None) -> Dict[URIRef, Tuple[URIRef, Optional[URIRef]]]:
-        """
-        Return all qualifying descendants of fhir:Resource + all first level properties.  This is the complete
-        set of FHIR elements in the concept dimension.
-        :param resource: Subject to restrict output to for debugging
-        :return: A list of all URI
-        """
-        if not self._fhir_concepts:
-            for subj in ({resource} if resource else sorted(self.fhir_resource_concepts())):
-                self._fhir_concepts[subj] = (None, None)        # No type / no parent
-                self._generate_fact_concepts(subj)
-        return self._fhir_concepts
-
-    def _generate_fact_concepts(self, resource: URIRef) -> None:
-        """
-        Generate a concept entry for each predicate associated with subj.  This method parallels the generate_facts
-        method in FHIRObservationFactFactory method.  The difference between the two is that, here, we generate a list
-        of *all* possible concept codes, where the generate_facts method only generates those for things that exist.
-        :param resource: URI of resource to concept
-        """
-
-        for concept_predicate in sorted(set(self.g.subjects(RDFS.domain, resource))):
-            if concept_predicate not in FHIRObservationFactFactory.special_processing_list:
-                range_type = self.g.value(concept_predicate, RDFS.range, any=False)
-                self._fhir_concepts[concept_predicate] = (range_type, resource)
-                if not self.is_primitive(range_type):
-                    self._non_primitive_paths(concept_predicate, range_type)
-
-    def _non_primitive_paths(self, base_predicate: URIRef, predicate_type: URIRef,
-                             seen_predicate_types: List[URIRef] = None) -> None:
-
-        if seen_predicate_types is None:
-            seen_predicate_types = []
-        if predicate_type not in seen_predicate_types:
-            for predicate in sorted(set(self.g.subjects(RDFS.domain, predicate_type))):
-                if predicate not in FHIRObservationFactFactory.special_processing_list:
-                    range_type = self.g.value(predicate, RDFS.range, any=False)
-                    if not self.is_primitive(range_type):
-                        extended_base_predicate = composite_uri(base_predicate, predicate)
-                        self._fhir_concepts[extended_base_predicate] = (range_type, base_predicate)
-                        seen_predicate_types.append(predicate_type)
-                        self._non_primitive_paths(extended_base_predicate, range_type, seen_predicate_types)
-                        seen_predicate_types.remove(predicate_type)
+        if name_base is None:
+            name_base = "\\FHIR\\"
         else:
-            print("Recursion on :{} {}".format(base_predicate, predicate_type))
+            assert(name_base.endswith('\\'))
+        if modifier_base is None:
+            modifier_base = name_base[:-1] + "Mod\\"
+        self._fhir_metadatavocabulary = FHIRMetaDataVocabulary()
+        self._name_base = name_base
+        self._modifier_base = modifier_base
+        self.graph = g
+
+    def _fhir_concept_expansion(self, concept_cd: URIRef, type_node: FMVGraphNode,
+                                target: Dict[URIRef, FMVGraphNodeWithMultiplicity], nested: bool=False) -> None:
+        """
+        Expand all of the descendants of concept_cd until a leaf or a multiple_entries node is encountered
+        :param concept_cd: Base resource predicate
+        """
+        target[concept_cd] = FMVGraphNodeWithMultiplicity(type_node, False)
+        for edge in type_node.edges:
+            extended_concept_cd = composite_uri(concept_cd, edge.predicate)
+            if not edge.type_node.is_primitive:
+                target[extended_concept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
+                if not edge.multiple_entries:
+                    self._fhir_concept_expansion(extended_concept_cd, edge.type_node, target, nested=True)
+            elif not nested:
+                target[extended_concept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
+
+    def fhir_concepts(self, resource: Optional[URIRef]=None) -> Dict[URIRef, FMVGraphNodeWithMultiplicity]:
+        """
+        Return a list of resources in the FMV and the corresponding graph nodes.
+        :param resource: Subject to restrict output to for debugging
+        :return: A map from the concept URI to the corresponding Graph node
+        """
+        resources = [resource] if resource else self._fhir_metadatavocabulary.fhir_resource_concepts()
+        rval = {}           # type: Dict[URIRef, FMVGraphNodeWithMultiplicity]
+        for r in resources:
+            self._fhir_concept_expansion(r, self._fhir_metadatavocabulary.resource_graph(r), rval)
+        return rval
+
+    def _add_modifier(self, modifier: FMVGraphEdge, target: Dict[URIRef, FMVGraphNode],
+                      seen: Set[FMVGraphNode], depth: int=0) -> None:
+        if depth > 15:
+            print("HERE")
+        if modifier.type_node not in seen:
+            if modifier.type_node.is_primitive:
+                target[modifier.predicate] = modifier.type_node
+            else:
+                for edge in modifier.type_node.edges:
+                    # seen.add(edge.type_node)
+                    self._add_modifier(edge, target, seen, depth+1)
+
+
+    def fhir_modifiers(self, resource: Optional[URIRef]=None) -> Dict[URIRef, FMVGraphNode]:
+        """
+        Return a list of modifier codes from the FMV and the corresponding graph nodes
+        :param resource: Subject to restrict output to for debugging
+        :return: A map from the modifier URI to the corresponding Graph node
+        """
+        resources = [resource] if resource else self._fhir_metadatavocabulary.fhir_resource_concepts()
+        rval = {}           # type: Dict[URIRef, FMVGraphNode]
+        seen = set()        # type: Set[FMVGraphNode]
+        for r in resources:
+            resource_type_node = self._fhir_metadatavocabulary.resource_graph(r)
+            for edge in resource_type_node.edges:
+                # Base level edges don't have modifier codes
+                if not edge.type_node.is_primitive:
+                    self._add_modifier(edge, rval, seen)
+        return rval
+
+    def fhir_modifiers_for(self, parent: FMVGraphNode) -> Dict[str, Tuple[URIRef, URIRef]]:
+        """
+        Return a list of modifier codes that are rooted on the supplied graph node
+        :param parent: concept code of possible parent
+        :return: List of modifier URI's and corresponding nodes
+        """
+        modifiers = {}
+        for edge in parent.edges:
+            print("----> testing {}:{}{}".
+                  format(edge.predicate, edge.type_node, '(M)' if edge.multiple_entries else ''))
+            if edge.multiple_entries:
+                for modifier_edge in edge.type_node.edges:
+                    if modifier_edge.type_node.is_primitive:
+                        path = concept_path(edge.predicate) + modifier_path(modifier_edge.predicate)
+                        modifiers[path] = (edge.predicate, modifier_edge.predicate)
+        return modifiers
 
     def dimension_list(self, _: Optional[URIRef]=None) -> List[OntologyEntry]:
         """ Abstract class to return i2b2 dimension entries"""
         return []
-
-    def is_primitive(self, subj: URIRef) -> bool:
-        """
-        Determine whether subj is 'primitive' in the FHIR context
-        :param subj:
-        :return:
-        """
-        parents = set(self.g.objects(subj, RDFS.subClassOf))
-        return not parents or FHIR.Primitive in parents or subj in fhir_primitives
-
-    def skipped_v5_domain(self, pred: URIRef) -> bool:
-        """
-        Return true if the domain of pred falls in a skipped domain
-        :param pred: p
-        :return:
-        """
-        for dom in self.g.objects(pred, RDFS.domain):
-            if self.w5_infrastructure_category(dom):
-                return True
-        return False
-
-    def value_property(self, prop) -> Optional[URIRef]:
-        """
-        Determine whether prop is one of the [x]'s in value[x]
-        :param prop: predicate to test
-        :return: base value property if it is an '[x]' type
-        """
-        # TODO: Make this work correctly
-        return None
-        # super_prop = self.value(prop, RDFS.subPropertyOf)
-        # TODO: We need to upgrade the ontology to provide a semantic way to do this
-        # return super_prop if super_prop and str(super_prop).endswith(".value") else None
-
-    def generate_modifier_path(self, prop: URIRef, range_type: URIRef, depth: int=1,
-                               seen: Optional[Set[URIRef]]=None) -> List[ModifierPath]:
-        """
-        Generate a list of URI's that represent the transitive closure of prop's predicates
-        :param prop: Root property
-        :param range_type: Element in the range of root property (typically only one)
-        :param depth: Nesting depth
-        :param seen: List of things we've looked at. Used to prevent infinite recursion.
-        :return: List of modifier paths derived from prop and range_type
-        """
-        rval = []               # type: List[ModifierPath]
-        if seen is None:
-            seen = set()
-        for pred in self.g.subjects(RDFS.domain, range_type):
-            if pred not in FHIRObservationFactFactory.special_processing_list:
-                # Concatenate the root property and predicates in the nested range
-                extended_prop = composite_uri(prop, pred)
-                for rng in self.g.objects(pred, RDFS.range):
-                    if rng not in seen:
-                        seen.add(rng)
-                        rval.append(ModifierPath(depth, extended_prop, pred, rng))
-                        if not self.is_primitive(rng):
-                            rval += self.generate_modifier_path(extended_prop, rng, depth+1, seen)
-                        seen.discard(rng)
-        return rval
 
     @staticmethod
     @abstractmethod

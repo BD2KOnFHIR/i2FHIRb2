@@ -63,7 +63,7 @@ class OntologyTestCase(unittest.TestCase):
              ('c_tablename', 'concept_dimension'),
              ('c_columnname', 'concept_path'),
              ('c_columndatatype', 'T'),
-             ('c_operator', 'like'),
+             ('c_operator', '='),
              ('c_dimcode', '\\X\\Y\\Z\\'),
              ('c_comment', None),
              ('c_tooltip', None),
@@ -77,13 +77,13 @@ class OntologyTestCase(unittest.TestCase):
              ('c_path', None),
              ('c_symbol', None)]), ontrec._freeze())
 
-    def test_ontology_entry(self):
+    def test_concept_ontology_entry(self):
         from i2fhirb2.fhir.fhirspecific import FHIR
         from i2fhirb2.i2b2model.metadata.i2b2ontology import ConceptOntologyEntry, OntologyEntry, ModifierOntologyEntry
 
         OntologyEntry._clear()
-        navigational_path = '\\FHIR\\administrative\\individual\\'
-        ontology_path = "\\FHIR\\"
+        navigational_path = '\\FHIR\\administrative\\individual\\Patient\\'
+        ontology_path = "\\FHIR\\Patient\\"
         OntologyEntry.graph = shared_graph
         OntologyEntry.sourcesystem_cd = "STU3"
         OntologyEntry.update_date = datetime.datetime(2017, 5, 25, 13, 0)
@@ -91,13 +91,13 @@ class OntologyTestCase(unittest.TestCase):
         o = ConceptOntologyEntry(subj,
                                  navigational_path,
                                  ontology_path,
-                                 False)
+                                 True)
         self.assertEqual(OrderedDict([
              ('c_hlevel', 3),
              ('c_fullname', '\\FHIR\\administrative\\individual\\Patient\\'),
              ('c_name', 'Patient'),
              ('c_synonym_cd', 'N'),
-             ('c_visualattributes', 'FA '),
+             ('c_visualattributes', 'LA '),
              ('c_totalnum', None),
              ('c_basecode', 'FHIR:Patient'),
              ('c_metadataxml', None),
@@ -105,7 +105,7 @@ class OntologyTestCase(unittest.TestCase):
              ('c_tablename', 'concept_dimension'),
              ('c_columnname', 'concept_path'),
              ('c_columndatatype', 'T'),
-             ('c_operator', 'like'),
+             ('c_operator', '='),
              ('c_dimcode', '\\FHIR\\Patient\\'),
              ('c_comment',
               'Demographics and other administrative information about an '
@@ -125,21 +125,70 @@ class OntologyTestCase(unittest.TestCase):
              ('m_exclusion_cd', None),
              ('c_path', None),
              ('c_symbol', None)]), o._freeze())
-        
+
+        o = ConceptOntologyEntry(subj,
+                                 navigational_path,
+                                 ontology_path,
+                                 False)
+        self.assertEqual(OrderedDict([
+            ('c_hlevel', 3),
+            ('c_fullname', '\\FHIR\\administrative\\individual\\Patient\\'),
+            ('c_name', 'Patient'),
+            ('c_synonym_cd', 'N'),
+            ('c_visualattributes', 'FA '),
+            ('c_totalnum', None),
+            ('c_basecode', 'FHIR:Patient'),
+            ('c_metadataxml', None),
+            ('c_facttablecolumn', ''),
+            ('c_tablename', ''),
+            ('c_columnname', ''),
+            ('c_columndatatype', 'T'),
+            ('c_operator', ''),
+            ('c_dimcode', ''),
+            ('c_comment',
+             'Demographics and other administrative information about an '
+             'individual or animal receiving care or other health-related '
+             'services.'),
+            ('c_tooltip',
+             'Demographics and other administrative information about an '
+             'individual or animal receiving care or other health-related '
+             'services.'
+             ),
+            ('m_applied_path', '@'),
+            ('update_date', datetime.datetime(2017, 5, 25, 13, 0)),
+            ('download_date', datetime.datetime(2017, 5, 25, 13, 0)),
+            ('import_date', datetime.datetime(2017, 5, 25, 13, 0)),
+            ('sourcesystem_cd', 'STU3'),
+            ('valuetype_cd', None),
+            ('m_exclusion_cd', None),
+            ('c_path', None),
+            ('c_symbol', None)]), o._freeze())
+
+    def test_modifier_ontology_entry(self):
+        from i2fhirb2.fhir.fhirspecific import FHIR
+        from i2fhirb2.i2b2model.metadata.i2b2ontology import ConceptOntologyEntry, OntologyEntry, \
+            ModifierOntologyEntry
+
+        OntologyEntry._clear()
+        navigational_path = '\\FHIR\\administrative\\individual\\Patient\\'
+        modifier_path = "\\FHIRMod\\Patient\\active\\"
+        OntologyEntry.graph = shared_graph
+        OntologyEntry.sourcesystem_cd = "STU3"
+        OntologyEntry.update_date = datetime.datetime(2017, 5, 25, 13, 0)
         subj = FHIR.Patient
         mod = FHIR.Patient.active
         o = ModifierOntologyEntry(1,
                                   subj,
                                   mod,
-                                  navigational_path + 'Patient\\',
-                                  ontology_path,
+                                  modifier_path,
+                                  navigational_path,
                                   True,
                                   mod,
                                   FHIR.boolean)
 
         self.assertEqual(OrderedDict([
              ('c_hlevel', 1),
-             ('c_fullname',  '\\Patient\\active\\'),
+             ('c_fullname',  '\\FHIRMod\\Patient\\active\\'),
              ('c_name', 'active'),
              ('c_synonym_cd', 'N'),
              ('c_visualattributes', 'RA '),
@@ -186,8 +235,9 @@ class OntologyTestCase(unittest.TestCase):
         o = OntologyRoot("FHIR")
         OntologyRoot.update_date = datetime.datetime(2017, 5, 25, 13, 0)
         self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR:\t\tconcept_cd\tconcept_dimension\t'
-                          'concept_path\tT\tlike\t\\FHIR\\\t\t\t@\t2017-05-25 13:00:00\t2017-05-25 '
+                          'concept_path\tT\t=\t\\FHIR\\\t\t\t@\t2017-05-25 13:00:00\t2017-05-25 '
                           '13:00:00\t2017-05-25 13:00:00\tFHIR\t\t\t\t'), repr(o))
+
 
 if __name__ == '__main__':
     unittest.main()

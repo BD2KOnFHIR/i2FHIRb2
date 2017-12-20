@@ -82,5 +82,6 @@ class ObservationComponentTestCase(unittest.TestCase):
                     else:
                         inst_codes[inst_num] = row['concept_cd']
 
+
 if __name__ == '__main__':
     unittest.main()

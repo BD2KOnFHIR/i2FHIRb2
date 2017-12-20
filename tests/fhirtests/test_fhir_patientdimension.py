@@ -34,9 +34,12 @@ import datetime
 from isodate import FixedOffset
 from rdflib import Graph
 
+from tests.utils.base_test_case import test_data_directory
+
 
 class FHIRPatientDimensionTestCase(unittest.TestCase):
     def test_load_ttl(self):
+        """ Load an example patient and verify the resulting patient_dimension and mapping tables """
         from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
         from i2fhirb2.fhir.fhirspecific import FHIR
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
@@ -53,7 +56,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         PatientDimension.upload_id = 12345
 
         g = Graph()
-        g.load(os.path.abspath(os.path.join(os.path.split(__file__)[0], "data", "patient-example.ttl")),
+        g.load(os.path.abspath(os.path.join(test_data_directory, "patient-example.ttl")),
                format="turtle")
         s = FHIR['Patient/example']
         pd_entry = FHIRPatientDimension(g, s)
@@ -104,19 +107,20 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'FHIR'),
              ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[1]._freeze())
 
-    @unittest.skip
-    def test_different_dates(self):
+    def test_patient_death_dates(self):
+        """ Test the various types of deathdates"""
+        # TODO: This test needs to be completed
         from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
         from i2fhirb2.fhir.fhirspecific import FHIR
 
         g = Graph()
-        g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example-deceased.ttl"),
+        g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example-deceased_bool.ttl"),
                format="turtle")
         s = FHIR['Patient/example']
         pd_entry = FHIRPatientDimension(g, s)
-        from pprint import PrettyPrinter; pp = PrettyPrinter().pprint
-        pp(pd_entry.patient_dimension_entry._freeze())
-        self.assertTrue(False)
+        self.assertEqual('UD', pd_entry.patient_dimension_entry.vital_status_cd)
+        self.assertIsNone(pd_entry.patient_dimension_entry.death_date)
+
 
 
 if __name__ == '__main__':

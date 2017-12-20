@@ -51,21 +51,21 @@ class RemoveFactsTestCase(unittest.TestCase, OutputRedirector):
 
     def check_error_output(self, args: str, filename: str) -> None:
         from i2fhirb2.removefacts import remove_facts
-        output = self._push_stderr()
+        self._push_stderr()
         with self.assertRaises(SystemExit):
             remove_facts(args.split())
-        self._pop_stderr()
+        output = self._pop_stderr()
         self.check_output(filename, output)
 
     def check_output_output(self, args: str, filename: str, exception: bool=False) -> None:
         from i2fhirb2.removefacts import remove_facts
-        output = self._push_stdout()
+        self._push_stdout()
         if exception:
             with self.assertRaises(SystemExit):
                 remove_facts(args.split())
         else:
             remove_facts(args.split())
-        self._pop_stdout()
+        output = self._pop_stdout()
         self.check_output(filename, output)
 
     def test_no_args(self):

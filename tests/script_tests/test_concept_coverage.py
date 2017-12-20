@@ -1,0 +1,232 @@
+# Copyright (c) 2017, Mayo Clinic
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+# Redistributions of source code must retain the above copyright notice, this
+#     list of conditions and the following disclaimer.
+#
+#     Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+#
+#     Neither the name of the Mayo Clinic nor the names of its contributors
+#     may be used to endorse or promote products derived from this software
+#     without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+# OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import unittest
+
+import os
+
+from fhirtordf.rdfsupport.namespaces import namespace_for, FHIR
+from sqlalchemy import select, and_, or_
+
+from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
+from i2fhirb2.sqlsupport.dbconnection import process_parsed_args
+from tests.utils.base_test_case import test_conf_directory
+
+fhir_concept_prefix = namespace_for(FHIR).upper() + ':'
+max_to_print = 100
+
+# If this is true, the tests below are skipped
+skip_tests = True
+
+# Note: while the construct 'x == None' is technically incorrect, 'x is None' does not work in SQLAlchemy
+
+
+class ConceptCoverageTestCase(unittest.TestCase):
+    from i2fhirb2.generate_i2b2 import genargs
+    conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
+
+    opts = genargs('-l --conf {} '.format(conf_file).split())
+    process_parsed_args(opts)
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_concept_coverage(self):
+        """
+        This test determines whether there are any concept codes in the observation fact table that don't have
+        matching codes in the concept_dimension
+        """
+#         select count(distinct i2b2demodata.observation_fact.concept_cd)
+#   from i2b2demodata.observation_fact left join i2b2demodata.concept_dimension on observation_fact.concept_cd
+        # = concept_dimension.concept_cd where i2b2demodata.observation_fact.concept_cd like '%FHIR%' and
+        # i2b2demodata.concept_dimension.concept_cd is null
+# group by i2b2demodata.observation_fact.concept_cd;
+
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        s = select([x.observation_fact.c.concept_cd.distinct()]).\
+            select_from(x.observation_fact.
+                        join(x.concept_dimension, x.observation_fact.c.concept_cd ==
+                             x.concept_dimension.c.concept_cd, isouter=True)).\
+            where(and_(x.observation_fact.c.concept_cd.like(fhir_concept_prefix + '%'),
+                       x.concept_dimension.c.concept_cd == None))
+
+        count = 0
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("----> Orphan concept code: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan concept codes in observation fact table")
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_modifier_coverage(self):
+        """
+        This test determines whether there are any modifier codes in the observation fact table that don't have
+        matching codes in the modifier_dimension
+        """
+
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        s = select([x.observation_fact.c.modifier_cd.distinct()]).\
+            select_from(x.observation_fact.
+                        join(x.modifier_dimension, x.observation_fact.c.modifier_cd ==
+                             x.modifier_dimension.c.modifier_cd, isouter=True)).\
+            where(and_(x.observation_fact.c.modifier_cd.like(fhir_concept_prefix + '%'),
+                       x.modifier_dimension.c.modifier_cd == None))
+
+        count = 0
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("----> Orphan modifier code: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan concept codes in observation fact table")
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_ontology_coverage_1(self):
+        """
+        Locate any ontology table concept references that aren't in the concept file.  Note that 'like' queries
+        (which we don't currently emit) should probably produce values but don't require exact matches
+        """
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
+        ont_table = getattr(x, ont_table_name)
+        s = select([ont_table.c.c_dimcode.distinct()]). \
+            select_from(ont_table.
+                        join(x.concept_dimension, ont_table.c.c_dimcode ==
+                             x.concept_dimension.c.concept_path, isouter=True)). \
+            where(and_(ont_table.c.c_tablename == 'concept_dimension',
+                       ont_table.c.c_columnname == 'concept_path',
+                       ont_table.c.c_operater == '=',
+                       ont_table.c.c_dimcode.like('%FHIR%'),
+                       x.concept_dimension.c.concept_path == None))
+
+        count = 0
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("Orphan concept path: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan concept codes in observation fact table")
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_ontology_coverage_2(self):
+        """
+        Locate any concept file entries that don't have ontology table references
+        """
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
+        ont_table = getattr(x, ont_table_name)
+        s = select([x.concept_dimension.c.concept_path.distinct()]). \
+            select_from(x.concept_dimension.
+                        join(ont_table, x.concept_dimension.c.concept_path ==
+                             ont_table.c.c_dimcode, isouter=True)). \
+            where(and_(or_(ont_table.c.c_tablename == 'concept_dimension', ont_table.c.c_tablename == None),
+                       or_(ont_table.c.c_columnname == 'concept_path', ont_table.c.c_columnname == None),
+                       x.concept_dimension.c.concept_path.like('%FHIR%'),
+                       ont_table.c.c_tablename == None))
+
+        count = 0
+        print(str(s))
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("Orphan concept path: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan concept codes in concept_dimension table")
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_ontology_coverage_3(self):
+        """
+        Locate any ontology table modifier references that aren't in the modifier dimension
+        """
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
+        ont_table = getattr(x, ont_table_name)
+        s = select([ont_table.c.c_dimcode.distinct()]). \
+            select_from(ont_table.
+                        join(x.modifier_dimension, ont_table.c.c_dimcode ==
+                             x.modifier_dimension.c.modifier_path, isouter=True)). \
+            where(and_(ont_table.c.c_tablename == 'modifier_dimension',
+                       ont_table.c.c_columnname == 'modifier_path',
+                       ont_table.c.c_visualattributes == 'RA',
+                       ont_table.c.c_dimcode.like('%FHIR%'),
+                       x.modifier_dimension.c.modifier_path == None))
+
+        count = 0
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("Orphan modifier path: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan modifier codes in observation fact table")
+
+    @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
+    def test_ontology_coverage_4(self):
+        """
+        Determine whether there is a 1-1 mapping betwen the FHIR ontology and the dimension tables
+        """
+        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        x = I2B2Tables(self.opts)
+
+        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
+        ont_table = getattr(x, ont_table_name)
+        s = select([x.modifier_dimension.c.modifier_path.distinct()]). \
+            select_from(x.modifier_dimension.
+                        join(ont_table, x.modifier_dimension.c.modifier_path ==
+                             ont_table.c.c_dimcode, isouter=True)). \
+            where(and_(or_(ont_table.c.c_tablename == 'modifier_dimension', ont_table.c.c_tablename == None),
+                       or_(ont_table.c.c_columnname == 'modifier_path', ont_table.c.c_columnname == None),
+                       x.modifier_dimension.c.modifier_path.like('%FHIR%'),
+                       ont_table.c.c_tablename == None))        # see note at front of document
+
+        count = 0
+        print(str(s))
+        for e in x.crc_engine.execute(s).fetchall():
+            if count < max_to_print:
+                print("Orphan modifier path: {}".format(e[0]))
+            elif count == max_to_print:
+                print("    ....     ")
+            count += 1
+        self.assertEqual(0, count, "Orphan modifier codes in modifier_dimension table")
+
+
+if __name__ == '__main__':
+    unittest.main()

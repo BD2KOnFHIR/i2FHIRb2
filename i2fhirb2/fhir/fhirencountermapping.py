@@ -32,6 +32,7 @@ from rdflib import URIRef
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
+from i2fhirb2.fhir.fhirspecific import IDE_SOURCE_HIVE, DEFAULT_PROJECT_ID, DEFAULT_ENCOUNTER_NUMBER_START
 from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
@@ -40,15 +41,30 @@ class EncounterNumberGenerator:
     """
     i2b2 encounter number generator.
     """
-    def __init__(self, next_number: int):
+    def __init__(self, next_number: int) -> None:
+        """
+        Create the number generator
+        :param next_number: First encounter number to assign
+        """
         self._next_number = next_number
 
     def new_number(self) -> int:
+        """
+        Return a new encounter number
+        :return:
+        """
         rval = self._next_number
         self._next_number += 1
         return rval
 
     def refresh(self, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        """
+        Determine the greatest encounter number that is currently in use and set the next number to one greater
+        :param tables: i2b2 SQL tables
+        :param ignore_upload_id: If present, encounters with this upload id are ignored.  This is used in cases when
+        an upload is being replaced.
+        :return: next number
+        """
         session = sessionmaker(bind=tables.crc_engine)()
         q = func.max(tables.visit_dimension.c.encounter_num)
         if ignore_upload_id is not None:
@@ -61,20 +77,29 @@ class EncounterNumberGenerator:
 
 
 class FHIREncounterMapping:
-    project_id = 'fhir'                     # Default project identifier
-    identity_source_id = 'HIVE'             # source_id for identity mapping
-    number_generator = EncounterNumberGenerator(500000)
+    project_id = DEFAULT_PROJECT_ID         # Project identifier
+    identity_source_id = IDE_SOURCE_HIVE    # source_id for identity mapping
+    number_generator = EncounterNumberGenerator(DEFAULT_ENCOUNTER_NUMBER_START)
     number_map = dict()                     # type: Dict[Tuple[str, str, str, str, str], int]
 
     @classmethod
-    def _clear(cls):
-        cls.project_id = 'fhir'
-        cls.identity_source_id = 'HIVE'
-        cls.number_generator = EncounterNumberGenerator(500000)
+    def _clear(cls) -> None:
+        """
+        Reset the mapping table to its default. (Primarily used for testing)
+        """
+        cls.project_id = DEFAULT_PROJECT_ID
+        cls.identity_source_id = IDE_SOURCE_HIVE
+        cls.number_generator = EncounterNumberGenerator(DEFAULT_ENCOUNTER_NUMBER_START)
         cls.number_map.clear()
 
     @classmethod
     def refresh_encounter_number_generator(cls, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
+        """
+        Reset the generator
+        :param tables: i2b2 tables
+        :param ignore_upload_id: if present, do not look at the encounter numbers from this upload
+        :return: starting encounter number
+        """
         return cls.number_generator.refresh(tables, ignore_upload_id)
 
     def __init__(self, encounterURI: URIRef, patient_id: str, patient_ide_source: str):
@@ -84,7 +109,6 @@ class FHIREncounterMapping:
         :param patient_id: Associated patient identifier
         :param patient_ide_source: Associated patient identifier source
         """
-
         self.encounter_mapping_entries = []
         encounter_id, encounter_ide_source = uri_to_ide_and_source(encounterURI, include_resource=True)
         key = (encounter_id, encounter_ide_source, self.project_id, patient_id, patient_ide_source)

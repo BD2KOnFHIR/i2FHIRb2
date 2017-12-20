@@ -33,13 +33,20 @@ from collections import OrderedDict
 
 
 from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
-from i2fhirb2.fhir.fhirspecific import FHIR
+from i2fhirb2.fhir.fhirspecific import FHIR, IDE_SOURCE_HIVE
 from tests.utils.connection_helper import connection_helper
 
 
 class FHIREncounterMappingTestCase(unittest.TestCase):
 
-    def test_1(self):
+    def test_basic_mapping(self):
+        """ Test the basic encounter mapping entry
+        Process:
+        1) Prime the EncounterMapping tables
+        2) Generate a simple FHIR EncounterMapping entry and verify that two
+           entries are generated - one for the number to external IDE and a second
+           for the HIVE ide
+        """
         from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
         from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
 
@@ -64,7 +71,7 @@ class FHIREncounterMappingTestCase(unittest.TestCase):
              ('upload_id', None)]), em.encounter_mapping_entries[0]._freeze())
         self.assertEqual(OrderedDict([
              ('encounter_ide', '500000'),
-             ('encounter_ide_source', 'HIVE'),
+             ('encounter_ide_source', IDE_SOURCE_HIVE),
              ('project_id', 'fhir'),
              ('encounter_num', 500000),
              ('patient_ide', 'patient01'),
@@ -79,8 +86,12 @@ class FHIREncounterMappingTestCase(unittest.TestCase):
         self.assertEqual(500000, em.encounter_num)
 
     def test_encounternum_refresh(self):
-        # Not a lot we can do to test this without knowing what is in the database.   We COULD add something to the
-        # tables and demonstrate that we don't see it if we pass a number in...
+        """ Test the EncounterNumberGenerator refresh function.
+         Process:
+         1) Create a couple of local (non-db) encounter numbers
+         2) Do a refresh and show that the number gets set to something else
+         3) Do a refresh ignoring an upload id and do the same
+         """
         png = EncounterNumberGenerator(2000017)
         self.assertEqual(png.new_number(), 2000017)
         self.assertEqual(png.new_number(), 2000018)

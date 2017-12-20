@@ -27,6 +27,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # TODO: The mapping portion of this function should be loaded from the i2b2 table mapping table
+from typing import List, Optional
+
+from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
 
 
 class _I2B2Tables:
@@ -36,7 +39,8 @@ class _I2B2Tables:
         self.concept_dimension = None
         self.modifier_dimension = None
         self.table_access = None
-        self.ontology_table = "custom_meta"
+        self.observation_fact = None
+        self.ontology_table = DEFAULT_ONTOLOGY_TABLE
         self.patient_dimension = None
         self.patient_mapping = None
         self.visit_dimension = None
@@ -49,7 +53,16 @@ class _I2B2Tables:
         v = self.__dict__[item]
         return item if item not in _I2B2Tables._funcs else v
 
-    def phys_name(self, item):
+    def __setattribute__(self, item, value):
+        if item.startswith("_") or item not in self.__dict__:
+            super().__setattr__(item, value)
+        self.__dict__[item] = value
+
+    def _clear(self):
+        for k in self.all_tables():
+            setattr(self, k, None if k != 'ontology_table' else DEFAULT_ONTOLOGY_TABLE)
+
+    def phys_name(self, item: str) -> str:
         """
         Return the physical (mapped) name of item.
         :param item: logical table name
@@ -58,7 +71,7 @@ class _I2B2Tables:
         v = self.__dict__[item]
         return v if v is not None else item
 
-    def all_tables(self):
+    def all_tables(self) -> List[str]:
         """
         List of all known tables
         :return:
@@ -66,4 +79,5 @@ class _I2B2Tables:
         return sorted([k for k in self.__dict__.keys()
                        if k not in _I2B2Tables._funcs and not k.startswith("_")])
 
-i2b2tables = _I2B2Tables()
+
+i2b2tablenames = _I2B2Tables()

@@ -1,3 +1,0 @@
-encounter_ide	encounter_ide_source	project_id	encounter_num	patient_ide	patient_ide_source	encounter_ide_status	update_date	download_date	import_date	sourcesystem_cd	upload_id
-527087	HIVE	fhir	527087	SMART-1134281	http://hl7.org/fhir/	A	2017-08-04 10:00:06.443978	2017-08-04 10:00:06.443989	2017-08-04 10:00:06.444000	SMARTONFHIR	1134281
-Observation/SMART-Observation-1706-lab	http://hl7.org/fhir/	fhir	527087	SMART-1134281	http://hl7.org/fhir/	A	2017-08-04 10:00:06.444066	2017-08-04 10:00:06.444077	2017-08-04 10:00:06.444087	SMARTONFHIR	1134281

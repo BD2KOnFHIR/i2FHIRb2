@@ -40,24 +40,21 @@ from rdflib import Graph, URIRef
 from sqlalchemy import delete, Table, update
 
 from i2fhirb2 import __version__
-from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
-from i2fhirb2.i2b2model.shared.tablenames import i2b2tables
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
-    change_column_length, FileAwareParser
+from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, FileAwareParser
+from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables, change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
 Default_Metavoc_URI = "http://build.fhir.org/"
 Default_Sourcesystem_Code = 'FHIR STU3'
 Default_Base = 'FHIR'
 Default_Path_Base = '\\{}\\'.format(Default_Base)
-Default_Ontology_TableName = "custom_meta"
 
 
 def pluralize(cnt: int, base: Any) -> str:
@@ -76,10 +73,10 @@ def generate_output(o: FHIRMetadata, opts: Namespace, resource: Optional[URIRef]
 
 
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
-    return ((opts.table and opts.table != i2b2tables.table_access) or generate_table_access(opts)) and \
-           ((opts.table and opts.table != i2b2tables.concept_dimension) or generate_concept_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2tables.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
-           ((opts.table and opts.table != i2b2tables.ontology_table) or generate_ontology(g, opts))
+    return ((opts.table and opts.table != i2b2tablenames.table_access) or generate_table_access(opts)) and \
+           ((opts.table and opts.table != i2b2tablenames.concept_dimension) or generate_concept_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2tablenames.modifier_dimension) or generate_modifier_dimension(g, opts)) and \
+           ((opts.table and opts.table != i2b2tablenames.ontology_table) or generate_ontology(g, opts))
 
 
 def generate_table_access(opts: Namespace) -> bool:
@@ -112,7 +109,7 @@ def generate_concept_dimension(g: Graph, opts: Namespace) -> bool:
 
     if opts.outdir:
         return generate_output(FHIRConceptDimension(g, name_base=opts.base), opts, resource,
-                               i2b2tables.concept_dimension)
+                               i2b2tablenames.concept_dimension)
     else:
         table = opts.tables.concept_dimension
         change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
@@ -142,7 +139,7 @@ def generate_modifier_dimension(g: Graph, opts: Namespace) -> bool:
 
     if opts.outdir:
         return generate_output(FHIRModifierDimension(g, name_base=opts.base), opts, resource,
-                               i2b2tables.modifier_dimension)
+                               i2b2tablenames.modifier_dimension)
     else:
         table = opts.tables.modifier_dimension
         change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
@@ -164,7 +161,7 @@ def generate_ontology(g: Graph, opts: Namespace) -> bool:
     if opts.outdir:
         return generate_output(FHIROntologyTable(g, name_base=opts.base), opts, resource, "ontology")
     else:
-        table = opts.tables.custom_meta
+        table = opts.tables.ontology_table
         change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
         # MedicationStatement is 1547 long
         change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
@@ -240,8 +237,8 @@ def test_configuration(opts: Namespace) -> bool:
     else:
         print("\tConnection validated")
         print("Validating target tables")
-        for tn in i2b2tables.all_tables():
-            if not test_tn(i2b2tables.phys_name(tn), tables):
+        for tn in i2b2tablenames.all_tables():
+            if not test_tn(i2b2tablenames.phys_name(tn), tables):
                 success = False
 
     if success:
@@ -267,8 +264,8 @@ def create_parser() -> FileAwareParser:
     Create a command line parser
     :return: parser
     """
-    metadata_tables = [i2b2tables.concept_dimension, i2b2tables.modifier_dimension, i2b2tables.ontology_table,
-                       i2b2tables.table_access]
+    metadata_tables = [i2b2tablenames.concept_dimension, i2b2tablenames.modifier_dimension, i2b2tablenames.ontology_table,
+                       i2b2tablenames.table_access]
     parser = FileAwareParser(description="FHIR in i2b2 metadata generator")
     # For reasons we don't completely understand, the default parser doesn't split the lines...
     parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
@@ -295,9 +292,7 @@ def create_parser() -> FileAwareParser:
     parser.add_argument("--test", help="Test the confguration", action="store_true")
     # Add the database connection arguments list
     add_connection_args(parser)
-    parser.add_argument("--onttable", metavar="ONTOLOGY TABLE NAME",
-                        help="Ontology table name (default: {})".format(Default_Ontology_TableName),
-                        default=Default_Ontology_TableName)
+
     return parser
 
 
@@ -310,7 +305,7 @@ def genargs(argv: List[str]) -> Namespace:
 
     parser = create_parser()
     opts = parser.parse_args(decode_file_args(argv))
-    if not (opts.version or opts.list or opts.test or opts.load):
+    if not (opts.version or opts.list or opts.test or opts.load or opts.outdir):
         parser.print_help()
     opts.setdefault = lambda *a: setdefault(opts, *a)
     opts.updatedate = datetime.now()
@@ -318,7 +313,7 @@ def genargs(argv: List[str]) -> Namespace:
         opts.metadatavoc = os.path.join(opts.metadatavoc, '')
     if opts.outdir and not opts.outdir.endswith(os.sep):
         opts.outdir = os.path.join(opts.outdir, '')
-    i2b2tables.ontology_table = opts.onttable
+    i2b2tablenames.ontology_table = opts.onttable
     # Set the defaults for the crc and ontology tables
     return process_parsed_args(opts) if opts.load or opts.list or opts.test else opts
 

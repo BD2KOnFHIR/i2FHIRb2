@@ -4,5 +4,6 @@ usage: _jb_unittest_runner.py [-h] [-mv METAVOC] [--conf CONFIG FILE]
                               [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                               [--ontouser ONTOUSER]
                               [--ontopassword ONTOPASSWORD]
+                              [--onttable ONTOLOGY TABLE NAME]
                               Upload identifiers [Upload identifiers ...]
 _jb_unittest_runner.py: error: the following arguments are required: Upload identifiers

@@ -25,126 +25,124 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from collections import OrderedDict
-from typing import Optional, List, cast, Callable, Dict
+from typing import Optional, List, cast, Dict, Tuple, NamedTuple
 
-from fhirtordf.rdfsupport.namespaces import W5
-from rdflib import URIRef, RDFS
-from rdflib.namespace import split_uri
+from fhirtordf.rdfsupport.fhirgraphutils import concept_uri
+from fhirtordf.rdfsupport.namespaces import FHIR
+from rdflib import URIRef, Graph
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
-from i2fhirb2.fhir.fhirspecific import concept_path, w5_infrastructure_categories
+from i2fhirb2.fhir.fhirmetadatavocabulary import FMVGraphNode
+from i2fhirb2.fhir.fhirspecific import concept_path, concept_path_sans_root, concept_code, rightmost_element
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
     ModifierOntologyEntry
+
+
+class DimensionSet(NamedTuple):
+    ontology_dimension: List[OntologyEntry]
+    concept_dimension: List[ConceptDimension]
+    modifier_dimension: List[ModifierDimension]
 
 
 class FHIROntologyTable(FHIRMetadata):
     """  The set of i2b2 ontology table entries for the supplied subject or all root concepts
     """
+    def __init__(self, g: Graph, name_base: str=None, modifier_base: str = None) -> None:
+        super().__init__(g, name_base=name_base, modifier_base = modifier_base)
+        OntologyEntry.graph = g
 
-    def dimension_list(self, subject: Optional[URIRef]=None) -> List[OntologyEntry]:
+    def _modifier_ontology_list(self, parent_path: str, parent_uri: URIRef, modifier_base_path: str, node: FMVGraphNode,
+                                modifier_dims: Dict[str, ModifierDimension], in_multiple_elements: bool, depth: int=1) \
+            -> List[ModifierOntologyEntry]:
         """
-        Return the set of ontology entries for all w5 concepts and resources
-        :param subject: Optional subject -- for debugging purposes only
+        Return a list of modifier ontology entries for the supplied base and graph node
+        :param parent_path: Path of parent node
+        :param parent_uri: URI of base code
+        :param modifier_base_path: Root of modifier path
+        :param node: Graph node for URI
+        :param in_multiple_elements:
+        :param depth: modifier depth
+        :return:
+        """
+        ontology_modifiers: List[ModifierOntologyEntry] = []
+        for edge in node.edges:
+            if edge.type_node.is_primitive or in_multiple_elements:
+                modifier_path = self._modifier_base + modifier_base_path + rightmost_element(edge.predicate)[1:]
+                ontology_modifiers.append(
+                    ModifierOntologyEntry(depth,                # depth
+                                          parent_uri,       # subject - uri of concept being modified
+                                          edge.predicate,   # URI of the modifier itself
+                                          modifier_path,    # path that the modifier is applied to
+                                          parent_path,      # modifier path
+                                          edge.type_node.is_primitive,  # is leaf
+                                          edge.predicate,   #
+                                          edge.type_node.node)) # actual type of modifier
+                if edge.type_node.is_primitive:
+                    if modifier_path not in modifier_dims:
+                        modifier_dims[modifier_path] = ModifierDimension(edge.predicate, self._modifier_base)
+                elif in_multiple_elements:
+                    ontology_modifiers += \
+                        self._modifier_ontology_list(parent_path,
+                                                     parent_uri,
+                                                     modifier_base_path + rightmost_element(edge.predicate)[1:],
+                                                     edge.type_node,
+                                                     modifier_dims,
+                                                     True,
+                                                     depth+1)
+
+        return ontology_modifiers
+
+    def dimension_list(self, resource: Optional[URIRef]=None) -> DimensionSet:
+        """
+        Return the set of ontology entries for all w5 concepts and resources (or resource if it is supplied)
+        :param resource: Optional resource URI -- for debugging purposes only.  None means all resources
         :return: List of i2b2 ontology entries
         """
-        rval = [cast(OntologyEntry, OntologyRoot('FHIR'))]
+        # TODO: Figure out how to get DomainResource and Resource concepts into this
+        # TODO: DomainResource entries
+        # TODO: Where is Observation.component???
+        ontology_entries: List[OntologyEntry] = [cast(OntologyEntry, OntologyRoot(self._name_base))]    # FHIR root node
+        concept_dimension_entries: Dict[str, ConceptDimension] = {}
+        modifier_dimension_entries: Dict[str, ModifierDimension] = {}
 
-        for subj in self.w5_concepts():
-            for path in self.i2b2_paths(self._name_base, subj, RDFS.subClassOf):
-                rval.append(ConceptOntologyEntry(subj, path, path, False, False))
+        # Create an entry for all of the W5 paths
+        for w5_node in self._fhir_metadatavocabulary.w5_graph.w5_paths():
+            ontological_path = self._name_base + concept_path(w5_node.node)
+            ontology_entries.append(
+                ConceptOntologyEntry(w5_node.node,                  # subject URI
+                                     w5_node.path,                  # navigational path
+                                     ontological_path,              # Ontological path
+                                     is_leaf=False,
+                                     is_draggable=False))
 
-        # fhir_concepts is an ordered dictionary whose keys are all concept_dimension concepts and
-        # whose range is a tuple consisting of a type and an optional parent concept uri if the
-        # concept isn't a root resource
-        fhir_concepts = self.fhir_concepts(subject)
-        base_paths = OrderedDict()          # type: Dict[URIRef, [str]]
-        subj_parents = dict()               # type: Dict[URIRef, URIRef]
+            if w5_node.fhir_resource_uri and (resource is None or w5_node.fhir_resource_uri == resource):
+                for conc_uri, conc_node_ent in self.fhir_concepts(w5_node.fhir_resource_uri).items():
+                    conc_node = conc_node_ent.graph_node
+                    if '.' in concept_code(conc_uri):
+                        navigational_path = w5_node.path + concept_path_sans_root(conc_uri)
+                        ontological_path = self._name_base + concept_path(conc_uri)
+                        ontology_entries.append(
+                            ConceptOntologyEntry(conc_uri,
+                                                 navigational_path,
+                                                 ontological_path,
+                                                 is_leaf=conc_node.is_primitive,
+                                                 is_draggable=True,
+                                                 primitive_type=conc_node.node if conc_node.is_primitive else None))
+                        if conc_node.is_primitive:
+                            concept_dimension_entries[ontological_path] = ConceptDimension(conc_uri, self._name_base)
+                        if "Observation\\" in navigational_path:
+                            ontology_entries += self._modifier_ontology_list(navigational_path,
+                                                                             conc_uri,
+                                                                             concept_path(conc_uri),
+                                                                             conc_node,
+                                                                             modifier_dimension_entries,
+                                                                             conc_node_ent.is_multiple)
 
-        # Determine all of the i2b2 paths to the root concepts
-        for subj in fhir_concepts.keys():
-            if fhir_concepts[subj][1] is None:
-                base_paths[subj] = self.i2b2_paths(self._name_base, subj, RDFS.subClassOf, self.is_w5_path)
-            else:
-                subj_parents[subj] = fhir_concepts[subj][1]
-
-        # Extend the paths to include the synthesized codes
-        while subj_parents:
-            parents_items = list(subj_parents.items())
-            for subj, parent in parents_items:
-                if parent in base_paths:
-                    base_paths[subj] = base_paths[parent]
-                    subj_parents.pop(subj)
-
-        for subj in base_paths.keys():
-            # Root resource code - non-leaf, non-draggable
-            if fhir_concepts[subj][1] is None:
-                for path in base_paths[subj]:
-                    rval.append(ConceptOntologyEntry(subj, path, path, False, False))
-            else:
-                subj_type = fhir_concepts[subj][0]
-                for path in base_paths[subj]:
-                    if self.is_primitive(subj_type):
-                        rval.append(ConceptOntologyEntry(subj, path, self._name_base, True, True, subj_type))
-                    else:
-                        rval.append(ConceptOntologyEntry(subj, path, self._name_base, False, True))
-                        rval += self.modifiers_and_primitives(subj, subj_type, path)
-        return rval
-
-    def modifiers_and_primitives(self, subj: URIRef, subj_type: URIRef, path: str) -> List[OntologyEntry]:
-        rval = []
-        # Level 0 modifiers -- create an additional ConceptOntologyEntry for every primitive type
-        # TODO: Facter this pattern out -- it appears in a lot of places
-        pred_types = [(p, self.g.value(p, RDFS.range, any=False))
-                      for p in self.g.subjects(RDFS.domain, subj_type)
-                      if p not in FHIRObservationFactFactory.special_processing_list]
-        for pred, pred_type in pred_types:
-            if self.is_primitive(pred_type):
-                rval.append(ModifierOntologyEntry(1,
-                                                  subj,
-                                                  pred,
-                                                  path + concept_path(subj),
-                                                  self._name_base,
-                                                  self.is_primitive(pred_type),
-                                                  pred,
-                                                  pred_type if self.is_primitive(pred_type) else None))
-
-        return rval
-
-    def i2b2_paths(self, base: str, subject: URIRef, predicate: URIRef,
-                   filtr: Optional[Callable[[List[URIRef]], bool]] = None) -> [str]:
-        rval = []
-        for path in self.full_paths(subject, predicate):
-            if not filtr or filtr(path):
-                rval.append(base + (''.join(concept_path(e) for e in path[:-1])))
-        return rval
-
-    def full_paths(self, subject: URIRef, predicate: URIRef) -> List[List[URIRef]]:
-        parents = [obj for obj in self.g.objects(subject, predicate) if isinstance(obj, URIRef)]
-        if not parents:
-            rval = [[subject]]
-        else:
-            rval = []
-            for parent in parents:
-                for e in self.full_paths(parent, predicate):
-                    e.append(subject)
-                    rval.append(e)
-        return rval
-
-    @staticmethod
-    def is_w5_path(path: List[URIRef]) -> bool:
-        """
-        Determine whether path represents a primary w5 path.  This exists to remove the alternate
-        paths that culminate in fhir:Thing.
-        :param path: path to test
-        :return: True if it is a single length path (e.g. Patient.status) or has a non-skipped w5
-        category in its ancestors.
-        """
-        if len(path) > 1:
-            if split_uri(path[0])[0] != str(W5):
-                return False
-        return not bool(set(path).intersection(w5_infrastructure_categories))
+        return DimensionSet(ontology_entries,
+                            list(concept_dimension_entries.values()),
+                            list(modifier_dimension_entries.values()))
 
     @staticmethod
     def tsv_header() -> str:

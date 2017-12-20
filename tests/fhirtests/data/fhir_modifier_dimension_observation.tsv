@@ -1,0 +1,181 @@
+modifier_path	modifier_cd	name_char	modifier_blob	update_date	download_date	import_date	sourcesystem_cd	upload_id
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\CodeableConcept\text\	FHIR:CodeableConcept.text	FHIR CodeableConcept text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\code\	FHIR:Coding.code	FHIR Coding code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\display\	FHIR:Coding.display	FHIR Coding display		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\system\	FHIR:Coding.system	FHIR Coding system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\userSelected\	FHIR:Coding.userSelected	FHIR Coding userSelected		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Coding\version\	FHIR:Coding.version	FHIR Coding version		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Identifier\assigner\	FHIR:Identifier.assigner	FHIR Identifier assigner		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Identifier\system\	FHIR:Identifier.system	FHIR Identifier system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Identifier\use\	FHIR:Identifier.use	FHIR Identifier use		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Identifier\value\	FHIR:Identifier.value	FHIR Identifier value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\referenceRange\text\	FHIR:Observation.component.referenceRange.text	FHIR Observation component referenceRange text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\valueBoolean\	FHIR:Observation.component.valueBoolean	FHIR Observation component valueBoolean		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\valueDateTime\	FHIR:Observation.component.valueDateTime	FHIR Observation component valueDateTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\valueInteger\	FHIR:Observation.component.valueInteger	FHIR Observation component valueInteger		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\valueString\	FHIR:Observation.component.valueString	FHIR Observation component valueString		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\component\valueTime\	FHIR:Observation.component.valueTime	FHIR Observation component valueTime		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Observation\referenceRange\text\	FHIR:Observation.referenceRange.text	FHIR Observation referenceRange text		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\end\	FHIR:Period.end	FHIR Period end		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\end\	FHIR:Period.end	FHIR Period end		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\end\	FHIR:Period.end	FHIR Period end		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\end\	FHIR:Period.end	FHIR Period end		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\end\	FHIR:Period.end	FHIR Period end		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\start\	FHIR:Period.start	FHIR Period start		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\start\	FHIR:Period.start	FHIR Period start		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\start\	FHIR:Period.start	FHIR Period start		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\start\	FHIR:Period.start	FHIR Period start		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Period\start\	FHIR:Period.start	FHIR Period start		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\code\	FHIR:Quantity.code	FHIR Quantity code		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\comparator\	FHIR:Quantity.comparator	FHIR Quantity comparator		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\system\	FHIR:Quantity.system	FHIR Quantity system		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\unit\	FHIR:Quantity.unit	FHIR Quantity unit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Quantity\value\	FHIR:Quantity.value	FHIR Quantity value		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\data\	FHIR:SampledData.data	FHIR SampledData data		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\data\	FHIR:SampledData.data	FHIR SampledData data		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\dimensions\	FHIR:SampledData.dimensions	FHIR SampledData dimensions		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\dimensions\	FHIR:SampledData.dimensions	FHIR SampledData dimensions		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\factor\	FHIR:SampledData.factor	FHIR SampledData factor		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\factor\	FHIR:SampledData.factor	FHIR SampledData factor		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\lowerLimit\	FHIR:SampledData.lowerLimit	FHIR SampledData lowerLimit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\lowerLimit\	FHIR:SampledData.lowerLimit	FHIR SampledData lowerLimit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\period\	FHIR:SampledData.period	FHIR SampledData period		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\period\	FHIR:SampledData.period	FHIR SampledData period		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\upperLimit\	FHIR:SampledData.upperLimit	FHIR SampledData upperLimit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\SampledData\upperLimit\	FHIR:SampledData.upperLimit	FHIR SampledData upperLimit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\event\	FHIR:Timing.event	FHIR Timing event		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\countMax\	FHIR:Timing.repeat.countMax	FHIR Timing repeat countMax		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\count\	FHIR:Timing.repeat.count	FHIR Timing repeat count		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\dayOfWeek\	FHIR:Timing.repeat.dayOfWeek	FHIR Timing repeat dayOfWeek		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\durationMax\	FHIR:Timing.repeat.durationMax	FHIR Timing repeat durationMax		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\durationUnit\	FHIR:Timing.repeat.durationUnit	FHIR Timing repeat durationUnit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\duration\	FHIR:Timing.repeat.duration	FHIR Timing repeat duration		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\frequencyMax\	FHIR:Timing.repeat.frequencyMax	FHIR Timing repeat frequencyMax		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\frequency\	FHIR:Timing.repeat.frequency	FHIR Timing repeat frequency		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\offset\	FHIR:Timing.repeat.offset	FHIR Timing repeat offset		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\periodMax\	FHIR:Timing.repeat.periodMax	FHIR Timing repeat periodMax		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\periodUnit\	FHIR:Timing.repeat.periodUnit	FHIR Timing repeat periodUnit		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\period\	FHIR:Timing.repeat.period	FHIR Timing repeat period		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\timeOfDay\	FHIR:Timing.repeat.timeOfDay	FHIR Timing repeat timeOfDay		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3
+\FHIRMod\Timing\repeat\when\	FHIR:Timing.repeat.when	FHIR Timing repeat when		2017-05-25 13:00:00	2017-05-25 13:00:00	2017-05-25 13:00:00	FHIR STU3

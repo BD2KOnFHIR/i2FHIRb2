@@ -36,7 +36,7 @@ from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from i2fhirb2.fhir.fhirproviderdimension import FHIRProviderDimension
-from i2fhirb2.fhir.fhirspecific import concept_code, composite_uri
+from i2fhirb2.fhir.fhirspecific import concept_code, composite_uri, instance_is_primitive
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
     valuetype_text, valuetype_date, valuetype_number
@@ -96,7 +96,7 @@ class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, concept: URIRef, modifier: Optional[URIRef], object: Node,
-                 instance_num: Optional[int] = None):
+                 instance_num: Optional[int] = None) -> None:
         """
         Construct an observation fact entry
         :param g: Graph containing information about the object
@@ -112,21 +112,8 @@ class FHIRObservationFact(ObservationFact):
         self._instance_num = instance_num
         self.fhir_primitive(g, object)
 
-    @staticmethod
-    def is_primitive(g: Graph, obj: Optional[Node]) -> bool:
-        """
-        Determine whether obj is a primitive or composite object
-        :param g: Graph context for testing
-        :param obj: object to test
-        :return:
-        """
-        if obj is None or not isinstance(obj, BNode):
-            return False
-        obj_vals = list(g.objects(obj, FHIR.value))
-        return len(obj_vals) == 1 and isinstance(obj_vals[0], Literal)
-
     def fhir_primitive(self, g: Graph, obj: Optional[Node]) -> None:
-        assert(self.is_primitive(g, obj))
+        assert(instance_is_primitive(g, obj))
         val = g.value(obj, FHIR.value, any=False)
         # TODO: remove the conversions that aren't needed (toPython does the same thing)
         if val.datatype in literal_conversions:
@@ -169,7 +156,7 @@ class FHIRObservationFactFactory:
         self._inst_num = 0
 
         # TODO: look at DomainResource embedded entries (claim-example-oral-bridge).  Perhaps we should change the
-        # RDF generator to add type arcs to all resources?
+        #       RDF generator to add type arcs to all resources?
         for s in {subject} if subject else self.g.subjects(FHIR.nodeRole, FHIR.treeRoot):
             self.observation_facts += self.generate_facts(s)
 
@@ -186,7 +173,7 @@ class FHIRObservationFactFactory:
 
         for conc, obj in sorted(self.g.predicate_objects(subject)):
             if conc not in self.special_processing_list:
-                if FHIRObservationFact.is_primitive(self.g, obj):
+                if instance_is_primitive(self.g, obj):
                     rval.append(FHIRObservationFact(self.g, self.ofk, conc, None, obj))
                 else:
                     rval += self.generate_modifiers(subject, conc, obj)
@@ -217,7 +204,7 @@ class FHIRObservationFactFactory:
             inst_num = parent_inst_num
 
         for modifier, modifier_object in pred_obj_list:
-            if FHIRObservationFact.is_primitive(self.g, modifier_object):
+            if instance_is_primitive(self.g, modifier_object):
                 mod_inst_idx = self.g.value(modifier_object, FHIR.index, any=False)
                 if mod_inst_idx is not None and len(pred_obj_list) > 1:
                     self._inst_num += 1
@@ -225,6 +212,9 @@ class FHIRObservationFactFactory:
                 obsfact = FHIRObservationFact(self.g, self.ofk, concept, modifier, modifier_object, inst_num)
                 rval.append(obsfact)
             else:
-                rval += self.generate_modifiers(subject, composite_uri(concept, modifier), modifier_object,
-                                                inst_num, same_subject=True)
+                rval += self.generate_modifiers(subject,
+                                                concept if inst_num else composite_uri(concept, modifier),
+                                                modifier_object,
+                                                inst_num,
+                                                same_subject=True)
         return rval

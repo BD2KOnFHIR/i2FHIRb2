@@ -12,4 +12,5 @@ usage: _jb_unittest_runner.py [-h] [-v] [-l]
                               [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                               [--ontouser ONTOUSER]
                               [--ontopassword ONTOPASSWORD]
+                              [--onttable ONTOLOGY TABLE NAME]
 _jb_unittest_runner.py: error: Either a list of input files or input directory must be supplied

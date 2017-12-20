@@ -30,6 +30,7 @@ from typing import Tuple, Dict, Optional
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
+from i2fhirb2.fhir.fhirspecific import DEFAULT_PROJECT_ID, IDE_SOURCE_HIVE, DEFAULT_PATIENT_NUMBER_START
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping, PatientIDEStatus
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
@@ -38,7 +39,7 @@ class PatientNumberGenerator:
     """
     i2b2 patient number generator.
     """
-    def __init__(self, next_number: int):
+    def __init__(self, next_number: int) -> None:
         self._next_number = next_number
 
     def new_number(self) -> int:
@@ -59,16 +60,16 @@ class PatientNumberGenerator:
 
 
 class FHIRPatientMapping:
-    project_id = 'fhir'                     # Default project identifier
-    identity_source_id = 'HIVE'             # source_id for identity mapping
-    number_generator = PatientNumberGenerator(100000001)
+    project_id = DEFAULT_PROJECT_ID         # Default project identifier
+    identity_source_id = IDE_SOURCE_HIVE    # source_id for identity mapping
+    number_generator = PatientNumberGenerator(DEFAULT_PATIENT_NUMBER_START)
     number_map = dict()                     # type: Dict[Tuple[str, str, str], int]
 
     @classmethod
     def _clear(cls):
-        cls.project_id = 'fhir'
-        cls.identity_source_id = 'HIVE'
-        cls.number_generator = PatientNumberGenerator(100000001)
+        cls.project_id = DEFAULT_PROJECT_ID
+        cls.identity_source_id = IDE_SOURCE_HIVE
+        cls.number_generator = PatientNumberGenerator(DEFAULT_PATIENT_NUMBER_START)
         cls.number_map.clear()
 
     @classmethod
@@ -77,7 +78,7 @@ class FHIRPatientMapping:
 
     def __init__(self, patient_id: str, patient_ide_source: str):
         """
-        Create a new patient mapping entry in https://www.dropbox.com/s/zynyact6uowhdgi/Screenshot%202017-09-25%2014.58.44.png?dl=0the FHIR context
+        Create a new patient mapping entry in the FHIR context
         :param patient_id: identifier
         :param patient_ide_source: source -- currently the base URI
         """

@@ -57,10 +57,10 @@ class VisualAttributes:
             self.leaf = False           # C
             self.approximate = False    # Leaf only - multiple targets
             self.draggable = True       # Folder only
-            self.concept = True  # Concept or Modifier Dimension
+            self.concept = True         # Concept or Modifier Dimension
 
             self.active = True
-            self.hidden = False  # No commitment whether hidden is active
+            self.hidden = False         # No commitment whether hidden is active
 
             self.editable = True
 

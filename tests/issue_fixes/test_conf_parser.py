@@ -52,7 +52,7 @@ class FilePathTestCase(unittest.TestCase):
     def setUpClass(cls):
         base = os.path.abspath(os.path.dirname(__file__))
         testpath = os.path.abspath(os.path.join(base, '..', '..', 'tests'))
-        cls._reltestpath = os.path.relpath(os.path.abspath(os.path.curdir), testpath)
+        cls._reltestpath = os.path.relpath(testpath)
 
     def test1(self):
         script = script_tmpl.format(self._reltestpath, self._reltestpath)
