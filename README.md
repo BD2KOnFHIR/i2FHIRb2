@@ -1,10 +1,13 @@
 # i2FHIRb2 - FHIR in i2b2
 
+## Edit history
+* Major update for version 0.2.0
+
 ## Introduction
 This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
 
     
-## i2b2 requirements
+## I2B2 requirements
 i2FHIRb2 has been tested with the postgres version of [i2b2 Software](https://www.i2b2.org/software/) release 1.7.08.  While it will theoretically
 work with earlier versions, you may encounter issues, including:
 1) The FHIR data includes UTF-8 characters.  Earlier releases of the i2b2 used `SQL_ASCII` encoding which won't work.
@@ -33,15 +36,13 @@ There are two ways to load/update an existing set of i2b2 tables:
 ### 1. Running `generate_i2b2`
 
 #### Prerequsites 
-You need a version of [Python 3](https://www.python.org/) (ideally, 3.6) installed on your computer. 
+You need a current version of [Python 3](https://www.python.org/) (>= 3.6) installed on your computer.  ()At some point we may be able to back-rev this to earlier Python 3 versions, but, for not...)
 
 ```text
 > python3 --version
 Python 3.6.1
 >
 ```
-
-If you are running version 3.5 or earlier, you should consider upgrading.  i2FHIRb2 will <u>not</u> run with Python 2.
 
 #### Download the i2FHIRb2 software 
 Download or clone the [FHIR in i2b2 (i2FHIRb2)](https://github.com/BD2KOnFHIR/i2FHIRb2) package into a local directory.
@@ -78,10 +79,10 @@ In the root project directory (i2FHIRb2):
 ```text
 (venv) > pip install -e .
 Obtaining file:///Users/mrf7578/Downloads/i2b2test/i2FHIRb2
-Collecting SQLAlchemy (from i2FHIRb2==0.0.2)
-Collecting python_dateutil (from i2FHIRb2==0.0.2)
-  Using cached python_dateutil-2.6.0-py2.py3-none-any.whl
-Collecting rdflib (from i2FHIRb2==0.0.2)
+Collecting SQLAlchemy (from i2FHIRb2==0.1.0)
+Collecting python_dateutil (from i2FHIRb2==0.1.0)
+  Using cached python_dateutil-2.6.1-py2.py3-none-any.whl
+Collecting rdflib (from i2FHIRb2==0.1.0)
   Using cached rdflib-4.2.2-py3-none-any.whl
    ...
 (venv) > 
@@ -91,7 +92,7 @@ Collecting rdflib (from i2FHIRb2==0.0.2)
 #### Validate the installation
 ```text
 (venv) > generate_i2b2 -v
-Version: 0.1.0              <--- a newer version may print here
+Version: 0.2.0              <--- a newer version may print here
 ```
 
 #### Edit the SQL configuration file 
@@ -103,14 +104,14 @@ Version: 0.1.0              <--- a newer version may print here
 --user [[user]]
 --password [[password]]
 ```
-(Note that it is also possible to enter the abovecommand line:
+Note that it is also possible to enter the above as a command line:
 ```text
-(venv) > generate_i2b2 tests/data -l -db "postgresql+psycopg2://localhost:5432/i2b2" -u postgres -p postgres``)
+(venv) > generate_i2b2 -l --dburl "postgresql+psycopg2://localhost:5432/i2b2" --user postgres --password postgres ...
 ```
  
 #### Test the configuration
 ```text
-(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary/ --test @my_conf
+(venv) > generate_i2b2 --conf my_conf --test
 Validating input files
 	File: ../tests/data/fhir_metadata_vocabulary/fhir.ttl exists
 	File: ../tests/data/fhir_metadata_vocabulary/w5.ttl exists
@@ -139,26 +140,21 @@ Lines marked with '++' below will only appear the first time the generator is ru
 Lines marked with '**' will only appear if the generator has been run previously
 The exact numbers will depend on the version of the FMV and/or the loader
 ```text
-(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary/ -l @my_conf
+(venv) > generate_i2b2 --conf my_conf -l
 Loading fhir.ttl
+ (cached)
 loading w5.ttl
-** 1 i2b2metadata.table_access record deleted
+ done
+
+1 i2b2metadata.table_access record deleted
 1 i2b2metadata.table_access record inserted
-++ Changing length of concept_dimension.concept_cd from 50 to 200
-** 3396 i2b2demodata.concept_dimension records deleted
-Recursion on :http://hl7.org/fhir/DomainResource.extension.value.extension http://hl7.org/fhir/Extension
-Recursion on :http://hl7.org/fhir/DomainResource.modifierExtension.value.extension http://hl7.org/fhir/Extension
-Recursion on :http://hl7.org/fhir/Task.input.value.extension.value http://hl7.org/fhir/Element
-Recursion on :http://hl7.org/fhir/Task.output.value.extension.value http://hl7.org/fhir/Element
-++ Changing length of modifier_dimension.modifier_cd from 50 to 200
-** 2000 i2b2demodata.modifier_dimension records deleted
-1861 i2b2demodata.modifier_dimension records inserted
-++ Changing length of custom_meta.c_basecode from 50 to 200
-++ Changing length of custom_meta.c_tooltip from 700 to 1600
-** 10222 i2b2metadata.custom_meta records deleted
-** 19 i2b2metadata.custom_meta records deleted
-10175 i2b2metadata.custom_meta records inserted
-++ 1 i2b2metadata.table_access record inserted
+4388 i2b2demodata.concept_dimension records deleted
+2158 i2b2demodata.concept_dimension records inserted
+2231 i2b2demodata.modifier_dimension records deleted
+743 i2b2demodata.modifier_dimension records inserted
+13588 i2b2metadata.custom_meta records deleted
+19 i2b2metadata.custom_meta records deleted
+15255 i2b2metadata.custom_meta records inserted
 (venv) >
 ```
 
@@ -171,7 +167,17 @@ distribution.
 in the distribution are derived from `../tests/data/fhir_metadata_vocabulary`, which may vary slightly from the FMV that
 can be found at 'http://build.fhir.org/'.  You can regenerate these tables by:
 ```text
-(venv) > generate_i2b2 -mv ../tests/data/fhir_metadata_vocabulary -l -od ../i2b2files
+(venv) > generate_i2b2 --conf my_conf -od ../i2b2files
+Loading fhir.ttl
+ (cached)
+loading w5.ttl
+ done
+
+writing ../i2b2files/table_access.tsv (1) records written
+writing ../i2b2files/concept_dimension.tsv (2158) records written
+writing ../i2b2files/modifier_dimension.tsv (743) records written
+writing ../i2b2files/ontology_table.tsv (15255) records written
+(venv) >
 ```
 
 **Note 2:**: Before you load the files below, you may need to adjust the length of the following columns:
@@ -218,42 +224,133 @@ The pre-loaded tsv files can be found in the `i2b2files` subdirectory of the `i2
 
 All of these tables have tab-separated values and the first row of each table has the column headers.   They can be imported directly into the corresponding i2b2 tables
 
-<sub>**NOTE:** We have been unable to convince the postgreSQL import tool to treat empty columns as `NULL` values.  While, in general, the i2b2 software appears to treat NULLs and zero-length strings as equivalent, there is at least one place where this breaks -- the `m_exclusion_cd` column in the `custom_meta` (ontology) table. After loading the `ontology.tsv` table it is necessary to execute the following SQL:
+**NOTE:** We have been unable to convince the postgreSQL import tool to treat empty columns as `NULL` values.  While, in general, the i2b2 software appears to treat NULLs and zero-length strings as equivalent, there is at least one place where this breaks -- the `m_exclusion_cd` column in the `custom_meta` (ontology) table. After loading the `ontology.tsv` table it is necessary to execute the following SQL:
  ```sql
  UPDATE custom_meta SET m_exclusion_cd = NULL WHERE m_exclusion_cd = '';
  ```
-</sub>
+
 
 ### Testing the installation
 Open the i2b2 browser and navigate to the `FHIR Resources`.  As you drill down it should look like:
 
-![Protege Screenshot](images/SampleBrowser.png)
+<img src="images/SampleBrowser.png" width="300">
+
+![webclient screenshot](images/SampleBrowser.png)
 
 ## Loading FHIR Resource Data
-The `loadfacts` program is used to load select FHIR Resource instances in to the i2b2 CRC tables. It requires a number of input parameters:
-1) The i2b2 SQL connection information, including the database URL, user name and password.
-2) The upload identifier -- an integer that identifies this particular `run`.  It is saved as the `upload_id` in all of the i2b2 CRC tables, allowing you to determine what operation caused the data to be loaded and to undo (via `removefacts`) and reload data if problems are encountered.
-3) 
+The `loadfacts` program is used to load select FHIR Resource instances in to the i2b2 CRC tables. It can load data from a list of files, a list of URLs or an input directory.  Input can either be in JSON or Turtle format. Both an `upload_id` and `sourcesystem_cd` can be specified
+for tracking and management purposes.
+
+### Example
+```text
+(venv) > loadfacts -v
+FHIR i2b2 CRC loader -- Version 0.2.0
+(venv) > loadfacts --conf db_conf -u 117 --sourcesystem "FHIR R4" -l -t json --dupcheck -rm -i http://build.fhir.org/observation-example-f001-glucose.json
+upload_id: 117
+  Starting encounter number: 527091
+  Starting patient number: 1000000213
+--> loading http://build.fhir.org/observation-example-f001-glucose.json
+89 triples
+0: (Patient) - http://hl7.org/fhir/Patient/f001
+1: (Observation) - http://hl7.org/fhir/Observation/f001
+2: (Practitioner) - http://hl7.org/fhir/Practitioner/f005
+---> Graph map phase complete
+Generated:
+    30 Observation facts
+    1 Patients
+    2 Patient mappings
+=== SKIPS ===
+    0 Bundled resources (shouldn't happen?)
+    0 Visit resources
+    0 Infrastructure resources
+    0 Provider resources
+    1 Unmapped resources
+
+Deleted 3 patient_dimension records
+Deleted 4 patient_mapping records
+Deleted 26 observation_fact records
+Deleted 3 visit_dimension records
+Deleted 4 encounter_mapping records
+1 / 0 patient_dimension records added / modified
+2 / 0 patient_mapping records added / modified
+1 / 0 visit_dimension records added / modified
+2 / 0 encounter_mapping records added / modified
+4 duplicate records encountered
+Key: (1000000213, 'FHIR:Observation.referenceRange', 'FHIR:Quantity.value', datetime.datetime(2017, 12, 21, 11, 13, 6, 736196), 527091, 3, 'FHIR:DefaultProvider') has a non-identical dup
+26 / 0 observation_fact records added / modified
+(venv) >
+```
+The above example uses the following parameters:
+* **`--conf my_conf`**  db connection and fhirt.ttl link
+* **`-u 117`** upload identifier
+* **`--sourcesystem "FHIR R4"`** sourcesystem_cd
+* **`-l`** load the data tables
+* **`-t json`** source format is JSON
+* **`--dupcheck`** Check for duplicate records before loading. Needed to address some unresolved issues in reference range representation.
+* **`-rm`** Remove existing entries for this upload id before loading (Useful for testing)
+* **`-i http://build.fhir.org/observation-example-f001-glucose.json` Input comes from this URL
+
+
+The results of the above load can be (indirectly) viewed with a query such as the one below:
+![sample query](images/QuerySample.png)
+
+Note that `Selected groups occur in the same financial encounter` is selected in the "temporal constraint".  We are currently using the notion of "encounter" to represent "resource" -- the selection says that the code, the system and the interpretation all have to occur on the same encounter.
+
+The results for this query (we selected the "Patient Set", "Encounter Set" and "Number of Patients" options) are shown below:
+
+![sample query output](images/QuerySampleResult.png)
+
+We can add patient demographics by following the link in the observation, loading:
+```text
+(venv) > loadfacts --conf db_conf -u 117 --sourcesystem "FHIR R4" -l -t json --dupcheck -i http://hl7.org/fhir/patient-example-f001-pieter.json
+upload_id: 117
+  Starting encounter number: 527092
+  Starting patient number: 1000000214
+--> loading http://hl7.org/fhir/patient-example-f001-pieter.json
+136 triples
+0: (Organization) - http://hl7.org/fhir/Organization/f001
+1: (Patient) - http://hl7.org/fhir/Patient/f001
+---> Graph map phase complete
+Generated:
+    0 Observation facts
+    1 Patients
+    2 Patient mappings
+=== SKIPS ===
+    0 Bundled resources (shouldn't happen?)
+    0 Visit resources
+    0 Infrastructure resources
+    1 Provider resources
+    0 Unmapped resources
+
+1 / 0 patient_dimension records added / modified
+1 / 1 patient_mapping records added / modified
+0 / 0 visit_dimension records added / modified
+0 / 0 encounter_mapping records added / modified
+0 / 0 observation_fact records added / modified
+(venv) >
+```
+
 
 
 ## Current State of the Project
+At the moment, the FHIR structural model is represented pretty much verbatim in the i2b2 ontology and the corresponding resources instances in the i2b2 observation_fact table. We have demonstrated that it is possible to create queries in the i2b2 web client to access this information, but it should also be obvious that these queries would be unapproachable to anyone who wasn't both a FHIR and i2b2 model expert.
 
-### metadata
-1) coded elements
-   * Required FHIR coded elements could be represented as Enums.  An alternative is to represent each possible code as a discrete concept / modifier code.  A second alternative is to use the Enum value picker.
-   * Non-required FHIR coded elements are both underspecified and too numerous to be represented as enums OR discrete codes (?). Choices include:
-       * Update the ontology as data is entered - only include *actual* codes in the information
-       * Connect up to a terminology server (!)
+The next steps include:
+### Mapping  [FHIR data types](http://www.hl7.org/FHIR/datatypes.html) to i2b2 equivalents.
+Currently, FHIR data types are represented quite literally.  As an example [FHIR Quantity](http://www.hl7.org/FHIR/datatypes.html#quantity) currently has a separate row for `Quantity.unit`,
+`Quantity.code`, `Quantity.comparator`, `Quantity.value` and `Quantity.system`.  There is a close correspondence between these and the observation_fact value columns `units_cd`, `tval_char`, and `nval_num` entries.  In addition, the `valueflag_cd` has a close correspondence to the [FHIR Observation interpretation](http://www.hl7.org/FHIR/observation-definitions.html#Observation.interpretation) field
+
+### Representing FHIR coded concepts as i2b2 concept codes.
+Currently, the [FHIR code](http://www.hl7.org/FHIR/datatypes.html#code), [FHIR Coding](http://www.hl7.org/FHIR/datatypes.html#Coding) and [FHIR CodeableConcept](http://www.hl7.org/FHIR/datatypes.html#CodeableConcept) data element values are represented as textual values.  We need to create i2b2 concept and/or modifier codes that represent this information.  This step would provide a key entry point to the use of FHIR terminologies in the i2b2 space.
+
+### Adapt i2b2 value widgets to the FHIR use case
+
+### Connect to FHIR terminologies and (possibly) terminology servers
+ 
+### Representing FHIR resources as first class groupings.
+Currently, we have preempted the "visit/financial encounter" dimension to represent FHIR resources.  We need to extend the i2b2 model to be able to group elements on the "Observation" or "Resource" level.
        
-### dimensions
+### Patient and Provide dimensions
 The project currently assumes that all information appears in the `observation_fact` table.  This obviously isn't the case as:
 * Patient / provider / visit information either maps to or extends the i2b2 dimension tables
 * Resources such as 'Device', 'Medication', etc. currently have no place in i2b2 at all.
-
-
-
-## Issues
-### Representational Issues
-* FHIR values -- the number of possible types for FHIR `value[x]` entries is sizeable.  Expanding each of these as URI's can potentially expand the size of the ontology table by an order of magnitude.  We need to decide what to do about the values and core data types.  One possibility would be a plug-in similar to the existing lab-value plug in.
-
-

@@ -46,7 +46,7 @@ class I2B2Tables:
     i2b2metadata = 'i2b2metadata'
     i2b2crc = 'i2b2demodata'
 
-    def __init__(self, opts: Namespace):
+    def __init__(self, opts: Namespace) -> None:
         _metadata = MetaData()
         crc_url, ont_url = self._db_urls(opts)
 

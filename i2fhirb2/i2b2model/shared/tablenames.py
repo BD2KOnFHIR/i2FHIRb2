@@ -27,7 +27,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # TODO: The mapping portion of this function should be loaded from the i2b2 table mapping table
-from typing import List, Optional
+from typing import List
 
 from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
 

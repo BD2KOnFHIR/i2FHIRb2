@@ -153,11 +153,12 @@ def output_concept_dimension(opts: Namespace, output: List[ConceptDimension]) ->
     :param output: output list
     :return: success indicator
     """
-    table = opts.tables.concept_dimension
-    if not opts.table or opts.table == table:
+    table_name = i2b2tablenames.concept_dimension
+    if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table, ConceptDimension._header(), output)
+            return write_tsv(opts.outdir, table_name, ConceptDimension._header(), output)
         else:
+            table = opts.tables.concept_dimension
             change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
             return update_dimension_table(output, opts, table, 'concept_path', [opts.base])
     else:
@@ -171,11 +172,12 @@ def output_modifier_dimension(opts: Namespace, output: List[ModifierDimension]) 
     :param output: output list
     :return: success indicator
     """
-    table = opts.tables.modifier_dimension
-    if not opts.table or opts.table == table:
+    table_name = i2b2tablenames.modifier_dimension
+    if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table, ModifierDimension._header(), output)
+            return write_tsv(opts.outdir, table_name, ModifierDimension._header(), output)
         else:
+            table = opts.tables.modifier_dimension
             change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
             return update_dimension_table(output, opts, table, 'modifier_path', [opts.base])
     else:
@@ -189,11 +191,12 @@ def output_ontology(opts: Namespace, output: List[OntologyEntry]) -> bool:
     :param output: set of ontology entries
     :return: success indicator
     """
-    table = opts.tables.ontology_table
-    if not opts.table or opts.table == table:
+    table_name = i2b2tablenames.ontology_table
+    if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table, OntologyEntry._header(), output)
+            return write_tsv(opts.outdir, table_name, OntologyEntry._header(), output)
         else:
+            table = opts.tables.ontology_table
             change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
             # MedicationStatement is 1547 long
             change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
