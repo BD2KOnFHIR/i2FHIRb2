@@ -29,10 +29,8 @@
 import unittest
 
 import os
-import io
 
-from tests.script_tests.script_test_base import ScriptTestBase
-from tests.utils.output_redirector import OutputRedirector
+from tests.utils.script_test_base import ScriptTestBase
 from i2fhirb2.loadfacts import load_facts
 
 
@@ -40,9 +38,10 @@ class LoadFactsTestCase(ScriptTestBase):
 
     @classmethod
     def setUpClass(cls):
-        ScriptTestBase.save_output = False
-        ScriptTestBase.tst_dir = "loadfacts"
-        ScriptTestBase.tst_fcn = load_facts
+        cls.dirname = os.path.split(os.path.abspath(__file__))[0]
+        cls.save_output = False
+        cls.tst_dir = "loadfacts"
+        cls.tst_fcn = load_facts
 
     def test_no_args(self):
         self.check_error_output("", "noargs")

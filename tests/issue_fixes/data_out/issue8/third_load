@@ -1,0 +1,24 @@
+upload_id: 117651
+  
+  
+--> loading http://hl7.org/fhir/patient-example.json
+
+
+
+---> Graph map phase complete
+Generated:
+    0 Observation facts
+    1 Patients
+    0 Patient mappings
+=== SKIPS ===
+    0 Bundled resources (shouldn't happen?)
+    0 Visit resources
+    0 Infrastructure resources
+    1 Provider resources
+    0 Unmapped resources
+
+0 / 0 patient_dimension records added / modified
+0 / 0 patient_mapping records added / modified
+0 / 0 visit_dimension records added / modified
+0 / 0 encounter_mapping records added / modified
+0 / 0 observation_fact records added / modified

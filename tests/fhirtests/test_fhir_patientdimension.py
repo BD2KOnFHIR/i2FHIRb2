@@ -35,6 +35,7 @@ from isodate import FixedOffset
 from rdflib import Graph
 
 from tests.utils.base_test_case import test_data_directory
+from tests.utils.connection_helper import connection_helper
 
 
 class FHIRPatientDimensionTestCase(unittest.TestCase):
@@ -59,7 +60,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         g.load(os.path.abspath(os.path.join(os.path.split(__file__)[0], "data",  "patient-example.ttl")),
                format="turtle")
         s = FHIR['Patient/example']
-        pd_entry = FHIRPatientDimension(g, s)
+        pd_entry = FHIRPatientDimension(g, connection_helper().tables, s)
 
         self.assertEqual(OrderedDict([
              ('patient_num', 100000001),
@@ -117,7 +118,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data", "patient-example-deceased_bool.ttl"),
                format="turtle")
         s = FHIR['Patient/example']
-        pd_entry = FHIRPatientDimension(g, s)
+        pd_entry = FHIRPatientDimension(g, connection_helper().tables, s)
         self.assertEqual('UD', pd_entry.patient_dimension_entry.vital_status_cd)
         self.assertIsNone(pd_entry.patient_dimension_entry.death_date)
 

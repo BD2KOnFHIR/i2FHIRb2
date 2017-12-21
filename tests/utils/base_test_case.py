@@ -36,8 +36,12 @@ from rdflib import Graph
 
 test_directory = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..'))
 test_conf_directory = os.path.join(test_directory, 'conf')
+test_conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
 test_data_directory = os.path.join(test_directory, 'data')
 mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
+
+test_upload_id = 117651                 # upload identifier for test cases
+test_sourcesystem_cd = "i2FHIRb2_Test"  # source system code for test cases
 
 
 def FHIRGraph():
@@ -74,9 +78,10 @@ class BaseTestCase(unittest.TestCase):
 def make_and_clear_directory(dirbase: str):
     import shutil
     safety_file = os.path.join(dirbase, "generated")
-    if os.path.exists(dirbase) and not os.path.exists(safety_file):
-        raise FileExistsError("{} not found in test directory".format(safety_file))
-    shutil.rmtree(dirbase)
+    if os.path.exists(dirbase):
+        if not os.path.exists(safety_file):
+            raise FileExistsError("{} not found in test directory".format(safety_file))
+        shutil.rmtree(dirbase)
     os.makedirs(dirbase)
     with open(os.path.join(dirbase,"generated"), "w") as f:
         f.write("Generated for safety.  Must be present for test to remove this directory.")

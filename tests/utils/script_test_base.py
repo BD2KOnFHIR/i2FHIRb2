@@ -29,14 +29,12 @@ import unittest
 from typing import Callable, List
 
 import os
-import io
 
-from tests.fhirtests.test_fhirmetadatavocabulary import save_output
 from tests.utils.output_redirector import OutputRedirector
 
 
 class ScriptTestBase(unittest.TestCase, OutputRedirector):
-    dirname, _ = os.path.split(os.path.abspath(__file__))
+    dirname = None
     save_output: bool = False              # Override this to save output
     tst_dir: str = None
     tst_fcn: Callable[[List[str]], bool] = None
@@ -45,14 +43,15 @@ class ScriptTestBase(unittest.TestCase, OutputRedirector):
     def call_tst_fcn(cls, args: str):
         return cls.tst_fcn(args.split())
 
-    def check_output(self, test_file: str, output: io.StringIO) -> None:
+    def check_output(self, test_file: str, output: str) -> None:
+        assert self.dirname is not None, "dirname must be set to local file path"
         fullfilename = os.path.join(self.dirname, 'data_out', self.tst_dir, test_file)
         if self.save_output:
             with open(fullfilename, 'w') as outf:
-                outf.write(output.getvalue())
+                outf.write(output)
         self.maxDiff = None
         with open(fullfilename) as testf:
-            self.assertEqual(testf.read(), output.getvalue())
+            self.assertEqual(testf.read(), output)
         self.assertFalse(self.save_output, "save_output is true")
 
     def check_output_output(self, args: str,  test_file: str, exception: bool=False) -> None:
@@ -63,11 +62,17 @@ class ScriptTestBase(unittest.TestCase, OutputRedirector):
         else:
             self.call_tst_fcn(args)
         output = self._pop_stdout()
-        self.check_output(test_file, output)
+        self.check_output(test_file, output.getvalue())
+
+    def check_filtered_output(self, args: str, test_file: str, filtr: Callable[[str], str]) -> None:
+        self._push_stdout()
+        self.call_tst_fcn(args)
+        output = self._pop_stdout()
+        self.check_output(test_file, filtr(output.getvalue()))
 
     def check_error_output(self, args: str, test_file: str) -> None:
         self._push_stderr()
         with self.assertRaises(SystemExit):
             self.call_tst_fcn(args)
         output = self._pop_stderr()
-        self.check_output(test_file, output)
+        self.check_output(test_file, output.getvalue())

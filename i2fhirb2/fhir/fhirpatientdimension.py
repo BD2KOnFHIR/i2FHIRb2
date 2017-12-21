@@ -40,18 +40,20 @@ from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, Vital
 # TODO: is there any reason to pull patient_id from Patient.identifier rather than URL?
 # TODO: what of foreign addresses?
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
+from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables
 
 
 class FHIRPatientDimension:
-    def __init__(self, g: Graph, patient: URIRef):
+    def __init__(self, g: Graph, tables: Optional[I2B2Tables], patient: URIRef):
         """
         Generate i2b2 patient dimension and patient_mapping records from PATIENT resources in graph g
         :param g: Graph containing 0 or more FHIR Patient resources
+        :param tables: i2b2 tables connection if we are using a database (vs. tsv output)
         :param patient: Graph subject
         """
         assert value(g, patient, FHIR.animal) is None       # We don't do animals
         patient_id, patient_ide_source = self.uri_to_patient_id(patient)
-        self.patient_mappings = FHIRPatientMapping(patient_id, patient_ide_source)
+        self.patient_mappings = FHIRPatientMapping(tables, patient_id, patient_ide_source)
         active = value(g, patient, FHIR.Patient.active)
         if active is not None and not active:
             self.patient_mappings._patient_ide_status = PatientIDEStatus.inactive

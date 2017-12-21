@@ -25,9 +25,10 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Tuple, Dict, Optional
+from operator import or_
+from typing import Tuple, Dict, Optional, NamedTuple
 
-from sqlalchemy import func, or_
+from sqlalchemy import func, select
 from sqlalchemy.orm import sessionmaker
 
 from i2fhirb2.fhir.fhirspecific import DEFAULT_PROJECT_ID, IDE_SOURCE_HIVE, DEFAULT_PATIENT_NUMBER_START
@@ -65,6 +66,11 @@ class FHIRPatientMapping:
     number_generator = PatientNumberGenerator(DEFAULT_PATIENT_NUMBER_START)
     number_map = dict()                     # type: Dict[Tuple[str, str, str], int]
 
+    class PatientMappingKey(NamedTuple):
+        patient_id: str
+        patient_ide_src: str
+        project_id: str
+
     @classmethod
     def _clear(cls):
         cls.project_id = DEFAULT_PROJECT_ID
@@ -76,18 +82,21 @@ class FHIRPatientMapping:
     def refresh_patient_number_generator(cls, tables: I2B2Tables, ignore_upload_id: Optional[int]) -> int:
         return cls.number_generator.refresh(tables, ignore_upload_id)
 
-    def __init__(self, patient_id: str, patient_ide_source: str):
+    def __init__(self, tables: Optional[I2B2Tables], patient_id: str, patient_ide_source: str) -> None:
         """
         Create a new patient mapping entry in the FHIR context
+        :param tables: i2b2 data tables
         :param patient_id: identifier
         :param patient_ide_source: source -- currently the base URI
         """
         self.patient_mapping_entries = []
-        key = (patient_id, patient_ide_source, self.project_id)
+        key = self.PatientMappingKey(patient_id, patient_ide_source, self.project_id)
         if key in self.number_map:
             self.patient_num = self.number_map[key]
         else:
-            self.patient_num = self.number_generator.new_number()
+            self.patient_num = self._existing_entry(tables, key)
+            if self.patient_num is None:
+                self.patient_num = self.number_generator.new_number()
             pm = PatientMapping(self.patient_num,
                                 patient_id,
                                 PatientIDEStatus.active,
@@ -97,7 +106,7 @@ class FHIRPatientMapping:
             self.patient_mapping_entries.append(pm)
 
         identity_id = str(self.patient_num)
-        ikey = (identity_id, self.identity_source_id, self.project_id)
+        ikey = self.PatientMappingKey(identity_id, self.identity_source_id, self.project_id)
         if ikey not in self.number_map:
             ipm = PatientMapping(self.patient_num,
                                  identity_id,
@@ -106,3 +115,15 @@ class FHIRPatientMapping:
                                  self.project_id)
             self.number_map[ikey] = ipm
             self.patient_mapping_entries.append(ipm)
+
+    @staticmethod
+    def _existing_entry(tables: Optional[I2B2Tables], key: "FHIRPatientMapping.PatientMappingKey") -> Optional[int]:
+        if not tables:
+            return None                                 # Generating tsv files, nothihc exists
+        pdtabc = tables.patient_mapping.c
+        s = select([pdtabc.patient_num])\
+            .where(pdtabc.patient_ide == key.patient_id and
+                   pdtabc.patient_ide_source == key.patient_ide_src
+                   and pdtabc.project_id == key.project_id)
+        qr = list(tables.crc_connection.execute(s))
+        return qr[0][0] if qr else None

@@ -31,7 +31,7 @@ import unittest
 import os
 
 from i2fhirb2.removefacts import remove_facts
-from tests.script_tests.script_test_base import ScriptTestBase
+from tests.utils.script_test_base import ScriptTestBase
 
 
 class RemoveFactsTestCase(ScriptTestBase):
@@ -39,9 +39,10 @@ class RemoveFactsTestCase(ScriptTestBase):
 
     @classmethod
     def setUpClass(cls):
-        ScriptTestBase.save_output = False
-        ScriptTestBase.tst_dir = "removefacts"
-        ScriptTestBase.tst_fcn = remove_facts
+        cls.dirname = os.path.split(os.path.abspath(__file__))[0]
+        cls.save_output = False
+        cls.tst_dir = "removefacts"
+        cls.tst_fcn = remove_facts
 
     def test_no_args(self):
         self.check_output_output("", "noargs")

@@ -39,7 +39,7 @@ from tests.utils.base_test_case import test_data_directory, test_conf_directory,
 
 class ObservationComponentTestCase(unittest.TestCase):
     dirname, _ = os.path.split(os.path.abspath(__file__))
-    output_dir = os.path.abspath(os.path.join(dirname, 'data_out'))
+    output_dir = os.path.abspath(os.path.join(dirname, 'data_out', 'test_observation_component'))
 
     def setUp(self):
         make_and_clear_directory(self.output_dir)

@@ -139,12 +139,12 @@ class OntologyTestCase(unittest.TestCase):
             ('c_totalnum', None),
             ('c_basecode', 'FHIR:Patient'),
             ('c_metadataxml', None),
-            ('c_facttablecolumn', ''),
-            ('c_tablename', ''),
-            ('c_columnname', ''),
+            ('c_facttablecolumn', 'concept_cd'),
+            ('c_tablename', 'concept_dimension'),
+            ('c_columnname', 'concept_path'),
             ('c_columndatatype', 'T'),
-            ('c_operator', ''),
-            ('c_dimcode', ''),
+            ('c_operator', '='),
+            ('c_dimcode', '\\FHIR\\Patient\\'),
             ('c_comment',
              'Demographics and other administrative information about an '
              'individual or animal receiving care or other health-related '
@@ -234,8 +234,8 @@ class OntologyTestCase(unittest.TestCase):
         OntologyEntry._clear()
         o = OntologyRoot("FHIR")
         OntologyRoot.update_date = datetime.datetime(2017, 5, 25, 13, 0)
-        self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR:\t\tconcept_cd\tconcept_dimension\t'
-                          'concept_path\tT\t=\t\\FHIR\\\t\t\t@\t2017-05-25 13:00:00\t2017-05-25 '
+        self.assertEqual(('0\t\\FHIR\\\tFHIR\tN\tCA \t\tFHIR:\t\t\t\t'
+                          '\tT\t\t\t\t\t@\t2017-05-25 13:00:00\t2017-05-25 '
                           '13:00:00\t2017-05-25 13:00:00\tFHIR\t\t\t\t'), repr(o))
 
 

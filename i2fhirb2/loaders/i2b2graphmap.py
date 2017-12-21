@@ -76,6 +76,7 @@ class I2B2GraphMap:
         self.patient_mappings = []          # type: List[PatientMapping]
         self.visit_dimensions = []          # type: List[VisitDimension]
         self.encounter_mappings = []        # type: List[EncounterMapping]
+        self.tables = opts.tables           # type: I2B2Tables
         nresources = 0
         for subj, subj_type in g.subject_objects(RDF.type):
             if isinstance(subj, URIRef) and subj_type in FHIR_RESOURCE_MAP:
@@ -98,7 +99,7 @@ class I2B2GraphMap:
                 elif isinstance(mapped_type, FHIR_Provider_Dimension_type):
                     self.num_provider += 1
                 elif isinstance(mapped_type, FHIR_Patient_Dimension_type):
-                    pd = FHIRPatientDimension(self._g, subj)
+                    pd = FHIRPatientDimension(self._g, self.tables, subj)
                     self.patient_dimensions.append(pd.patient_dimension_entry)
                     self.patient_mappings += pd.patient_mappings.patient_mapping_entries
                 elif isinstance(mapped_type, FHIR_Bundle_type):
@@ -112,7 +113,7 @@ class I2B2GraphMap:
         patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(self._g, subj)
         if patient_id_uri is not None:
             patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
-            pm = FHIRPatientMapping(patient_id, patient_ide_source)
+            pm = FHIRPatientMapping(self.tables, patient_id, patient_ide_source)
             self.patient_mappings += pm.patient_mapping_entries
             start_date = value(self._g, subj, FHIR.Observation.effectiveDateTime)
             if not start_date:

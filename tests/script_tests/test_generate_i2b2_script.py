@@ -31,13 +31,14 @@ import unittest
 import os
 
 from i2fhirb2.generate_i2b2 import generate_i2b2
-from tests.script_tests.script_test_base import ScriptTestBase
+from tests.utils.script_test_base import ScriptTestBase
 
 
 class GenerateI2B2TestCase(ScriptTestBase):
 
     @classmethod
     def setUpClass(cls):
+        cls.dirname = os.path.split(os.path.abspath(__file__))[0]
         cls.save_output = False
         cls.tst_dir = "generatei2b2"
         cls.tst_fcn = generate_i2b2

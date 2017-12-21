@@ -45,7 +45,7 @@ class FHIRPatientMappingTestCase(unittest.TestCase):
         FHIRPatientMapping._clear()
         PatientMapping.upload_id = 1773486
 
-        pm = FHIRPatientMapping("p123", "http://hl7.org/fhir")
+        pm = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
 
         self.assertEqual(OrderedDict([
              ('patient_ide', 'p123'),
@@ -71,7 +71,7 @@ class FHIRPatientMappingTestCase(unittest.TestCase):
              ('upload_id', 1773486)]), pm.patient_mapping_entries[1]._freeze())
         self.assertEqual(2, len(pm.patient_mapping_entries))
 
-        pm2 = FHIRPatientMapping("p123", "http://hl7.org/fhir")
+        pm2 = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
         self.assertEqual(2, len(pm.patient_mapping_entries))
         self.assertEqual(pm2.patient_num, pm.patient_num)
 
