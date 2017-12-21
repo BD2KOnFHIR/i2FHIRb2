@@ -41,7 +41,7 @@ fhir_concept_prefix = namespace_for(FHIR).upper() + ':'
 max_to_print = 100
 
 # If this is true, the tests below are skipped
-skip_tests = True
+skip_tests = False
 
 # Note: while the construct 'x == None' is technically incorrect, 'x is None' does not work in SQLAlchemy
 
@@ -73,6 +73,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
                         join(x.concept_dimension, x.observation_fact.c.concept_cd ==
                              x.concept_dimension.c.concept_cd, isouter=True)).\
             where(and_(x.observation_fact.c.concept_cd.like(fhir_concept_prefix + '%'),
+                       x.observation_fact.c.modifier_cd == '@',
                        x.concept_dimension.c.concept_cd == None))
 
         count = 0
@@ -119,15 +120,14 @@ class ConceptCoverageTestCase(unittest.TestCase):
         from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
-        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
-        ont_table = getattr(x, ont_table_name)
+        ont_table = x.ontology_table
         s = select([ont_table.c.c_dimcode.distinct()]). \
             select_from(ont_table.
                         join(x.concept_dimension, ont_table.c.c_dimcode ==
                              x.concept_dimension.c.concept_path, isouter=True)). \
             where(and_(ont_table.c.c_tablename == 'concept_dimension',
                        ont_table.c.c_columnname == 'concept_path',
-                       ont_table.c.c_operater == '=',
+                       ont_table.c.c_operator == '=',
                        ont_table.c.c_dimcode.like('%FHIR%'),
                        x.concept_dimension.c.concept_path == None))
 
@@ -148,8 +148,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
-        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
-        ont_table = getattr(x, ont_table_name)
+        ont_table = x.ontology_table
         s = select([x.concept_dimension.c.concept_path.distinct()]). \
             select_from(x.concept_dimension.
                         join(ont_table, x.concept_dimension.c.concept_path ==
@@ -177,8 +176,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
-        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
-        ont_table = getattr(x, ont_table_name)
+        ont_table = x.ontology_table
         s = select([ont_table.c.c_dimcode.distinct()]). \
             select_from(ont_table.
                         join(x.modifier_dimension, ont_table.c.c_dimcode ==
@@ -206,8 +204,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
-        ont_table_name = i2b2tablenames.phys_name(i2b2tablenames.ontology_table)
-        ont_table = getattr(x, ont_table_name)
+        ont_table = x.ontology_table
         s = select([x.modifier_dimension.c.modifier_path.distinct()]). \
             select_from(x.modifier_dimension.
                         join(ont_table, x.modifier_dimension.c.modifier_path ==

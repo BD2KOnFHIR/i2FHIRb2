@@ -44,7 +44,7 @@ class RemoveFactsTestCase(ScriptTestBase):
         ScriptTestBase.tst_fcn = remove_facts
 
     def test_no_args(self):
-        self.check_error_output("", "noargs")
+        self.check_output_output("", "noargs")
 
     def test_help(self):
         self.check_output_output("-h", "help", exception=True)
@@ -54,6 +54,12 @@ class RemoveFactsTestCase(ScriptTestBase):
 
     def test_threeargs(self):
         self.check_output_output("123450 123460 123470", "threeargs")
+
+    def test_sourcesystem(self):
+        self.check_output_output("--sourcesystemcd SAMPLE", "sourcesystem")
+
+    def test_ss_and_id(self):
+        self.check_output_output("123450 --sourcesystemcd SAMPLE", "ssandid")
 
     def test_config_parms(self):
         self.check_output_output("--conf {} 123450".format(os.path.join(self.dirname, 'data', 'db_conf')), "confparms")

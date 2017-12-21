@@ -47,6 +47,8 @@ from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, Obse
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
+from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
+from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 from i2fhirb2.sqlsupport.i2b2tables import change_column_length
@@ -152,6 +154,19 @@ class I2B2GraphMap:
               .format(VisitDimension.delete_upload_id(tables, uploadid)))
         print("Deleted {} encounter_mapping records"
               .format(EncounterMapping.delete_upload_id(tables, uploadid)))
+
+    @staticmethod
+    def clear_i2b2_sourcesystems(tables: I2B2Tables, sourcesystemcd: str) -> None:
+        print("Deleted {} patient_dimension records"
+              .format(PatientDimension.delete_sourcesystem_cd(tables, sourcesystemcd)))
+        print("Deleted {} patient_mapping records"
+              .format(PatientMapping.delete_sourcesystem_cd(tables, sourcesystemcd)))
+        print("Deleted {} observation_fact records"
+              .format(ObservationFact.delete_sourcesystem_cd(tables, sourcesystemcd)))
+        print("Deleted {} visit_dimension records"
+              .format(VisitDimension.delete_sourcesystem_cd(tables, sourcesystemcd)))
+        print("Deleted {} encounter_mapping records"
+              .format(EncounterMapping.delete_sourcesystem_cd(tables, sourcesystemcd)))
 
     def load_i2b2_tables(self, check_dups=False) -> None:
         # session = sessionmaker(bind=tables.crc_engine)()

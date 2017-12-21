@@ -56,7 +56,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         PatientDimension.upload_id = 12345
 
         g = Graph()
-        g.load(os.path.abspath(os.path.join(test_data_directory, "patient-example.ttl")),
+        g.load(os.path.abspath(os.path.join(os.path.split(__file__)[0], "data",  "patient-example.ttl")),
                format="turtle")
         s = FHIR['Patient/example']
         pd_entry = FHIRPatientDimension(g, s)

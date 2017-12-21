@@ -177,7 +177,7 @@ class OntologyRoot(OntologyEntry):
         if base.startswith('\\'):
             base = base[1:-1]
         path = '\\' + base + '\\'
-        super().__init__(path, ConceptQuery(path), VisualAttributes("CA"), sourcesystem_cd=base, **kwargs)
+        super().__init__(path, EmptyQuery(), VisualAttributes("CA"), sourcesystem_cd=base, **kwargs)
         self._base = base
 
     @DynObject.entry(_t)
@@ -294,7 +294,7 @@ class ConceptOntologyEntry(OntologyEntry):
         full_path = navigational_path
         self._m_applied_path = '@'
 
-        query = ConceptQuery(ontological_path) if is_leaf else EmptyQuery()
+        query = ConceptQuery(ontological_path) if is_draggable else EmptyQuery()
         super().__init__(full_path, query, visattr, concept_code(subject), primitive_type)
 
     # Level in ontology concept references are relative to base path

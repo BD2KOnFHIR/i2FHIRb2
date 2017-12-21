@@ -172,6 +172,16 @@ class VisitDimension(I2B2_Core_With_Upload_Id):
         return cls._delete_upload_id(tables.crc_connection, tables.visit_dimension, upload_id)
 
     @classmethod
+    def delete_sourcesystem_cd(cls, tables: I2B2Tables, sourcesystem_cd: str) -> int:
+        """
+        Delete all records with the supplied sourcesystem_cd
+        :param tables: i2b2 sql connection
+        :param sourcesystem_cd: sourcesystem_cd to remove
+        :return: number or records that were deleted
+        """
+        return cls._delete_sourcesystem_cd(tables.crc_connection, tables.visit_dimension, sourcesystem_cd)
+
+    @classmethod
     def add_or_update_records(cls, tables: I2B2Tables, records: List["VisitDimension"]) -> Tuple[int, int]:
         """
         Add or update the patient_dimension table as needed to reflect the contents of records

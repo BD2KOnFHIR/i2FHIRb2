@@ -44,7 +44,9 @@ def create_parser() -> FileAwareParser:
     """
     parser = FileAwareParser(description="Clear data from FHIR observation fact table")
     parser.add_argument("uploadid", metavar="Upload identifiers",
-                        help="Upload identifer(s) -- unique batch identifiers", type=int, nargs='+')
+                        help="Upload identifer(s) -- unique batch identifiers", type=int, nargs='*')
+    parser.add_argument("--sourcesystemcd", metavar="Source system code",
+                        help="sourcesystem_code to remove")
     parser.add_argument("-mv", "--metavoc", help="Metavocabulary directory - ignored")
     return parser
 
@@ -60,9 +62,15 @@ def remove_facts(argv: List[str]) -> bool:
     if opts is None:
         return False
     process_parsed_args(opts)           # Update CRC and Meta table connection information
+    if not opts.uploadid and not opts.sourcesystemcd:
+        parser.print_usage()
+        return False
     for uploadid in opts.uploadid:
         print("---> Removing entries for id {}".format(uploadid))
         I2B2GraphMap.clear_i2b2_tables(I2B2Tables(opts), uploadid)
+    if opts.sourcesystemcd:
+        print("---> Removing entries for sourcesystem_cd {}".format(opts.sourcesystemcd))
+        I2B2GraphMap.clear_i2b2_sourcesystems(I2B2Tables(opts), opts.sourcesystemcd)
     return True
 
 

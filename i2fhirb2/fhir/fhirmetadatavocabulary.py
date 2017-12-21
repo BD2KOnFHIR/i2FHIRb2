@@ -36,12 +36,6 @@ from rdflib.collection import Collection
 from i2fhirb2.fhir.fhirspecific import is_primitive, skip_fhir_predicates
 from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
 
-# TODO: This shouldn't be here, but, if we treat Reference as a non-primitive we end up in an endless loop on
-#       Reference.identifier.assigner ...
-fhir_primitives = {FHIR.Reference}
-
-fhir_toplevel_items = {FHIR.DomainResource, FHIR.BackboneElement, FHIR.Element}
-
 # TODO: The FMV needs to be updated to add a type element -- we use this enumeration as a temporary solution
 fhir_complex_types = {FHIR.Address, FHIR.Age, FHIR.Annotation, FHIR.Attachment,
                       FHIR.CodeableConcept, FHIR.Coding, FHIR.ContactDetail, FHIR.ContactPoint,
@@ -107,6 +101,9 @@ class FMVGraphEdge:
     def __eq__(self, other: "FMVGraphEdge") -> bool:
         return str(self.predicate) == str(other.predicate)
 
+    def __hash__(self):
+        return hash((self.predicate, self.type_node))
+
 
 class FMVGraphNode:
     _known_nodes = {}        # type: Dict[URIRef, 'FMVGraphNode']
@@ -120,7 +117,7 @@ class FMVGraphNode:
         """
         self.node: URIRef = node                            # URI of the node itself
         self.edges: List[FMVGraphEdge] = []                 # Outgoing edges
-        self.parents: List[URIRef] = []                     # Parent types
+        self.parents: List["FMVGraphNode"] = []                     # Parent types
         FMVGraphNode._known_nodes[node]: Dict[URIRef, FMVGraphNode] = self  # Prevent recursive looping
         self.is_primitive: bool = is_primitive(g, node)
 
@@ -143,7 +140,8 @@ class FMVGraphNode:
                             self.edges += self._known_nodes[sc_type].edges \
                                 if sc_type in FMVGraphNode._known_nodes else FMVGraphNode(g, sc_type).edges
                         else:
-                            self.parents.append(sc)
+                            self.parents.append(self._known_nodes[sc]
+                                                if sc in FMVGraphNode._known_nodes else FMVGraphNode(g, sc))
         else:
             self.is_complex_type = False
 

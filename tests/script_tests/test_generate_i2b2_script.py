@@ -38,7 +38,7 @@ class GenerateI2B2TestCase(ScriptTestBase):
 
     @classmethod
     def setUpClass(cls):
-        cls.save_output = True
+        cls.save_output = False
         cls.tst_dir = "generatei2b2"
         cls.tst_fcn = generate_i2b2
         cls.conf_file_loc = "--conf {}".format(os.path.join(cls.dirname, 'data', 'db_conf'))

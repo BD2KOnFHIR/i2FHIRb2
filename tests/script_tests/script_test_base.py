@@ -45,7 +45,6 @@ class ScriptTestBase(unittest.TestCase, OutputRedirector):
     def call_tst_fcn(cls, args: str):
         return cls.tst_fcn(args.split())
 
-
     def check_output(self, test_file: str, output: io.StringIO) -> None:
         fullfilename = os.path.join(self.dirname, 'data_out', self.tst_dir, test_file)
         if self.save_output:

@@ -98,6 +98,18 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
         return conn.execute(delete(table).where(table.c.upload_id == upload_id)).rowcount if upload_id else 0
 
     @staticmethod
+    def _delete_sourcesystem_cd(conn: Connection, table: Table, sourcesystem_cd: str) -> int:
+        """
+        Remove all table records with the supplied upload_id
+        :param conn: sql connection
+        :param table: table to modify
+        :param sourcesystem_cd: target sourcesystem code
+        :return: number of records removed
+        """
+        return conn.execute(delete(table).where(table.c.sourcesystem_cd == sourcesystem_cd)).rowcount \
+            if sourcesystem_cd else 0
+
+    @staticmethod
     def _nested_fcn(f: Callable, filters: List):
         """
         Distribute binary function f across list L

@@ -101,47 +101,6 @@ class FHIRMetadata(metaclass=ABCMeta):
                     # seen.add(edge.type_node)
                     self._add_modifier(edge, target, seen, depth+1)
 
-
-    def fhir_modifiers(self, resource: Optional[URIRef]=None) -> Dict[URIRef, FMVGraphNode]:
-        """
-        Return a list of modifier codes from the FMV and the corresponding graph nodes
-        :param resource: Subject to restrict output to for debugging
-        :return: A map from the modifier URI to the corresponding Graph node
-        """
-        resources = [resource] if resource else self._fhir_metadatavocabulary.fhir_resource_concepts()
-        rval = {}           # type: Dict[URIRef, FMVGraphNode]
-        seen = set()        # type: Set[FMVGraphNode]
-        for r in resources:
-            resource_type_node = self._fhir_metadatavocabulary.resource_graph(r)
-            for edge in resource_type_node.edges:
-                # Base level edges don't have modifier codes
-                if not edge.type_node.is_primitive:
-                    self._add_modifier(edge, rval, seen)
-        return rval
-
-    def fhir_modifiers_for(self, parent: FMVGraphNode) -> Dict[str, Tuple[URIRef, URIRef]]:
-        """
-        Return a list of modifier codes that are rooted on the supplied graph node
-        :param parent: concept code of possible parent
-        :return: List of modifier URI's and corresponding nodes
-        """
-        modifiers = {}
-        for edge in parent.edges:
-            print("----> testing {}:{}{}".
-                  format(edge.predicate, edge.type_node, '(M)' if edge.multiple_entries else ''))
-            if edge.multiple_entries:
-                for modifier_edge in edge.type_node.edges:
-                    if modifier_edge.type_node.is_primitive:
-                        path = concept_path(edge.predicate) + modifier_path(modifier_edge.predicate)
-                        modifiers[path] = (edge.predicate, modifier_edge.predicate)
-        return modifiers
-
     def dimension_list(self, _: Optional[URIRef]=None) -> List[OntologyEntry]:
         """ Abstract class to return i2b2 dimension entries"""
         return []
-
-    @staticmethod
-    @abstractmethod
-    def tsv_header() -> str:
-        """ Abstract class to return i2b2 dimension tsv header"""
-        return ""

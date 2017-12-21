@@ -1,9 +1,9 @@
-usage: _jb_unittest_runner.py [-h] [-mv METAVOC] [--conf CONFIG FILE]
-                              [-db DBURL] [--user USER] [--password PASSWORD]
+usage: _jb_unittest_runner.py [-h] [--sourcesystemcd Source system code]
+                              [-mv METAVOC] [--conf CONFIG FILE] [-db DBURL]
+                              [--user USER] [--password PASSWORD]
                               [--crcdb CRCDB] [--crcuser CRCUSER]
                               [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                               [--ontouser ONTOUSER]
                               [--ontopassword ONTOPASSWORD]
                               [--onttable ONTOLOGY TABLE NAME]
-                              Upload identifiers [Upload identifiers ...]
-_jb_unittest_runner.py: error: the following arguments are required: Upload identifiers
+                              [Upload identifiers [Upload identifiers ...]]

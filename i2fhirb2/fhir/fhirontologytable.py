@@ -25,13 +25,15 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+
 from typing import Optional, List, cast, Dict, NamedTuple, Set
 
 from rdflib import URIRef, Graph
 
 from i2fhirb2.fhir.fhirmetadata import FHIRMetadata
-from i2fhirb2.fhir.fhirmetadatavocabulary import FMVGraphNode
-from i2fhirb2.fhir.fhirspecific import concept_path, concept_path_sans_root, concept_code, rightmost_element
+from i2fhirb2.fhir.fhirmetadatavocabulary import FMVGraphNode, FMVGraphEdge
+from i2fhirb2.fhir.fhirspecific import concept_path, concept_path_sans_root, concept_code, rightmost_element, \
+    skip_fhir_predicates, skip_fhir_types
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
@@ -51,6 +53,20 @@ class FHIROntologyTable(FHIRMetadata):
         super().__init__(g, name_base=name_base, modifier_base=modifier_base)
         OntologyEntry.graph = g
 
+    @staticmethod
+    def _all_edges(node: FMVGraphNode) -> Set[FMVGraphEdge]:
+        """
+        Follow the parents, pulling all edges
+        :param node: target node
+        :return: list of all edges back to root
+        """
+        rval = set([e for e in node.edges
+                    if e.predicate not in skip_fhir_predicates and e.type_node.node not in skip_fhir_types])
+        for p in node.parents:
+            if p.node not in skip_fhir_types:
+                rval.update(FHIROntologyTable._all_edges(p))
+        return rval
+
     def _modifier_ontology_list(self, parent_path: str, parent_uri: URIRef, modifier_base_path: str, node: FMVGraphNode,
                                 modifier_dims: Dict[str, ModifierDimension], in_multiple_elements: bool,
                                 inside: Set[URIRef] = None, depth: int=1) \
@@ -69,7 +85,7 @@ class FHIROntologyTable(FHIRMetadata):
         if inside is None:
             inside = set()
         ontology_modifiers: List[ModifierOntologyEntry] = []
-        for edge in node.edges:
+        for edge in self._all_edges(node):
             if edge.type_node.is_primitive or in_multiple_elements:
                 modifier_path = self._modifier_base + modifier_base_path + rightmost_element(edge.predicate)[1:]
                 ontology_modifiers.append(
@@ -137,8 +153,8 @@ class FHIROntologyTable(FHIRMetadata):
                                                  is_leaf=conc_node.is_primitive,
                                                  is_draggable=True,
                                                  primitive_type=conc_node.node if conc_node.is_primitive else None))
-                        if conc_node.is_primitive:
-                            concept_dimension_entries[ontological_path] = ConceptDimension(conc_uri, self._name_base)
+
+                        concept_dimension_entries[ontological_path] = ConceptDimension(conc_uri, self._name_base)
                         ontology_entries += self._modifier_ontology_list(navigational_path,
                                                                          conc_uri,
                                                                          concept_path(conc_uri),
@@ -149,7 +165,3 @@ class FHIROntologyTable(FHIRMetadata):
         return DimensionSet(ontology_entries,
                             list(concept_dimension_entries.values()),
                             list(modifier_dimension_entries.values()))
-
-    @staticmethod
-    def tsv_header() -> str:
-        return OntologyEntry._header()
