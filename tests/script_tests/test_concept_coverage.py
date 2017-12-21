@@ -159,7 +159,6 @@ class ConceptCoverageTestCase(unittest.TestCase):
                        ont_table.c.c_tablename == None))
 
         count = 0
-        print(str(s))
         for e in x.crc_engine.execute(s).fetchall():
             if count < max_to_print:
                 print("Orphan concept path: {}".format(e[0]))
@@ -215,7 +214,6 @@ class ConceptCoverageTestCase(unittest.TestCase):
                        ont_table.c.c_tablename == None))        # see note at front of document
 
         count = 0
-        print(str(s))
         for e in x.crc_engine.execute(s).fetchall():
             if count < max_to_print:
                 print("Orphan modifier path: {}".format(e[0]))
