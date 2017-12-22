@@ -40,7 +40,7 @@ class ActiveStatusCd:
         super().__setattr__(key, value)
 
     class EndDateCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
 
     ed_unknown = EndDateCode('U')
@@ -53,7 +53,7 @@ class ActiveStatusCd:
     ed_second = EndDateCode('S')
 
     class StartDateCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
 
     sd_unknown = StartDateCode('L')
@@ -65,7 +65,7 @@ class ActiveStatusCd:
     sd_minute = StartDateCode('I')
     sd_second = StartDateCode('C')
 
-    def __init__(self, start: StartDateCode, end: EndDateCode):
+    def __init__(self, start: StartDateCode, end: EndDateCode) -> None:
         self.startcode = start
         self.endcode = end
 

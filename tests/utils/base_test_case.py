@@ -83,5 +83,5 @@ def make_and_clear_directory(dirbase: str):
             raise FileExistsError("{} not found in test directory".format(safety_file))
         shutil.rmtree(dirbase)
     os.makedirs(dirbase)
-    with open(os.path.join(dirbase,"generated"), "w") as f:
+    with open(os.path.join(dirbase, "generated"), "w") as f:
         f.write("Generated for safety.  Must be present for test to remove this directory.")

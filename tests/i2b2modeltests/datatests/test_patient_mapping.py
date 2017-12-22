@@ -42,7 +42,8 @@ class PatientMappingTestCase(unittest.TestCase):
         pm = PatientMapping(10000001, "p123", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
         pm._upload_id = 17443
 
-        self.assertEqual(OrderedDict([('patient_ide', 'p123'),
+        self.assertEqual(OrderedDict([
+             ('patient_ide', 'p123'),
              ('patient_ide_source', 'http://hl7.org/fhir/'),
              ('patient_num', 10000001),
              ('patient_ide_status', 'A'),

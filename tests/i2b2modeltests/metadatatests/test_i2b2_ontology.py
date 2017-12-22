@@ -79,7 +79,7 @@ class OntologyTestCase(unittest.TestCase):
 
     def test_concept_ontology_entry(self):
         from i2fhirb2.fhir.fhirspecific import FHIR
-        from i2fhirb2.i2b2model.metadata.i2b2ontology import ConceptOntologyEntry, OntologyEntry, ModifierOntologyEntry
+        from i2fhirb2.i2b2model.metadata.i2b2ontology import ConceptOntologyEntry, OntologyEntry
 
         OntologyEntry._clear()
         navigational_path = '\\FHIR\\administrative\\individual\\Patient\\'
@@ -166,8 +166,7 @@ class OntologyTestCase(unittest.TestCase):
 
     def test_modifier_ontology_entry(self):
         from i2fhirb2.fhir.fhirspecific import FHIR
-        from i2fhirb2.i2b2model.metadata.i2b2ontology import ConceptOntologyEntry, OntologyEntry, \
-            ModifierOntologyEntry
+        from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, ModifierOntologyEntry
 
         OntologyEntry._clear()
         navigational_path = '\\FHIR\\administrative\\individual\\Patient\\'

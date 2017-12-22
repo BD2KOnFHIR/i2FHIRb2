@@ -54,7 +54,7 @@ from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 class PatientIDEStatus:
     class PatientIDEStatusCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
     active = PatientIDEStatusCode("A")
     inactive = PatientIDEStatusCode("I")

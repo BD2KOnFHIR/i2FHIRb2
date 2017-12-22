@@ -32,7 +32,7 @@ from typing import Optional, Union, Callable, Any
 class classproperty(object):
     """ Decorator to allow properties on the class level """
 
-    def __init__(self, fget: Callable[[type], Any]):
+    def __init__(self, fget: Callable[[type], Any]) -> None:
         self.fget = fget
 
     def __get__(self, _, owner_cls: type) -> Any:
@@ -114,7 +114,7 @@ class I2B2DemographicsCodes(I2B2Coding):
         return cls._code('VITAL', 'y')
 
     @classproperty
-    def vital_deferred(cls)  -> str:
+    def vital_deferred(cls) -> str:
         # TODO: find out what 'deferred' means in this context
         return cls._code('VITAL', 'x')
 

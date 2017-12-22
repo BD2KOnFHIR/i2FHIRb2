@@ -27,12 +27,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import argparse
 import shlex
-from argparse import ArgumentParser, Namespace
-from typing import List, Tuple
+from argparse import Namespace
+from typing import List
 
 import os
-from sqlalchemy import MetaData, create_engine, Table, Column
-from sqlalchemy.engine import Engine
 
 from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
 from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
@@ -44,7 +42,7 @@ Default_Password = "postgres"
 
 
 class FileAwareParser(argparse.ArgumentParser):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.file_args = []
 
@@ -64,10 +62,10 @@ class FileAwareParser(argparse.ArgumentParser):
 
 
 class ConfigFile(argparse.Action):
-    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs) -> None:
         super().__init__(option_strings, dest, nargs, **kwargs)
 
-    def __call__(self, parser: ArgumentParser, namespace: Namespace, values, option_string=None):
+    def __call__(self, parser: FileAwareParser, namespace: Namespace, values, option_string=None):
         raise AttributeError("Must preprocess input arguments with decode_file_args function")
 
 
@@ -121,7 +119,7 @@ def process_parsed_args(opts: Namespace, connect: bool=True) -> Namespace:
     return opts
 
 
-def decode_file_args(argv: List[str], parser: argparse.ArgumentParser = None) -> List[str]:
+def decode_file_args(argv: List[str], parser: FileAwareParser = None) -> List[str]:
     """
     Preprocess a configuration file.  The location of the configuration file is stored in the parser so that the
     FileOrURI action can add relative locations.
@@ -157,4 +155,3 @@ def fix_rel_paths(conf_args: List[str], parser: FileAwareParser, conf_file: str)
         else:
             rval.append(conf_arg)
     return rval
-

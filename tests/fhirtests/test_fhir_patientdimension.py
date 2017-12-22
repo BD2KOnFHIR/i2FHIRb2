@@ -34,7 +34,6 @@ import datetime
 from isodate import FixedOffset
 from rdflib import Graph
 
-from tests.utils.base_test_case import test_data_directory
 from tests.utils.connection_helper import connection_helper
 
 
@@ -121,7 +120,6 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
         pd_entry = FHIRPatientDimension(g, connection_helper().tables, s)
         self.assertEqual('UD', pd_entry.patient_dimension_entry.vital_status_cd)
         self.assertIsNone(pd_entry.patient_dimension_entry.death_date)
-
 
 
 if __name__ == '__main__':

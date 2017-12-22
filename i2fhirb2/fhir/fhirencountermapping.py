@@ -102,7 +102,7 @@ class FHIREncounterMapping:
         """
         return cls.number_generator.refresh(tables, ignore_upload_id)
 
-    def __init__(self, encounterURI: URIRef, patient_id: str, patient_ide_source: str):
+    def __init__(self, encounterURI: URIRef, patient_id: str, patient_ide_source: str) -> None:
         """
         Create a new encounter mapping entry
         :param encounterURI: URI of the encounter

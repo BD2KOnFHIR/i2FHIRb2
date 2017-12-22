@@ -124,5 +124,6 @@ class FHIROntologyTestCase(BaseTestCase):
         FHIROntologyTable(shared_graph).dimension_list()
         self.assertTrue(True)
 
+
 if __name__ == '__main__':
     unittest.main()

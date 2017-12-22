@@ -38,13 +38,13 @@ class DynElements:
     """
     _delimiter = '\t'
 
-    def __init__(self, parent: Type["DynObject"]=None):
+    def __init__(self, parent: Type["DynObject"]=None) -> None:
         """
         Construct a set of dynamic elements
         :param parent:
         """
-        self.elements = OrderedDict()               # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
-        self.override_elements = OrderedDict()      # type: OrderedDict[str, Tuple(bool, DynamicPropType)]
+        self.elements = OrderedDict()               # type: OrderedDict[str, Tuple[bool, DynamicPropType]]
+        self.override_elements = OrderedDict()      # type: OrderedDict[str, Tuple[bool, DynamicPropType]]
         self.parent_dynelements = parent._t if parent else None
 
     def add(self, c: DynamicPropType) -> DynamicPropType:

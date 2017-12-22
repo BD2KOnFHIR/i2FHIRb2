@@ -65,7 +65,7 @@ class VitalStatusCd:
         super().__setattr__(key, value)
 
     class BirthDateCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
 
     bd_unknown = BirthDateCode('L')
@@ -77,7 +77,7 @@ class VitalStatusCd:
     bd_second = BirthDateCode('C')
 
     class DeathDateCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
     dd_living = DeathDateCode('N')
     dd_unknown = DeathDateCode('U')
@@ -89,7 +89,7 @@ class VitalStatusCd:
     dd_minute = DeathDateCode('T')
     dd_second = DeathDateCode('S')
 
-    def __init__(self, birth: BirthDateCode, death: DeathDateCode):
+    def __init__(self, birth: BirthDateCode, death: DeathDateCode) -> None:
         self.birthcode = birth
         self.deathcode = death
 
@@ -106,7 +106,7 @@ class PatientDimension(I2B2_Core_With_Upload_Id):
 
     key_fields = ["patient_num"]
 
-    def __init__(self, patient_num, vital_status_cd: VitalStatusCd, **kwargs):
+    def __init__(self, patient_num, vital_status_cd: VitalStatusCd, **kwargs) -> None:
         self._patient_num = patient_num
         self._vital_status_code = vital_status_cd
         self._birth_date = None

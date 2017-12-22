@@ -62,7 +62,7 @@ class PatientDimensionTestCase(unittest.TestCase):
              ('sourcesystem_cd', 'Unspecified'),
              ('upload_id', None)]), x._freeze())
         x._birth_date = datetime(1955, 8, 10)
-        x._death_date =  datetime(2017, 9, 11)
+        x._death_date = datetime(2017, 9, 11)
         x.birth = VitalStatusCd.bd_day
         x.death = VitalStatusCd.dd_deceased
         x._sex_cd = "M"
@@ -75,7 +75,8 @@ class PatientDimensionTestCase(unittest.TestCase):
         x._statecityzip_path = 'Zip codes\\Minnesota\\Rochester\\55901\\'
         x._income_cd = "Medium"
         x._patient_blob = "<div>some text</div>"
-        self.assertEqual(OrderedDict([('patient_num', 12345),
+        self.assertEqual(OrderedDict([
+             ('patient_num', 12345),
              ('vital_status_cd', 'UL'),
              ('birth_date', datetime(1955, 8, 10, 0, 0)),
              ('death_date', datetime(2017, 9, 11, 0, 0)),

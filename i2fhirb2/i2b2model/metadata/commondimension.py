@@ -25,7 +25,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from fhirtordf.rdfsupport.namespaces import namespaces, namespace_for
+from fhirtordf.rdfsupport.namespaces import namespace_for
 from rdflib import URIRef
 from rdflib.namespace import split_uri
 
@@ -39,7 +39,7 @@ class CommonDimension(I2B2_Core_With_Upload_Id):
     _t = DynElements(I2B2_Core_With_Upload_Id)
     graph = None
 
-    def __init__(self, subject: URIRef, base_path: str = '\\', **kwargs):
+    def __init__(self, subject: URIRef, base_path: str = '\\', **kwargs) -> None:
         """
         Constructor
         :param subject: URI of the subject

@@ -34,7 +34,7 @@ from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 class EncounterIDEStatus:
     class EncounterIDEStatusCode:
-        def __init__(self, code: str):
+        def __init__(self, code: str) -> None:
             self.code = code
     active = EncounterIDEStatusCode("A")
     inactive = EncounterIDEStatusCode("I")

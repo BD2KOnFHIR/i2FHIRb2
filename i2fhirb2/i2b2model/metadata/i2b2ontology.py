@@ -169,7 +169,7 @@ class OntologyEntry(I2B2_Core):
 class OntologyRoot(OntologyEntry):
     _t = DynElements(OntologyEntry)
 
-    def __init__(self, base: str, **kwargs):
+    def __init__(self, base: str, **kwargs) -> None:
         """
         Initialize an ontology header.
         :param kwargs: Additional arguments for i2b2_core

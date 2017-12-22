@@ -74,6 +74,7 @@ def pluralize(cnt: int, base: Any) -> str:
 def initialize_table_defaults(g: Graph, opts: Namespace) -> None:
     """
     Initialize all of the table defaults
+    :param g: Graph containing fhir.ttl
     :param opts: input options
     """
     # TODO: This is kind of messy -- we've refactored so we should be able to consolidate this

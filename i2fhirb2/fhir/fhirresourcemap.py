@@ -69,7 +69,7 @@ class FHIR_Observation_Fact_type(FHIR_Resource_type):
 
 
 class FHIR_Visit_Dimension_type(FHIR_Resource_type):
-    def __init__(self, patient_ref: str):
+    def __init__(self, patient_ref: str) -> None:
         self.patient_ref = patient_ref
 
 

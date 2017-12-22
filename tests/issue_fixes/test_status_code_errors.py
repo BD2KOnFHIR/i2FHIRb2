@@ -55,6 +55,5 @@ class StatusCodeErrorsTestCase(unittest.TestCase):
         self.assertEqual("ZD", vital_status_code.code)
 
 
-
 if __name__ == '__main__':
     unittest.main()

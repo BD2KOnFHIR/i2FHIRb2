@@ -151,7 +151,8 @@ class W5TestCase(unittest.TestCase):
            '\\FHIR\\clinical\\general\\UserSession\\:(http://hl7.org/fhir/UserSession)',
            '\\FHIR\\clinical\\medication\\',
            '\\FHIR\\clinical\\medication\\ImmunizationEvaluation\\:(http://hl7.org/fhir/ImmunizationEvaluation)',
-           '\\FHIR\\clinical\\medication\\ImmunizationRecommendation\\:(http://hl7.org/fhir/ImmunizationRecommendation)',
+           '\\FHIR\\clinical\\medication\\ImmunizationRecommendation\\:'
+           '(http://hl7.org/fhir/ImmunizationRecommendation)',
            '\\FHIR\\clinical\\medication\\Immunization\\:(http://hl7.org/fhir/Immunization)',
            '\\FHIR\\clinical\\medication\\MedicationAdministration\\:(http://hl7.org/fhir/MedicationAdministration)',
            '\\FHIR\\clinical\\medication\\MedicationDispense\\:(http://hl7.org/fhir/MedicationDispense)',

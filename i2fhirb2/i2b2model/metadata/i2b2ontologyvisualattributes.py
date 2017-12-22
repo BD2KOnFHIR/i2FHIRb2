@@ -31,7 +31,7 @@ from typing import Optional, cast, Sized
 class VisualAttributes:
     """ i2b2 Metadata Visual attributes element
     """
-    def __init__(self, string_value: Optional[str] = None):
+    def __init__(self, string_value: Optional[str] = None) -> None:
         """
         Constructor from optional string value.
         :param string_value:

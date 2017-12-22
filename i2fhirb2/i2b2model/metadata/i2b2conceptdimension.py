@@ -60,7 +60,7 @@ class ConceptDimension(CommonDimension):
 class ConceptDimensionRoot(ConceptDimension):
     _t = DynElements(ConceptDimension)
 
-    def __init__(self, base: str, **kwargs):
+    def __init__(self, base: str, **kwargs) -> None:
         super().__init__(OWL.Class, **kwargs)
         self._base = base
 

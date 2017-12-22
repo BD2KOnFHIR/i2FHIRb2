@@ -35,7 +35,7 @@ from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
 class _I2B2Tables:
     _funcs = {"phys_name", "all_tables"}
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.concept_dimension = None
         self.modifier_dimension = None
         self.table_access = None

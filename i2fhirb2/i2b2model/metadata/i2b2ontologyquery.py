@@ -74,7 +74,7 @@ class ConceptQuery(Query):
     """
     A query for the concept dimension.   The only (typical) variable is the object of the WHERE clause.
     """
-    def __init__(self, where_obj: str):
+    def __init__(self, where_obj: str) -> None:
         """
         Concept dimension query.
         Usually: "SELECT concept_cd FROM concept_dimension WHERE concept_path LIKE {where_obj}
@@ -93,7 +93,7 @@ class ModifierQuery(Query):
     """
     Modifier dimension query.  The only (typical) variable is the object of the WHERE clause.
     """
-    def __init__(self, where_obj: str):
+    def __init__(self, where_obj: str) -> None:
         """
         Modifier dimension query.
         Usually: "SELECT modifier_cd FROM modifier_dimension WHERE modifier_path LIKE {where_obj}"
@@ -154,7 +154,7 @@ class VisitQuery(Query):
 
 
 class ProviderQuery(Query):
-    def __init__(self, where_obj):
+    def __init__(self, where_obj) -> None:
         """
         Provider dimension query.
         Usually: "SELECT provider_id FROM provider_dimension WHERE provider_path LIKE {where_obj}"

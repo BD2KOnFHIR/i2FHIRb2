@@ -65,7 +65,7 @@ def predicate_and_type_for(g: Graph, restriction_node: Union[URIRef, BNode]) -> 
 
 
 class FMVGraphEdge:
-    def __init__(self, g: Graph, restriction_node: Union[URIRef, BNode]):
+    def __init__(self, g: Graph, restriction_node: Union[URIRef, BNode]) -> None:
         """
         An edge (predicate) in an FMV graph.  Determined by parsing either an existential (OWL:someValuesFrom)
          or universal (OWL:allValuesFrom) element in an OWL:Restriction node.

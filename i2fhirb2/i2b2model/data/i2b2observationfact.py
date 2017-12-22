@@ -35,7 +35,7 @@ from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class ObservationFactKey:
-    def __init__(self, patient_num: int, encounter_num: int, provider_id: str, start_date: Optional[datetime] = None):
+    def __init__(self, patient_num: int, encounter_num: int, provider_id: str, start_date: Optional[datetime] = None) -> None:
         """
         A partial key to the observation fact table.  These three or four elements identify a collection of facts
         that can be added or replaced as a block
@@ -52,8 +52,9 @@ class ObservationFactKey:
 
 
 class ValueTypeCd:
-    def __init__(self, code: str):
+    def __init__(self, code: str) -> None:
         self.code = code
+
 
 valuetype_text = ValueTypeCd('T')
 valuetype_number = ValueTypeCd('N')
@@ -98,7 +99,7 @@ class ObservationFact(I2B2_Core_With_Upload_Id):
     key_fields = ["patient_num", "concept_cd", "modifier_cd", "start_date",
                   "encounter_num", "instance_num", "provider_id"]
 
-    def __init__(self, fact_key: ObservationFactKey, concept_cd: str, **kwargs):
+    def __init__(self, fact_key: ObservationFactKey, concept_cd: str, **kwargs) -> None:
         super().__init__(**kwargs)
         self._patient_num = fact_key.patient_num
         self._encounter_num = fact_key.encounter_num

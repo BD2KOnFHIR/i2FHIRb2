@@ -12,7 +12,7 @@
 ```python
 from typing import Dict, Optional
 from rdflib import URIRef
-from i2fhirb2.fhir.fhirresourcemap import FHIR_Resource_type, FHIR_Observation_Fact_type, FHIR_Bundle_type,FHIR_Visit_Dimension_type, FHIR_Provider_Dimension_type, FHIR_Patient_Dimension_type, FHIR_Infrastructure_type
+from i2fhirb2.fhir.fhirresourcemap import FHIR_Resource_type, FHIR_Observation_Fact_type, FHIR_Bundle_type, FHIR_Visit_Dimension_type, FHIR_Provider_Dimension_type, FHIR_Patient_Dimension_type, FHIR_Infrastructure_type
 from fhirtordf.rdfsupport.namespaces import FHIR
 
 FHIR_RESOURCE_MAP: Dict[URIRef, Optional[FHIR_Resource_type]] = {

@@ -44,7 +44,7 @@ from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables
 
 
 class FHIRPatientDimension:
-    def __init__(self, g: Graph, tables: Optional[I2B2Tables], patient: URIRef):
+    def __init__(self, g: Graph, tables: Optional[I2B2Tables], patient: URIRef) -> None:
         """
         Generate i2b2 patient dimension and patient_mapping records from PATIENT resources in graph g
         :param g: Graph containing 0 or more FHIR Patient resources

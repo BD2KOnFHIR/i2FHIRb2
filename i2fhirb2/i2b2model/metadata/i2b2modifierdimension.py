@@ -59,7 +59,7 @@ class ModifierDimension(CommonDimension):
 class ModifierDimensionRoot(ModifierDimension):
     _t = DynElements(ModifierDimension)
 
-    def __init__(self, base: str, **kwargs):
+    def __init__(self, base: str, **kwargs) -> None:
         super().__init__(**kwargs)
         self._base = base
 

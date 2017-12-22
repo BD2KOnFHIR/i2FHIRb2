@@ -58,7 +58,7 @@ from i2fhirb2.tsv_support.tsvwriter import write_tsv
 # TODO: Handle continuation pages in queries and bundles
 
 class I2B2GraphMap:
-    def __init__(self, g: Graph, opts: Namespace):
+    def __init__(self, g: Graph, opts: Namespace) -> None:
         """
         Iterate over the resources in the graph mapping them to their i2b2 equivalent
         :param g: graph

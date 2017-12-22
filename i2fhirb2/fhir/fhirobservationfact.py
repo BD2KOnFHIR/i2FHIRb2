@@ -95,7 +95,7 @@ literal_conversions = {
 class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
 
-    def __init__(self, g: Graph, ofk: ObservationFactKey, concept: URIRef, modifier: Optional[URIRef], object: Node,
+    def __init__(self, g: Graph, ofk: ObservationFactKey, concept: URIRef, modifier: Optional[URIRef], obj: Node,
                  instance_num: Optional[int] = None) -> None:
         """
         Construct an observation fact entry
@@ -103,14 +103,14 @@ class FHIRObservationFact(ObservationFact):
         :param ofk: Observation fact key - patient, encounter, etc
         :param concept: concept URI
         :param modifier: modifier URI (if any)
-        :param object: object of concept_code
+        :param obj: object of concept_code
         :param instance_num: instance identifier
         """
         super().__init__(ofk, concept_code(concept))
         if modifier is not None:
             self._modifier_cd = concept_code(modifier)
         self._instance_num = instance_num
-        self.fhir_primitive(g, object)
+        self.fhir_primitive(g, obj)
 
     def fhir_primitive(self, g: Graph, obj: Optional[Node]) -> None:
         assert(instance_is_primitive(g, obj))
@@ -144,7 +144,7 @@ class FHIRObservationFactFactory:
 
     special_processing_list = {RDF.type: None, FHIR.nodeRole: None, FHIR.index: None, FHIR.link: None}
 
-    def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]):
+    def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]) -> None:
         self.g = g
         self.ofk = ofk
         self.observation_facts = []         # type: List[FHIRObservationFact]
