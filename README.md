@@ -1,7 +1,8 @@
 # i2FHIRb2 - FHIR in i2b2
 
 ## Edit history
-* Major update for version 0.2.0
+* 0.2.0 - Major overhaul
+* 0.2.1 - `Observation.referenceRange` temporarily removed to allow batch loads
 
 ## Introduction
 This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
