@@ -142,7 +142,9 @@ class FHIRObservationFactFactory:
     visit_dimension, provider_dimension, patient_mapping and encounter_mapping entries
     """
 
-    special_processing_list = {RDF.type: None, FHIR.nodeRole: None, FHIR.index: None, FHIR.link: None}
+    # TODO: FHIR.Observation.referenceRange predicates are a temporary fix to issue 7.  Get a real fix in!
+    special_processing_list = {RDF.type: None, FHIR.nodeRole: None, FHIR.index: None, FHIR.link: None,
+                               FHIR.Observation.referenceRange: None}
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]) -> None:
         self.g = g
