@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 import sys
 
@@ -25,7 +25,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
         'Intended Audience :: Healthcare Industry',
-        'License :: OSI Approved :: Apache Software License'
+        'License :: OSI Approved :: Apache Software License',
         'Topic :: Database',
         'Programming Language :: Python :: 3 :: Only'
     ]
