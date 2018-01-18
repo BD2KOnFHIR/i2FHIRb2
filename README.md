@@ -17,10 +17,28 @@ work with earlier versions, you may encounter issues, including:
  non-postgres back end.
 
 Before you start, you will need to know:
-1) The ip and port of the i2b2 SQL server.  The default for postgres is: **localhost:5432**
+1) The ip address and port number of the i2b2 SQL server.  The default for postgres is: **localhost:5432**
 2) A userid/password combination that has write access to the `i2b2demodata` (CRC) and `i2b2metadata` schemas.  The default for postgresql is: **postgres**:[none], but, being a responsible dba, you will have changed these.
 
 You should also have an i2b2 client (we use the web client) that can access and query the installed services.
+
+## Installing i2FHIRb2
+### Prerequsites 
+You will need the latest version of [Python 3](https://www.python.org/) (3.6 or later).  This software will not work with Python 2 or earlier versions of Python 3.
+
+
+```text
+> python --version
+Python 3.6.1
+>
+
+```
+
+### Installation
+```text
+> pip install i2FHIRb2
+
+```
 
 ## Quick Summary
 The sections below tell you how to:
@@ -36,21 +54,9 @@ There are two ways to load/update an existing set of i2b2 tables:
 
 ### 1. Running `generate_i2b2`
 
-#### Prerequsites 
-You need a current version of [Python 3](https://www.python.org/) (>= 3.6) installed on your computer.  ()At some point we may be able to back-rev this to earlier Python 3 versions, but, for not...)
 
-```text
-> python3 --version
-Python 3.6.1
->
-```
 
-#### Download the i2FHIRb2 software 
-Download or clone the [FHIR in i2b2 (i2FHIRb2)](https://github.com/BD2KOnFHIR/i2FHIRb2) package into a local directory.
-```text
-> git clone https://github.com/BD2KonFHIR/i2FHIRb2
-> cd i2FHIRb2
-```
+
 
 #### Create a virtual environment
 1) Install `virtualenv` if needed:

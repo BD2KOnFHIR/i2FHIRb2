@@ -12,7 +12,9 @@ if sys.version_info < (3, 5):
 setup(
     name='i2FHIRb2',
     version=__version__,
-    packages=['tests', 'scripts', 'i2fhirb2', 'i2fhirb2.fhir', 'i2fhirb2.i2b2model', 'i2fhirb2.sqlsupport'],
+    packages=['tests', 'scripts', 'i2fhirb2', 'i2fhirb2.fhir', 'i2fhirb2.i2b2model', 'i2fhirb2.sqlsupport',
+              'i2fhirb2.i2b2model.data', 'i2fhirb2.i2b2model.metadata', 'i2fhirb2.i2b2model.shared',
+              'i2fhirb2.tsv_support', 'i2fhirb2.loaders'],
     url='https://github.com/BD2KOnFHIR/i2FHIRb2',
     license='Apache 2.0',
     author='Harold Solbrig',

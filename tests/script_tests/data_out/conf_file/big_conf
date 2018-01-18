@@ -1,0 +1,16 @@
+--metadatavoc metavoc
+--sourcesystem sourcesystemcode
+--uploadid 17334
+--base BASE
+--uribase uribase
+--providerid provider
+--dburl dburl
+--user defuser
+--password defpassword
+--crcdb crcdburl
+--crcuser crcuser
+--crcpassword crcpwd
+--ontodb ontdburl
+--ontouser ontuser
+--ontopassword ontpasswd
+--onttable tables

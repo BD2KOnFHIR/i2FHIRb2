@@ -1,0 +1,18 @@
+--metadatavoc http://build.fhir.org/
+--sourcesystem FHIR STU3
+--uploadid None
+--base \FHIR\
+--uribase http://hl7.org/fhir/
+--providerid FHIR:DefaultProvider
+--dburl postgresql+psycopg2://localhost:5432/i2b2
+--user postgres
+--password postgres
+--crcdb None
+--crcuser None
+--crcpassword None
+--ontodb None
+--ontouser None
+--ontopassword None
+--onttable custom_meta
+--version None
+--file data/db_conf_mt
