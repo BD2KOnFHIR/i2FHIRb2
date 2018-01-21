@@ -50,7 +50,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
     conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
 
     opts = genargs('-l --conf {} '.format(conf_file).split())
-    process_parsed_args(opts)
+    process_parsed_args(opts, None)
 
     @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
     @unittest.expectedFailure

@@ -1,30 +1,35 @@
-usage: _jb_unittest_runner.py [-h] [--sourcesystemcd Source system code]
-                              [-mv METAVOC] [--conf CONFIG FILE] [-db DBURL]
-                              [--user USER] [--password PASSWORD]
-                              [--crcdb CRCDB] [--crcuser CRCUSER]
-                              [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
-                              [--ontouser ONTOUSER]
-                              [--ontopassword ONTOPASSWORD]
-                              [--onttable ONTOLOGY TABLE NAME]
-                              [Upload identifiers [Upload identifiers ...]]
+usage: removefacts [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
+                   [-u [UPLOAD IDENTIFIER [UPLOAD IDENTIFIER ...]]]
+                   [--base CONCEPT IDENTIFIER BASE] [-ub URIBASE]
+                   [-p DEFAULT PROVIDER ID] [--conf CONFIG FILE] [-db DBURL]
+                   [--user USER] [--password PASSWORD] [--crcdb CRCDB]
+                   [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
+                   [--ontodb ONTODB] [--ontouser ONTOUSER]
+                   [--ontopassword ONTOPASSWORD]
+                   [--onttable ONTOLOGY TABLE NAME]
 
 Clear data from FHIR observation fact table
 
-positional arguments:
-  Upload identifiers    Upload identifer(s) -- unique batch identifiers
-
 optional arguments:
   -h, --help            show this help message and exit
-  --sourcesystemcd Source system code
-                        sourcesystem_code to remove
-  -mv METAVOC, --metavoc METAVOC
-                        Metavocabulary directory - ignored
+  -v, --version
+  -mv METADATAVOC, --metadatavoc METADATAVOC
+                        Location of FHIR Metavocabulary file
+  -ss SOURCE SYSTEM CODE, --sourcesystem SOURCE SYSTEM CODE
+                        Sourcesystem code
+  -u [UPLOAD IDENTIFIER [UPLOAD IDENTIFIER ...]], --uploadid [UPLOAD IDENTIFIER [UPLOAD IDENTIFIER ...]]
+                        Upload identifer -- uniquely identifies this batch
+  --base CONCEPT IDENTIFIER BASE
+                        Concept dimension and ontology base path
+  -ub URIBASE, --uribase URIBASE
+                        RESOURCE URI BASE
+  -p DEFAULT PROVIDER ID, --providerid DEFAULT PROVIDER ID
+                        Default provider id
   --conf CONFIG FILE    Configuration file
   -db DBURL, --dburl DBURL
-                        Default database URL (default:
-                        postgresql+psycopg2://localhost:5432/i2b2)
-  --user USER           Default user name (default: postgres)
-  --password PASSWORD   Default password (default: postgres)
+                        Default database URL
+  --user USER           Default user name
+  --password PASSWORD   Default password
   --crcdb CRCDB         CRC database URL. (default: dburl)
   --crcuser CRCUSER     User name for CRC database. (default: user)
   --crcpassword CRCPASSWORD
@@ -34,5 +39,4 @@ optional arguments:
   --ontopassword ONTOPASSWORD
                         Password for ontology database. (default: password)
   --onttable ONTOLOGY TABLE NAME
-                        Ontology table name (default: custom_meta) (default:
-                        custom_meta)
+                        Ontology table name (default: custom_meta)

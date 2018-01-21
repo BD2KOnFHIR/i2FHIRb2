@@ -53,7 +53,7 @@ class Issue8TestCase(ScriptTestBase):
     def reset_facts():
         save_stdout = sys.stdout
         sys.stdout = io.StringIO()
-        remove_facts(f"{test_upload_id} --conf {test_conf_file}".split())
+        remove_facts(f"-u {test_upload_id} --conf {test_conf_file}".split())
         sys.stdout = save_stdout
 
     @classmethod

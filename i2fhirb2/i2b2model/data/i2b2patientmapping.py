@@ -47,7 +47,7 @@
 from typing import List, Tuple
 
 
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
@@ -62,8 +62,8 @@ class PatientIDEStatus:
     merged = PatientIDEStatusCode("M")
 
 
-class PatientMapping(I2B2_Core_With_Upload_Id):
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+class PatientMapping(I2B2CoreWithUploadId):
+    _t = DynElements(I2B2CoreWithUploadId)
 
     key_fields = ["patient_ide", "patient_ide_source", "project_id"]
 

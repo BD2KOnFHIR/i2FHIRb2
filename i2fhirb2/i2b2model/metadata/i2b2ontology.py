@@ -35,12 +35,12 @@ from i2fhirb2.fhir.fhirspecific import concept_path, concept_code, modifier_code
 from i2fhirb2.i2b2model.metadata.dimensionmetadata import metadata_xml
 from i2fhirb2.i2b2model.metadata.i2b2ontologyquery import Query, ModifierQuery, ConceptQuery, EmptyQuery
 from i2fhirb2.i2b2model.metadata.i2b2ontologyvisualattributes import VisualAttributes
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2Core
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
 
 
-class OntologyEntry(I2B2_Core):
-    _t = DynElements(I2B2_Core)
+class OntologyEntry(I2B2Core):
+    _t = DynElements(I2B2Core)
     graph = None                # type: Graph
     ontology_name = "FHIR"
 

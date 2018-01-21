@@ -29,7 +29,10 @@ import os
 import unittest
 
 from rdflib import Graph
-from tests.utils.base_test_case import test_data_directory, mvdir
+
+from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
+from tests.utils.base_test_case import test_data_directory
+from tests.utils.shared_graph import shared_graph
 
 
 class W5TestCase(unittest.TestCase):
@@ -87,9 +90,6 @@ class W5TestCase(unittest.TestCase):
              '\\FHIR\\workflow\\scheduling\\'], [str(e) for e in sorted(fot.w5_paths())])
 
     def test_full_w5_paths(self):
-        from i2fhirb2.fhir.fhirmetadatavocabulary import FHIRMetaDataVocabulary
-        self.fmv = FHIRMetaDataVocabulary(os.path.join(mvdir, 'fhir.ttl'), os.path.join(mvdir, 'w5.ttl'))
-
         self.assertEqual([
            '\\FHIR\\administrative\\',
            '\\FHIR\\administrative\\device\\',
@@ -198,7 +198,7 @@ class W5TestCase(unittest.TestCase):
            '\\FHIR\\workflow\\scheduling\\Appointment\\:(http://hl7.org/fhir/Appointment)',
            '\\FHIR\\workflow\\scheduling\\Schedule\\:(http://hl7.org/fhir/Schedule)',
            '\\FHIR\\workflow\\scheduling\\Slot\\:(http://hl7.org/fhir/Slot)'],
-            [str(e) for e in sorted(self.fmv.w5_graph.w5_paths())])
+            [str(e) for e in sorted(FHIRW5Ontology(shared_graph).w5_paths())])
 
 
 if __name__ == '__main__':

@@ -41,22 +41,22 @@ class LoadFactsHelper(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.conf = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
-        cls.mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'))
+        cls.mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         cls.dirname, test_file = os.path.split(os.path.abspath(cls.caller_filename))
         cls.source_system = re.sub(r'\.[^.]+$', '', test_file)
 
     def setUp(self):
-        remove_facts(f"--sourcesystemcd {self.source_system} --conf {self.conf}".split())
+        remove_facts(f"--sourcesystem {self.source_system} --conf {self.conf}".split())
 
     def tearDown(self):
-        remove_facts(f"--sourcesystemcd {self.source_system} --conf {self.conf}".split())
+        remove_facts(f"--sourcesystem {self.source_system} --conf {self.conf}".split())
 
     def create_test_output(self, infilename: str):
         """ Helper to generate test output for input file infilename """
 
         input_dir = os.path.abspath((os.path.join(self.dirname, 'data')))
 
-        mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'))
+        mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         input_file = os.path.abspath(os.path.join(input_dir, infilename))
 
         load_facts(f"--sourcesystem {self.source_system} -mv {mv} --conf {self.conf} -i {input_file}"

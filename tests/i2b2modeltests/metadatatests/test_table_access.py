@@ -29,7 +29,7 @@
 import unittest
 from collections import OrderedDict
 
-from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
+from i2fhirb2.i2b2model.shared.tablenames import DEFAULT_ONTOLOGY_TABLE
 
 
 class TableAccessTestCase(unittest.TestCase):

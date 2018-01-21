@@ -32,7 +32,7 @@ from collections import OrderedDict
 import datetime
 
 from isodate import FixedOffset
-from rdflib import Graph
+from rdflib import Graph, Literal, XSD
 
 from tests.utils.connection_helper import connection_helper
 
@@ -60,15 +60,17 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
                format="turtle")
         s = FHIR['Patient/example']
         pd_entry = FHIRPatientDimension(g, connection_helper().tables, s)
-
+        rslt = pd_entry.patient_dimension_entry._freeze()
+        real_pat_num = rslt['patient_num']
+        rslt['patient_num'] = 100000001
+        bd = Literal("1974-12-25T14:35:45-05:00", datatype=XSD.dateTime).value
         self.assertEqual(OrderedDict([
              ('patient_num', 100000001),
              ('vital_status_cd', 'UH'),
-             ('birth_date',
-              datetime.datetime(1974, 12, 25, 14, 35, 45, tzinfo=FixedOffset(-5))),
+             ('birth_date', bd),
              ('death_date', None),
              ('sex_cd', 'M'),
-             ('age_in_years_num', 43),
+             ('age_in_years_num', 44),
              ('language_cd', None),
              ('race_cd', None),
              ('marital_status_cd', None),
@@ -81,9 +83,12 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 12345)]), pd_entry.patient_dimension_entry._freeze())
+             ('upload_id', 12345)]), rslt)
 
         self.assertEqual(2, len(pd_entry.patient_mappings.patient_mapping_entries))
+        rslt = pd_entry.patient_mappings.patient_mapping_entries[0]._freeze()
+        self.assertEqual(real_pat_num, rslt['patient_num'])
+        rslt['patient_num'] = 100000001
         self.assertEqual(OrderedDict([
              ('patient_ide', 'example'),
              ('patient_ide_source', 'http://hl7.org/fhir/'),
@@ -94,7 +99,12 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[0]._freeze())
+             ('upload_id', 12345)]), rslt)
+        rslt = pd_entry.patient_mappings.patient_mapping_entries[1]._freeze()
+        self.assertEqual(real_pat_num, rslt['patient_num'])
+        self.assertEqual(str(real_pat_num), rslt['patient_ide'])
+        rslt['patient_ide'] = '100000001'
+        rslt['patient_num'] = 100000001
         self.assertEqual(OrderedDict([
              ('patient_ide', '100000001'),
              ('patient_ide_source', 'HIVE'),
@@ -105,7 +115,7 @@ class FHIRPatientDimensionTestCase(unittest.TestCase):
              ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
              ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 12345)]), pd_entry.patient_mappings.patient_mapping_entries[1]._freeze())
+             ('upload_id', 12345)]), rslt)
 
     def test_patient_death_dates(self):
         """ Test the various types of deathdates"""

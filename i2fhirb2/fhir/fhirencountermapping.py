@@ -32,7 +32,7 @@ from rdflib import URIRef
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
-from i2fhirb2.fhir.fhirspecific import IDE_SOURCE_HIVE, DEFAULT_PROJECT_ID, DEFAULT_ENCOUNTER_NUMBER_START
+from i2fhirb2.common_cli_parameters import DEFAULT_PROJECT_ID, DEFAULT_ENCOUNTER_NUMBER_START, IDE_SOURCE_HIVE
 from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 

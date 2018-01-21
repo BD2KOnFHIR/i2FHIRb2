@@ -26,39 +26,12 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 import argparse
-import shlex
 from argparse import Namespace
-from typing import List
+from typing import Callable, Optional
 
-import os
-
-from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
-from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
+from i2fhirb2.file_aware_parser import FileAwareParser
+from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames, DEFAULT_ONTOLOGY_TABLE
 from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables
-
-Default_DB_Connection = "postgresql+psycopg2://localhost:5432/i2b2"
-Default_User = "postgres"
-Default_Password = "postgres"
-
-
-class FileAwareParser(argparse.ArgumentParser):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.file_args = []
-
-    def add_file_argument(self, *args, **kwargs):
-        rval = self.add_argument(*args, **kwargs)
-        self.file_args.append(rval)
-        return rval
-
-    def add_argument(self, *args, **kwargs):
-        defhelp = kwargs.pop("help", None)
-        default = kwargs.pop("default", None)
-        if not defhelp or default is None or kwargs.get('action') == 'help':
-            return super().add_argument(*args, help=defhelp, default=default, **kwargs)
-        else:
-            return super().add_argument(*args, help=defhelp + " (default: {})".format(default),
-                                        default=default, **kwargs)
 
 
 class ConfigFile(argparse.Action):
@@ -69,13 +42,19 @@ class ConfigFile(argparse.Action):
         raise AttributeError("Must preprocess input arguments with decode_file_args function")
 
 
-def add_connection_args(parser: FileAwareParser) -> FileAwareParser:
+def add_connection_args(parser: FileAwareParser, strong_config_file: bool=True) -> FileAwareParser:
     """
     Add the database connection arguments to the supplied parser
+
     :param parser: parser to add arguments to
+    :param strong_config_file: If True, force --conf to be processed.  This is strictly a test for programming errors,
+      and has to be skipped due to removefacts function.
     :return: parser
     """
-    parser.add_file_argument("--conf", metavar="CONFIG FILE", help="Configuration file", action=ConfigFile)
+    # TODO: Decide what to do with this
+    parser.add_file_argument("--conf", metavar="CONFIG FILE", help="Configuration file",
+                             action=ConfigFile if strong_config_file else None)
+
     parser.add_argument("-db", "--dburl", help="Default database URL",
                         default=Default_DB_Connection)
     parser.add_argument("--user", help="Default user name",
@@ -94,10 +73,11 @@ def add_connection_args(parser: FileAwareParser) -> FileAwareParser:
     return parser
 
 
-def process_parsed_args(opts: Namespace, connect: bool=True) -> Namespace:
+def process_parsed_args(opts: Namespace, error_fun: Optional[Callable], connect: bool=True) -> Namespace:
     """
     Set the defaults for the crc and ontology schemas
     :param opts: parsed arguments
+    :param error_fun: Function to call if error
     :param connect: actually connect. (For debugging)
     :return: namespace with additional elements added
     """
@@ -106,6 +86,9 @@ def process_parsed_args(opts: Namespace, connect: bool=True) -> Namespace:
         if not getattr(opts, vn):
             setattr(opts, vn, default)
 
+    if error_fun and \
+            (getattr(opts, 'dburl') is None or getattr(opts, 'user') is None or getattr(opts, 'password') is None):
+        error_fun("db url, user id and password must be supplied")
     setdefault('crcdb', opts.dburl)
     setdefault('crcuser', opts.user)
     setdefault('crcpassword', opts.password)
@@ -115,43 +98,13 @@ def process_parsed_args(opts: Namespace, connect: bool=True) -> Namespace:
     if connect:
         opts.tables = I2B2Tables(opts)
 
-    i2b2tablenames.ontology_table = opts.onttable
+    # TODO: This approach needs to be re-thought.  As i2b2tablenames is a singleton, any changes here
+    # impact the entire testing harness
+    if opts.onttable:
+        i2b2tablenames.ontology_table = opts.onttable
     return opts
 
 
-def decode_file_args(argv: List[str], parser: FileAwareParser = None) -> List[str]:
-    """
-    Preprocess a configuration file.  The location of the configuration file is stored in the parser so that the
-    FileOrURI action can add relative locations.
-    :param argv: raw options list
-    :param parser: argument parser.  Used as an anchor for the configuration file location
-    :return: options list with '--conf' references replaced with file contents
-    """
-    for i in range(0, len(argv) - 1):
-        # TODO: take prefix into account
-        if argv[i] == '--conf':
-            del argv[i]
-            conf_file = argv[i]
-            del(argv[i])
-            with open(conf_file) as config_file:
-                conf_args = shlex.split(config_file.read())
-                if parser:
-                    argv += fix_rel_paths(conf_args, parser, conf_file)
-            return decode_file_args(argv)
-    return argv
-
-
-def fix_rel_paths(conf_args: List[str], parser: FileAwareParser, conf_file: str) -> List[str]:
-    base_path = os.path.abspath(os.path.split(conf_file)[0])
-    rval = []
-    is_file_arg = False
-    for conf_arg in conf_args:
-        if any(conf_arg.startswith(prefix) for prefix in parser.prefix_chars):
-            rval.append(conf_arg)
-            is_file_arg = any(conf_arg in file_action.option_strings for file_action in parser.file_args)
-            # TODO: recursive config files
-        elif is_file_arg and ('://' not in conf_arg and not os.path.isabs(conf_arg)):
-                rval.append(os.path.abspath(os.path.join(base_path, conf_arg)))
-        else:
-            rval.append(conf_arg)
-    return rval
+Default_DB_Connection = "postgresql+psycopg2://localhost:5432/i2b2"
+Default_User = "postgres"
+Default_Password = "postgres"

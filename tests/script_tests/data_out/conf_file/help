@@ -1,17 +1,17 @@
-usage: conf_file [-h] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
+usage: conf_file [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
                  [-u UPLOAD IDENTIFIER] [--base CONCEPT IDENTIFIER BASE]
                  [-ub URIBASE] [-p DEFAULT PROVIDER ID] [--conf CONFIG FILE]
                  [-db DBURL] [--user USER] [--password PASSWORD]
                  [--crcdb CRCDB] [--crcuser CRCUSER]
                  [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
                  [--ontouser ONTOUSER] [--ontopassword ONTOPASSWORD]
-                 [--onttable ONTOLOGY TABLE NAME] [-v] [-f FILE] [-s]
-                 [--update] [-c] [-c!]
+                 [--onttable ONTOLOGY TABLE NAME] [-f FILE] [-s] [-c] [-c!]
 
 Create configuration file for i2FHIRb2 software
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --version
   -mv METADATAVOC, --metadatavoc METADATAVOC
                         Location of FHIR Metavocabulary file (default:
                         http://build.fhir.org/)
@@ -43,9 +43,7 @@ optional arguments:
   --onttable ONTOLOGY TABLE NAME
                         Ontology table name (default: custom_meta) (default:
                         custom_meta)
-  -v, --version         Show software version number and exit
   -f FILE, --file FILE  Configuration file (default: db_conf)
-  -s, --show            Display current configuration (Default)
-  --update              Update or change values in existing file
+  -s, --show            Display current configuration
   -c, --create          Create new configuration file if not exists
   -c!, --createorrep    Create or replace configuration file

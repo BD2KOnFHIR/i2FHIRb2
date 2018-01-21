@@ -33,7 +33,8 @@ from collections import OrderedDict
 
 
 from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
-from i2fhirb2.fhir.fhirspecific import FHIR, IDE_SOURCE_HIVE
+from i2fhirb2.fhir.fhirspecific import FHIR
+from i2fhirb2.common_cli_parameters import IDE_SOURCE_HIVE
 from tests.utils.connection_helper import connection_helper
 
 

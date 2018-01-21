@@ -1,4 +1,0 @@
--mv ../tests/data/fhir_metadata_vocabulary
---dburl postgresql+psycopg2://localhost:5432/i2b2
---user postgres
---password postgres

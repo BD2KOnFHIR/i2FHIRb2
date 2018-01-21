@@ -29,7 +29,7 @@
 # TODO: The mapping portion of this function should be loaded from the i2b2 table mapping table
 from typing import List
 
-from i2fhirb2.fhir.fhirspecific import DEFAULT_ONTOLOGY_TABLE
+DEFAULT_ONTOLOGY_TABLE = "custom_meta"      # Default metadata ontology table
 
 
 class _I2B2Tables:
@@ -48,23 +48,21 @@ class _I2B2Tables:
         self.encounter_mapping = None
 
     def __getattribute__(self, item):
+        """ Return the logical name of a table  """
         if item.startswith("_") or item not in self.__dict__:
             return super().__getattribute__(item)
-        v = self.__dict__[item]
-        return item if item not in _I2B2Tables._funcs else v
+        return self.__dict__[item] if item in _I2B2Tables._funcs else item
 
-    def __setattribute__(self, item, value):
-        if item.startswith("_") or item not in self.__dict__:
-            super().__setattr__(item, value)
-        self.__dict__[item] = value
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
 
     def _clear(self):
         for k in self.all_tables():
             setattr(self, k, None if k != 'ontology_table' else DEFAULT_ONTOLOGY_TABLE)
 
     def phys_name(self, item: str) -> str:
-        """
-        Return the physical (mapped) name of item.
+        """Return the physical (mapped) name of item.
+
         :param item: logical table name
         :return: physical name of table
         """

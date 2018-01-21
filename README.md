@@ -3,6 +3,7 @@
 ## Edit history
 * 0.2.0 - Major overhaul
 * 0.2.1 - `Observation.referenceRange` temporarily removed to allow batch loads
+* 0.2.2 - Added `conf_file` utility and removed hard-coded configuration files.  Now available via `pip`
 
 ## Introduction
 This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.
@@ -35,10 +36,52 @@ Python 3.6.1
 ```
 
 ### Installation
+#### Install i2FHIRb2 package
 ```text
 > pip install i2FHIRb2
-
 ```
+
+#### Validate the installation
+```text
+> generate_i2b2 -v
+Version: 0.2.2              <--- a newer version may print here
+```
+
+#### Generate the configuration file
+The following command creates a file, `my_conf` with the default configuration parameters for the i2FIRb2 package.
+```text
+> config_file -f my_conf --user <db user> --password <db password> 
+```
+This file has an editable set of parameters used by the FHIR loading tools.  All of these parameters can be set or overriden on the command line.  Of particular interest are:
+* **dburl** - the URL of the target i2b2 SQL instance
+* **user** - user id to use with instance
+* **password** - password to use with instance
+* **sourcesystem** - sourcesystem_id used in i2b2 tables.  Handy in that `removefacts` can remove all entries for a given source system
+* **uploadid** - upload identifier used in i2b2 tables.  Individual uploads can also be removed.
+
+#### Test the configuration file
+```text
+> generate_i2b2 --conf my_conf --test
+Validating input files
+	URL: http://build.fhir.org/fhir.ttl is valid
+	URL: http://build.fhir.org/w5.ttl is valid
+Validating sql connection
+	Connection validated
+Validating target tables
+	Table concept_dimension exists
+	Table encounter_mapping exists
+	Table modifier_dimension exists
+	Table observation_fact exists
+	Table ontology_table exists
+	Table patient_dimension exists
+	Table patient_mapping exists
+	Table provider_dimension exists
+	Table table_access exists
+	Table visit_dimension exists
+Testing write access
+	2 rows updated in table_access table
+```
+(TODO: Add a fail situation)
 
 ## Quick Summary
 The sections below tell you how to:
@@ -50,104 +93,14 @@ The sections below tell you how to:
 There are two ways to load/update an existing set of i2b2 tables:
 1) Run `generate_i2b2` and load the tables directly
 2) Import the tab separated value (.tsv) tables that have been preloaded as part of this project
-
-
-### 1. Running `generate_i2b2`
-
-
-
-
-
-#### Create a virtual environment
-1) Install `virtualenv` if needed:
-```text
-> virtualenv --version
--bash: virtualenv: command not found    <-- If you get this message ...
-> pip install virtualenv                <-- ... install virtualenv
-   ...
-> virtualenv --version
-15.1.0
->
-```
-2) Create a new virtual environment and activate it
-```text
-> virtualenv venv -p python3
-Running virtualenv with interpreter /Library/Frameworks/Python.framework/Versions/3.6/bin/python3
-Using base prefix '/Library/Frameworks/Python.framework/Versions/3.6'
-   ...
-> . venv/bin/activate
-(venv) > 
-```
-
-#### Install i2FHIRb2 in the environment
-
-    
-In the root project directory (i2FHIRb2):
-```text
-(venv) > pip install -e .
-Obtaining file:///Users/mrf7578/Downloads/i2b2test/i2FHIRb2
-Collecting SQLAlchemy (from i2FHIRb2==0.1.0)
-Collecting python_dateutil (from i2FHIRb2==0.1.0)
-  Using cached python_dateutil-2.6.1-py2.py3-none-any.whl
-Collecting rdflib (from i2FHIRb2==0.1.0)
-  Using cached rdflib-4.2.2-py3-none-any.whl
-   ...
-(venv) > 
-```
-(Don't miss the period  ('.') in the above command)
-
-#### Validate the installation
-```text
-(venv) > generate_i2b2 -v
-Version: 0.2.0              <--- a newer version may print here
-```
-
-#### Edit the SQL configuration file 
-```text
-> cd scripts
-> cp db_conf my_conf
-> (edit) my_conf
---dburl "postgresql+psycopg2://[[ip]]:[[port]]/i2b2"
---user [[user]]
---password [[password]]
-```
-Note that it is also possible to enter the above as a command line:
-```text
-(venv) > generate_i2b2 -l --dburl "postgresql+psycopg2://localhost:5432/i2b2" --user postgres --password postgres ...
-```
- 
-#### Test the configuration
-```text
-(venv) > generate_i2b2 --conf my_conf --test
-Validating input files
-	File: ../tests/data/fhir_metadata_vocabulary/fhir.ttl exists
-	File: ../tests/data/fhir_metadata_vocabulary/w5.ttl exists
-Validating sql connection
-	Connection validated
-Validating target tables
-	Table concept_dimension exists
-	Table encounter_mapping exists
-	Table modifier_dimension exists
-	Table ontology_table exists
-	Table patient_dimension exists
-	Table patient_mapping exists
-	Table provider_dimension exists
-	Table table_access exists
-	Table visit_dimension exists
-Testing write access
-	2 rows updated in table_access table
- (venv) > 
-```
  
  Further instructions for running the various loader functions can be found in the [scripts](scripts) directory.
  
  
 #### Loading the i2b2 ontology tables from the FHIR Metadata Vocabulary
-Lines marked with '++' below will only appear the first time the generator is run.</br>
-Lines marked with '**' will only appear if the generator has been run previously
-The exact numbers will depend on the version of the FMV and/or the loader
+
 ```text
-(venv) > generate_i2b2 --conf my_conf -l
+> generate_i2b2 --conf my_conf -l
 Loading fhir.ttl
  (cached)
 loading w5.ttl
@@ -155,14 +108,14 @@ loading w5.ttl
 
 1 i2b2metadata.table_access record deleted
 1 i2b2metadata.table_access record inserted
-4388 i2b2demodata.concept_dimension records deleted
-2158 i2b2demodata.concept_dimension records inserted
-2231 i2b2demodata.modifier_dimension records deleted
-743 i2b2demodata.modifier_dimension records inserted
-13588 i2b2metadata.custom_meta records deleted
+2143 i2b2demodata.concept_dimension records deleted
+2143 i2b2demodata.concept_dimension records inserted
+742 i2b2demodata.modifier_dimension records deleted
+742 i2b2demodata.modifier_dimension records inserted
+15222 i2b2metadata.custom_meta records deleted
 19 i2b2metadata.custom_meta records deleted
-15255 i2b2metadata.custom_meta records inserted
-(venv) >
+15241 i2b2metadata.custom_meta records inserted
+>
 ```
 
 ### Importing .tsv files
@@ -174,17 +127,17 @@ distribution.
 in the distribution are derived from `../tests/data/fhir_metadata_vocabulary`, which may vary slightly from the FMV that
 can be found at 'http://build.fhir.org/'.  You can regenerate these tables by:
 ```text
-(venv) > generate_i2b2 --conf my_conf -od ../i2b2files
+> generate_i2b2 --conf my_conf -od ../i2b2files
 Loading fhir.ttl
  (cached)
 loading w5.ttl
  done
 
-writing ../i2b2files/table_access.tsv (1) records written
-writing ../i2b2files/concept_dimension.tsv (2158) records written
-writing ../i2b2files/modifier_dimension.tsv (743) records written
-writing ../i2b2files/ontology_table.tsv (15255) records written
-(venv) >
+writing i2b2files/table_access.tsv (1) records written
+writing i2b2files/concept_dimension.tsv (2143) records written
+writing i2b2files/modifier_dimension.tsv (742) records written
+writing i2b2files/ontology_table.tsv (15241) records written
+>
 ```
 
 **Note 2:**: Before you load the files below, you may need to adjust the length of the following columns:
@@ -250,20 +203,20 @@ for tracking and management purposes.
 
 ### Example
 ```text
-(venv) > loadfacts -v
-FHIR i2b2 CRC loader -- Version 0.2.0
-(venv) > loadfacts --conf db_conf -u 117 --sourcesystem "FHIR R4" -l -t json --dupcheck -rm -i http://build.fhir.org/observation-example-f001-glucose.json
+> loadfacts -v
+FHIR i2b2 CRC loader -- Version 0.2.2
+(venv) > loadfacts --conf my_conf -u 117 -l -t json -rm -i http://build.fhir.org/observation-example-f001-glucose.json
 upload_id: 117
-  Starting encounter number: 527091
-  Starting patient number: 1000000213
+  Starting encounter number: 505749
+  Starting patient number: 1000000507
 --> loading http://build.fhir.org/observation-example-f001-glucose.json
 89 triples
-0: (Patient) - http://hl7.org/fhir/Patient/f001
-1: (Observation) - http://hl7.org/fhir/Observation/f001
-2: (Practitioner) - http://hl7.org/fhir/Practitioner/f005
+0: (Practitioner) - http://hl7.org/fhir/Practitioner/f005
+1: (Patient) - http://hl7.org/fhir/Patient/f001
+2: (Observation) - http://hl7.org/fhir/Observation/f001
 ---> Graph map phase complete
 Generated:
-    30 Observation facts
+    22 Observation facts
     1 Patients
     2 Patient mappings
 === SKIPS ===
@@ -273,27 +226,24 @@ Generated:
     0 Provider resources
     1 Unmapped resources
 
-Deleted 3 patient_dimension records
-Deleted 4 patient_mapping records
-Deleted 26 observation_fact records
-Deleted 3 visit_dimension records
-Deleted 4 encounter_mapping records
-1 / 0 patient_dimension records added / modified
-2 / 0 patient_mapping records added / modified
+Deleted 0 patient_dimension records
+Deleted 0 patient_mapping records
+Deleted 0 observation_fact records
+Deleted 0 visit_dimension records
+Deleted 0 encounter_mapping records
+0 / 0 patient_dimension records added / modified
+0 / 0 patient_mapping records added / modified
 1 / 0 visit_dimension records added / modified
-2 / 0 encounter_mapping records added / modified
-4 duplicate records encountered
-Key: (1000000213, 'FHIR:Observation.referenceRange', 'FHIR:Quantity.value', datetime.datetime(2017, 12, 21, 11, 13, 6, 736196), 527091, 3, 'FHIR:DefaultProvider') has a non-identical dup
-26 / 0 observation_fact records added / modified
-(venv) >
+1 / 1 encounter_mapping records added / modified
+22 / 0 observation_fact records added / modified
+
+>
 ```
 The above example uses the following parameters:
-* **`--conf my_conf`**  db connection and fhirt.ttl link
+* **`--conf my_conf`**  default configuration parameters
 * **`-u 117`** upload identifier
-* **`--sourcesystem "FHIR R4"`** sourcesystem_cd
 * **`-l`** load the data tables
 * **`-t json`** source format is JSON
-* **`--dupcheck`** Check for duplicate records before loading. Needed to address some unresolved issues in reference range representation.
 * **`-rm`** Remove existing entries for this upload id before loading (Useful for testing)
 * **`-i http://build.fhir.org/observation-example-f001-glucose.json` Input comes from this URL
 
@@ -303,17 +253,17 @@ The results of the above load can be (indirectly) viewed with a query such as th
 
 Note that `Selected groups occur in the same financial encounter` is selected in the "temporal constraint".  We are currently using the notion of "encounter" to represent "resource" -- the selection says that the code, the system and the interpretation all have to occur on the same encounter.
 
-The results for this query (we selected the "Patient Set", "Encounter Set" and "Number of Patients" options) are shown below:
+The results for this query (we selected the "Patient Set" and "Number of Patients" options) are shown below:
 
 ![sample query output](images/QuerySampleResult.png)
 
 We can add patient demographics by following the link in the observation, loading:
 ```text
-(venv) > loadfacts --conf db_conf -u 117 --sourcesystem "FHIR R4" -l -t json --dupcheck -i http://hl7.org/fhir/patient-example-f001-pieter.json
+(venv) > loadfacts --conf my_conf -u 117 -l -t json -rm -i http://build.fhir.org/patient-example-f001-pieter.json
 upload_id: 117
-  Starting encounter number: 527092
-  Starting patient number: 1000000214
---> loading http://hl7.org/fhir/patient-example-f001-pieter.json
+  Starting encounter number: 505750
+  Starting patient number: 1000000506
+--> loading http://build.fhir.org/patient-example-f001-pieter.json
 136 triples
 0: (Organization) - http://hl7.org/fhir/Organization/f001
 1: (Patient) - http://hl7.org/fhir/Patient/f001
@@ -329,8 +279,13 @@ Generated:
     1 Provider resources
     0 Unmapped resources
 
+Deleted 1 patient_dimension records
+Deleted 2 patient_mapping records
+Deleted 22 observation_fact records
+Deleted 1 visit_dimension records
+Deleted 2 encounter_mapping records
 1 / 0 patient_dimension records added / modified
-1 / 1 patient_mapping records added / modified
+2 / 0 patient_mapping records added / modified
 0 / 0 visit_dimension records added / modified
 0 / 0 encounter_mapping records added / modified
 0 / 0 observation_fact records added / modified

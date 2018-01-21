@@ -29,13 +29,14 @@ from datetime import datetime
 from typing import Optional, Tuple, List
 
 
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
 
 class ObservationFactKey:
-    def __init__(self, patient_num: int, encounter_num: int, provider_id: str, start_date: Optional[datetime] = None) -> None:
+    def __init__(self, patient_num: int, encounter_num: int, provider_id: str,
+                 start_date: Optional[datetime] = None) -> None:
         """
         A partial key to the observation fact table.  These three or four elements identify a collection of facts
         that can be added or replaced as a block
@@ -93,8 +94,8 @@ valuetype_novalue = ValueTypeCd('@')
 #         primary key (patient_num, concept_cd, modifier_cd, start_date, encounter_num, instance_num, provider_id)
 # )
 
-class ObservationFact(I2B2_Core_With_Upload_Id):
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+class ObservationFact(I2B2CoreWithUploadId):
+    _t = DynElements(I2B2CoreWithUploadId)
 
     key_fields = ["patient_num", "concept_cd", "modifier_cd", "start_date",
                   "encounter_num", "instance_num", "provider_id"]

@@ -32,7 +32,6 @@ from typing import Union
 
 from dateutil.parser import parse
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
-from rdflib import Graph
 
 test_directory = os.path.abspath(os.path.join(os.path.split(__file__)[0], '..'))
 test_conf_directory = os.path.join(test_directory, 'conf')

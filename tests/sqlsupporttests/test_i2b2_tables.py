@@ -44,7 +44,7 @@ class I2B2TablesTestCase(unittest.TestCase):
     conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
 
     opts = genargs('-l --conf {} '.format(conf_file).split())
-    process_parsed_args(opts)
+    process_parsed_args(opts, None)
 
     def test_basics(self):
         from i2fhirb2.sqlsupport.dbconnection import I2B2Tables

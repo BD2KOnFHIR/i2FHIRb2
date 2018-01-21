@@ -29,14 +29,14 @@
 import unittest
 from datetime import datetime, timedelta
 
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core, I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2Core, I2B2CoreWithUploadId
 from tests.utils.base_test_case import BaseTestCase
 
 
 class I2B2CoreTestCase(BaseTestCase):
 
     def test_defaults(self):
-        rtn = I2B2_Core()
+        rtn = I2B2Core()
         rtnf = rtn._freeze()
         self.assertAlmostNow(rtn.update_date)
         self.assertDatesAlmostEqual(rtn.update_date, rtnf['update_date'])
@@ -48,30 +48,30 @@ class I2B2CoreTestCase(BaseTestCase):
         self.assertEqual(rtn.sourcesystem_cd, rtnf['sourcesystem_cd'])
         self.assertEqual(['update_date', 'download_date', 'import_date', 'sourcesystem_cd'], list(rtnf.keys()))
 
-        rtn = I2B2_Core()
-        I2B2_Core.download_date = datetime(2009, 1, 1, 12, 0)
-        I2B2_Core.sourcesystem_cd = "MASTER"
-        I2B2_Core.import_date = datetime(2011, 1, 1, 12, 0)
-        I2B2_Core.update_date = datetime.now() + timedelta(hours=2)
+        rtn = I2B2Core()
+        I2B2Core.download_date = datetime(2009, 1, 1, 12, 0)
+        I2B2Core.sourcesystem_cd = "MASTER"
+        I2B2Core.import_date = datetime(2011, 1, 1, 12, 0)
+        I2B2Core.update_date = datetime.now() + timedelta(hours=2)
         self.assertEqual('2009-01-01 12:00:00', str(rtn.download_date))
         self.assertEqual('2011-01-01 12:00:00', str(rtn.import_date))
         self.assertEqual('MASTER', rtn.sourcesystem_cd)
         self.assertDatesAlmostEqual(rtn.update_date, str(datetime.now() + timedelta(hours=2)))
 
-        I2B2_Core._clear()
-        rtn = I2B2_Core_With_Upload_Id(upload_id=1777439)
+        I2B2Core._clear()
+        rtn = I2B2CoreWithUploadId(upload_id=1777439)
         self.assertEqual('Unspecified', rtn.sourcesystem_cd)
         self.assertEqual(1777439, rtn.upload_id)
         self.assertEqual('update_date\tdownload_date\timport_date\tsourcesystem_cd\tupload_id', rtn._header())
-        rtn = I2B2_Core()
+        rtn = I2B2Core()
         with self.assertRaises(AttributeError):
             _ = rtn.upload_id
 
     def test_settings(self):
-        I2B2_Core._clear()
-        rtn = I2B2_Core(sourcesystem_cd="abcd",
-                        update_date=datetime(2014, 7, 31),
-                        download_date=datetime.now)
+        I2B2Core._clear()
+        rtn = I2B2Core(sourcesystem_cd="abcd",
+                       update_date=datetime(2014, 7, 31),
+                       download_date=datetime.now)
         rtnf = rtn._freeze()
         self.assertEqual(str(rtnf['update_date']), '2014-07-31 00:00:00')
         self.assertAlmostNow(rtn.download_date)

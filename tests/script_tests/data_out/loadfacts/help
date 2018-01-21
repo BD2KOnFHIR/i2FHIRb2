@@ -1,24 +1,19 @@
-usage: _jb_unittest_runner.py [-h] [-v] [-l]
-                              [-i [Input files [Input files ...]]]
-                              [-id Input directory] [-od Output directory]
-                              [-t {json,rdf}] [-mv METADATAVOC]
-                              [--sourcesystem Source system code]
-                              [-u Upload identifier]
-                              [--base concept identifier base default: \FHIR\]
-                              [-ub URIBASE] [-rm] [-p Default provider id]
-                              [--dupcheck] [--conf CONFIG FILE] [-db DBURL]
-                              [--user USER] [--password PASSWORD]
-                              [--crcdb CRCDB] [--crcuser CRCUSER]
-                              [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
-                              [--ontouser ONTOUSER]
-                              [--ontopassword ONTOPASSWORD]
-                              [--onttable ONTOLOGY TABLE NAME]
+usage: loadfacts [-h] [-l] [-i [Input files [Input files ...]]]
+                 [-id Input directory] [-od Output directory] [-t {json,rdf}]
+                 [-rm] [--dupcheck] [-v] [-mv METADATAVOC]
+                 [-ss SOURCE SYSTEM CODE] [-u UPLOAD IDENTIFIER]
+                 [--base CONCEPT IDENTIFIER BASE] [-ub URIBASE]
+                 [-p DEFAULT PROVIDER ID] [--conf CONFIG FILE] [-db DBURL]
+                 [--user USER] [--password PASSWORD] [--crcdb CRCDB]
+                 [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
+                 [--ontodb ONTODB] [--ontouser ONTOUSER]
+                 [--ontopassword ONTOPASSWORD]
+                 [--onttable ONTOLOGY TABLE NAME]
 
 Load FHIR Resource Data into i2b2 CRC tables
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v, --version         Current version number
   -l, --load            Load SQL Tables
   -i [Input files [Input files ...]], --infile [Input files [Input files ...]]
                         URLs and/or name(s) of input file(s)
@@ -29,23 +24,24 @@ optional arguments:
   -t {json,rdf}, --filetype {json,rdf}
                         Type of file to ask for / load - only applies for
                         URL's and directories. (default: rdf)
+  -rm, --remove         Remove existing entries for the upload identifier
+                        and/or clear target tsv files
+  --dupcheck            Check for duplicate records before add.
+  -v, --version
   -mv METADATAVOC, --metadatavoc METADATAVOC
                         Location of FHIR Metavocabulary file (default:
                         http://build.fhir.org/)
-  --sourcesystem Source system code
+  -ss SOURCE SYSTEM CODE, --sourcesystem SOURCE SYSTEM CODE
                         Sourcesystem code (default: FHIR STU3)
-  -u Upload identifier, --uploadid Upload identifier
+  -u UPLOAD IDENTIFIER, --uploadid UPLOAD IDENTIFIER
                         Upload identifer -- uniquely identifies this batch
-  --base concept identifier base (default: \FHIR\)
+  --base CONCEPT IDENTIFIER BASE
                         Concept dimension and ontology base path (default:
                         \FHIR\)
   -ub URIBASE, --uribase URIBASE
-                        Resource URI base (default: http://hl7.org/fhir/)
-  -rm, --remove         Remove existing entries for the upload identifier
-                        and/or clear target tsv files
-  -p Default provider id, --providerid Default provider id
+                        RESOURCE URI BASE (default: http://hl7.org/fhir/)
+  -p DEFAULT PROVIDER ID, --providerid DEFAULT PROVIDER ID
                         Default provider id (default: FHIR:DefaultProvider)
-  --dupcheck            Check for duplicate records before add.
   --conf CONFIG FILE    Configuration file
   -db DBURL, --dburl DBURL
                         Default database URL (default:

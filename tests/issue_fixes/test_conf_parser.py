@@ -41,7 +41,7 @@ import os
 #   2) Config files can be nested and/or occur multiple times.  There is only one rel_path
 #
 from i2fhirb2.loadfacts import create_parser
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, decode_file_args
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args
 
 script_tmpl = "-i {}/data/synthea_data/fhir/Zieme803_Caroline16_2.json" \
               " -u 119651 -l -rm --conf {}/conf/db_conf --sourcesystem SMARTONFHIR"
@@ -57,7 +57,7 @@ class FilePathTestCase(unittest.TestCase):
     def test1(self):
         script = script_tmpl.format(self._reltestpath, self._reltestpath)
         parser = add_connection_args(create_parser())
-        opts = parser.parse_args(decode_file_args(script.split(), parser))
+        opts = parser.parse_args(parser.decode_file_args(script.split()))
         self.assertTrue(os.path.exists(opts.infile[0]))
         self.assertTrue(os.path.exists(opts.metadatavoc))
 

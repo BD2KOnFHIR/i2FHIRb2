@@ -28,21 +28,21 @@
 import unittest
 import os
 
-from i2fhirb2.sqlsupport.dbconnection import process_parsed_args, FileAwareParser
+from i2fhirb2.sqlsupport.dbconnection import process_parsed_args
+from i2fhirb2.file_aware_parser import FileAwareParser
 
 
 class DBConnectionTestCase(unittest.TestCase):
     dirname, _ = os.path.split(os.path.abspath(__file__))
 
     def test_decodefileargs1(self):
-        from i2fhirb2.sqlsupport.dbconnection import add_connection_args, decode_file_args
+        from i2fhirb2.sqlsupport.dbconnection import add_connection_args
 
         parser = FileAwareParser()
         parser.add_argument('-mv', '--metadatavoc', help="Unused")
         add_connection_args(parser)
-        opts = parser.parse_args(decode_file_args("--conf {}".
-                                                  format(os.path.join(self.dirname, 'data', 'db_conf')).split(),
-                                                  parser))
+        opts = parser.parse_args(parser.decode_file_args("--conf {}".
+                                                         format(os.path.join(self.dirname, 'data', 'db_conf')).split()))
         self.assertEqual("postgresql+psycopg2://localhost:5432/i2b2", opts.crcdb)
         self.assertEqual("postgresql+psycopg2://localhost:5433/i2b2", opts.ontodb)
         self.assertEqual("postgresql+psycopg2://localhost:5431/i2b2", opts.dburl)
@@ -51,14 +51,14 @@ class DBConnectionTestCase(unittest.TestCase):
         self.assertEqual('postgres', opts.password)
 
     def test_decodefileargs2(self):
-        from i2fhirb2.sqlsupport.dbconnection import add_connection_args, decode_file_args
+        from i2fhirb2.sqlsupport.dbconnection import add_connection_args
 
         parser = FileAwareParser()
         add_connection_args(parser)
         opts = process_parsed_args(
             parser.parse_args(
-                decode_file_args("--conf {}".format(os.path.join(self.dirname, 'data', 'db_conf_2')).split(), parser)),
-            False)
+                parser.decode_file_args("--conf {}".format(os.path.join(self.dirname, 'data', 'db_conf_2')).split())),
+            None, False)
         self.assertEqual("postgresql+psycopg2://localhost:5431/i2b2", opts.crcdb)
         self.assertEqual("user2", opts.crcuser)
         self.assertEqual("password1", opts.crcpassword)

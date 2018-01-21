@@ -53,7 +53,7 @@
 from datetime import datetime
 from typing import Optional, Tuple, List
 
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
 from i2fhirb2.sqlsupport.dynobject import DynElements, DynObject
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 
@@ -101,8 +101,8 @@ class VitalStatusCd:
 # TODO: should age be computed from birthdate / deathdate
 # TODO: language code -- what do we do with this?
 
-class PatientDimension(I2B2_Core_With_Upload_Id):
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+class PatientDimension(I2B2CoreWithUploadId):
+    _t = DynElements(I2B2CoreWithUploadId)
 
     key_fields = ["patient_num"]
 

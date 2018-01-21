@@ -48,7 +48,7 @@ class ObservationComponentTestCase(unittest.TestCase):
         make_and_clear_directory(self.output_dir)
 
     def create_test_output(self, infilename: str):
-        mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary', 'fhir.ttl'))
+        mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         conf = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
         input_file = os.path.abspath(os.path.join(self.dirname, 'data', infilename))
         load_facts("-mv {} --conf {} -i {} -t rdf -od {}".format(mv, conf, input_file, self.output_dir).split())

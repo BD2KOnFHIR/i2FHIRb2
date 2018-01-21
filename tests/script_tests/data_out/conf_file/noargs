@@ -1,4 +1,8 @@
-metadatavoc:		../tests/data/fhir_metadata_vocabulary
-dburl:		postgresql+psycopg2://localhost:5432/i2b2
-user:		postgres
-password:		postgres
+usage: conf_file [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
+                 [-u UPLOAD IDENTIFIER] [--base CONCEPT IDENTIFIER BASE]
+                 [-ub URIBASE] [-p DEFAULT PROVIDER ID] [--conf CONFIG FILE]
+                 [-db DBURL] [--user USER] [--password PASSWORD]
+                 [--crcdb CRCDB] [--crcuser CRCUSER]
+                 [--crcpassword CRCPASSWORD] [--ontodb ONTODB]
+                 [--ontouser ONTOUSER] [--ontopassword ONTOPASSWORD]
+                 [--onttable ONTOLOGY TABLE NAME] [-f FILE] [-s] [-c] [-c!]

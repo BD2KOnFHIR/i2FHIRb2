@@ -29,39 +29,39 @@ from typing import Set, List, Optional
 
 from fhirtordf.rdfsupport.namespaces import W5
 from rdflib import Graph, URIRef, RDF, RDFS, OWL
-from rdflib.namespace import split_uri
 
-from i2fhirb2.fhir.fhirspecific import w5_infrastructure_categories, DEFAULT_NAME_BASE, concept_path
+from i2fhirb2.common_cli_parameters import DEFAULT_NAME_BASE
+from i2fhirb2.fhir.fhirspecific import w5_infrastructure_categories, concept_path
 
 INDENT = '  '
 
 
 def is_w5_uri(uri: URIRef) -> bool:
-    """
-    Determine whether uri is in the w5 namespace
+    """ Determine whether uri is in the w5 namespace
+
     :param uri: URI to test
     :return: True if in w5 namespace
     """
-    return split_uri(uri)[0] == str(W5)
+    return str(uri).startswith(str(W5))
 
 
 class W5GraphNode:
     """
-    A node and all of the descendants down to the first non-w5 entry
+    A node and all of the descendants down to and including the first non-w5 entry
     """
     def __init__(self, g: Graph, node: URIRef) -> None:
         self.node = node
         self.children = [W5GraphNode(g, subj) for subj in g.subjects(RDFS.subClassOf, node)
                          if isinstance(subj, URIRef)] if is_w5_uri(node) else []
 
-    def _indented_str(self, indent: int) -> str:
+    def indented_str(self, indent: int) -> str:
         rval = INDENT * indent + ('Node: {}' if is_w5_uri(self.node) else 'Resource: {}').format(self.node)
         if self.children:
-            rval += '\n' + '\n'.join([c._indented_str(indent+1) for c in sorted(self.children)])
+            rval += '\n' + '\n'.join([c.indented_str(indent + 1) for c in sorted(self.children)])
         return rval
 
     def __str__(self) -> str:
-        return self._indented_str(0)
+        return self.indented_str(0)
 
     def __lt__(self, other: "W5GraphNode") -> bool:
         return self.node < other.node
@@ -72,8 +72,8 @@ class W5GraphNode:
 
 class W5PathEntry:
     def __init__(self, path: str, w5_ent: W5GraphNode) -> None:
-        """
-        An w5 path and accompanying metadata
+        """ A w5 path and accompanying metadata
+
         :param path: Full path to referenced node
         :param w5_ent: Corresponding W5GraphNode
         """
@@ -93,6 +93,10 @@ class W5PathEntry:
 
 class FHIRW5Ontology:
     def __init__(self, g: Graph) -> None:
+        """ A representation of the FHIR W5 GRAPH
+
+        :param g: Graph containing W5 concepts
+        """
         self.g = g
         self.w5_graph = [W5GraphNode(g, subj) for subj in self._w5_concepts() if g.value(subj, RDFS.subClassOf) is None]
 
@@ -126,4 +130,4 @@ class FHIRW5Ontology:
         return rval
 
     def __str__(self):
-        return "W5 Ontology\n" + '\n'.join([c._indented_str(1) for c in sorted(self.w5_graph)])
+        return "W5 Ontology\n" + '\n'.join([c.indented_str(1) for c in sorted(self.w5_graph)])

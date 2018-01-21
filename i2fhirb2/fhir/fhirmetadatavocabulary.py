@@ -25,16 +25,14 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Set, Dict, List, Union, Tuple
-
 import sys
-from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
+from typing import Dict, List, Union, Tuple, NamedTuple
+
 from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import Graph, URIRef, RDFS, RDF, OWL, BNode
 from rdflib.collection import Collection
 
 from i2fhirb2.fhir.fhirspecific import is_primitive, skip_fhir_predicates
-from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
 
 # TODO: The FMV needs to be updated to add a type element -- we use this enumeration as a temporary solution
 fhir_complex_types = {FHIR.Address, FHIR.Age, FHIR.Annotation, FHIR.Attachment,
@@ -82,10 +80,10 @@ class FMVGraphEdge:
         self.multiple_entries = int(g.value(restriction_node, OWL.maxCardinality,
                                             default=int(g.value(restriction_node, OWL.cardinality,
                                                                 default=sys.maxsize)))) > 1
-        if predicate_type not in FMVGraphNode._known_nodes:
+        if predicate_type not in FMVGraphNode.known_nodes:
             self.type_node = FMVGraphNode(g, predicate_type)
         else:
-            self.type_node = FMVGraphNode._known_nodes[predicate_type]
+            self.type_node = FMVGraphNode.known_nodes[predicate_type]
 
     def as_indented_str(self, indent: int) -> str:
         rval = 4 * indent * ' '
@@ -106,7 +104,7 @@ class FMVGraphEdge:
 
 
 class FMVGraphNode:
-    _known_nodes = {}        # type: Dict[URIRef, 'FMVGraphNode']
+    known_nodes = {}        # type: Dict[URIRef, 'FMVGraphNode']
 
     def __init__(self, g: Graph, node: URIRef) -> None:
         """
@@ -118,7 +116,7 @@ class FMVGraphNode:
         self.node: URIRef = node                            # URI of the node itself
         self.edges: List[FMVGraphEdge] = []                 # Outgoing edges
         self.parents: List["FMVGraphNode"] = []                     # Parent types
-        FMVGraphNode._known_nodes[node]: Dict[URIRef, FMVGraphNode] = self  # Prevent recursive looping
+        FMVGraphNode.known_nodes[node]: Dict[URIRef, FMVGraphNode] = self  # Prevent recursive looping
         self.is_primitive: bool = is_primitive(g, node)
 
         if not self.is_primitive:
@@ -137,11 +135,11 @@ class FMVGraphNode:
                             if predicate not in skip_fhir_predicates:
                                 self.edges.append(FMVGraphEdge(g, sc))
                         elif sc_type != OWL.Class:
-                            self.edges += self._known_nodes[sc_type].edges \
-                                if sc_type in FMVGraphNode._known_nodes else FMVGraphNode(g, sc_type).edges
+                            self.edges += self.known_nodes[sc_type].edges \
+                                if sc_type in FMVGraphNode.known_nodes else FMVGraphNode(g, sc_type).edges
                         else:
-                            self.parents.append(self._known_nodes[sc]
-                                                if sc in FMVGraphNode._known_nodes else FMVGraphNode(g, sc))
+                            self.parents.append(self.known_nodes[sc]
+                                                if sc in FMVGraphNode.known_nodes else FMVGraphNode(g, sc))
         else:
             self.is_complex_type = False
 
@@ -161,27 +159,6 @@ class FMVGraphNode:
         return self.as_indented_str()
 
 
-class FHIRMetaDataVocabulary(FHIRMetaVoc):
-
-    """
-    FHIR Metadata Vocabulary - represents a combination of the FMV and W5 ontology
-    """
-    def __init__(self,
-                 mv_file_loc: str="http://build.fhir.org/fhir.ttl",
-                 w5_file_loc: str="http://build.fhir.org/w5.ttl",
-                 fmt: str="turtle",
-                 cache_mv_file=True):
-        super().__init__(mv_file_loc, fmt, cache_mv_file)
-        self.g.load(w5_file_loc, format=fmt)
-        self.w5_graph = FHIRW5Ontology(self.g)
-
-    def fhir_resource_concepts(self) -> Set[URIRef]:
-        """
-        Return the uris for the set of all qualifying FHIR resources
-        :return: URIs of all FHIR resources
-        """
-        return {subj for subj in self.g.transitive_subjects(RDFS.subClassOf, FHIR.Resource)
-                if isinstance(subj, URIRef) and not self.w5_graph.is_w5_infrastructure(subj)}
-
-    def resource_graph(self, subject: URIRef) -> FMVGraphNode:
-        return FMVGraphNode(self.g, subject)
+class FMVGraphNodeWithMultiplicity(NamedTuple):
+    graph_node: "FMVGraphNode"
+    is_multiple: bool

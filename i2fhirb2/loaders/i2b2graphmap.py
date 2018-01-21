@@ -29,7 +29,6 @@ from argparse import Namespace
 from datetime import datetime
 from typing import List, Tuple, Optional
 
-import sys
 from fhirtordf.rdfsupport.fhirgraphutils import value
 from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
 from rdflib import Graph, RDF, URIRef
@@ -47,9 +46,7 @@ from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, Obse
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2Core
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 from i2fhirb2.sqlsupport.i2b2tables import change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
@@ -133,7 +130,7 @@ class I2B2GraphMap:
         self._generate_tsv_file("visit_dimension.tsv", VisitDimension, self.visit_dimensions)
         self._generate_tsv_file("encounter_mapping.tsv", EncounterMapping, self.encounter_mappings)
 
-    def _generate_tsv_file(self, fname: str, cls, values: List[I2B2_Core]) -> None:
+    def _generate_tsv_file(self, fname: str, cls, values: List[I2B2Core]) -> None:
         write_tsv(self._opts.outdir, fname, cls._header(), values)
 
     @staticmethod
@@ -171,7 +168,7 @@ class I2B2GraphMap:
 
     def load_i2b2_tables(self, check_dups=False) -> None:
         # session = sessionmaker(bind=tables.crc_engine)()
-        I2B2_Core._check_dups = check_dups
+        I2B2Core._check_dups = check_dups
         if self._opts.remove:
             # TODO: This should really be within a transaction boundary
             self.clear_i2b2_tables(self._opts.tables, self._opts.uploadid)

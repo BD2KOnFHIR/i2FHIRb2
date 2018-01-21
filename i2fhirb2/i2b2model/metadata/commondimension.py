@@ -30,13 +30,13 @@ from rdflib import URIRef
 from rdflib.namespace import split_uri
 
 from i2fhirb2.fhir.fhirspecific import concept_path, concept_code, concept_name
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
 from i2fhirb2.sqlsupport.dynobject import DynElements
 
 
-class CommonDimension(I2B2_Core_With_Upload_Id):
+class CommonDimension(I2B2CoreWithUploadId):
     """ Common base class of all dimensions """
-    _t = DynElements(I2B2_Core_With_Upload_Id)
+    _t = DynElements(I2B2CoreWithUploadId)
     graph = None
 
     def __init__(self, subject: URIRef, base_path: str = '\\', **kwargs) -> None:

@@ -25,16 +25,14 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import argparse
+import sys
 from argparse import ArgumentParser
-import shlex
 from typing import List
 
-import sys
-
+from i2fhirb2.common_cli_parameters import add_common_parameters
+from i2fhirb2.file_aware_parser import FileAwareParser
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables, decode_file_args, \
-    FileAwareParser
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
 
 
 def create_parser() -> FileAwareParser:
@@ -42,13 +40,10 @@ def create_parser() -> FileAwareParser:
     Create a command line parser
     :return: parser
     """
-    parser = FileAwareParser(description="Clear data from FHIR observation fact table")
-    parser.add_argument("uploadid", metavar="Upload identifiers",
-                        help="Upload identifer(s) -- unique batch identifiers", type=int, nargs='*')
-    parser.add_argument("--sourcesystemcd", metavar="Source system code",
-                        help="sourcesystem_code to remove")
-    parser.add_argument("-mv", "--metavoc", help="Metavocabulary directory - ignored")
-    return parser
+    parser = FileAwareParser(description="Clear data from FHIR observation fact table", prog="removefacts",
+                             use_defaults=False)
+    return add_connection_args(add_common_parameters(parser, multi_upload_ids=True),
+                               strong_config_file=False)
 
 
 def remove_facts(argv: List[str]) -> bool:
@@ -57,20 +52,26 @@ def remove_facts(argv: List[str]) -> bool:
     :param argv: Command line arguments.  See: create_parser for details
     :return:
     """
-    parser = add_connection_args(create_parser())
-    opts = parser.parse_args(decode_file_args(argv, parser))
+    parser = create_parser()
+    local_opts = parser.parse_args(argv)                        # Pull everything from the actual command line
+    if not local_opts.uploadid and not local_opts.sourcesystem:
+        parser.error("Upload identifiers and/or source system codes must be supplied")
+
+    opts = parser.parse_args(parser.decode_file_args(argv))     # Include the options file
     if opts is None:
         return False
-    process_parsed_args(opts)           # Update CRC and Meta table connection information
-    if not opts.uploadid and not opts.sourcesystemcd:
-        parser.print_usage()
-        return False
-    for uploadid in opts.uploadid:
-        print("---> Removing entries for id {}".format(uploadid))
-        I2B2GraphMap.clear_i2b2_tables(I2B2Tables(opts), uploadid)
-    if opts.sourcesystemcd:
-        print("---> Removing entries for sourcesystem_cd {}".format(opts.sourcesystemcd))
-        I2B2GraphMap.clear_i2b2_sourcesystems(I2B2Tables(opts), opts.sourcesystemcd)
+    opts.uploadid = local_opts.uploadid
+    opts.sourcesystem = local_opts.sourcesystem
+
+    process_parsed_args(opts, parser.error)           # Update CRC and Meta table connection information
+
+    if opts.uploadid:
+        for uploadid in opts.uploadid:
+            print("---> Removing entries for id {}".format(uploadid))
+            I2B2GraphMap.clear_i2b2_tables(I2B2Tables(opts), uploadid)
+    if opts.sourcesystem:
+        print("---> Removing entries for sourcesystem_cd {}".format(opts.sourcesystem))
+        I2B2GraphMap.clear_i2b2_sourcesystems(I2B2Tables(opts), opts.sourcesystem)
     return True
 
 

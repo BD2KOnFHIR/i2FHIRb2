@@ -36,27 +36,23 @@ from urllib.error import HTTPError
 
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
 
+from i2fhirb2.common_cli_parameters import add_common_parameters
 from i2fhirb2.i2b2model.metadata.commondimension import CommonDimension
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
 from rdflib import Graph
 from sqlalchemy import delete, Table, update
 
-from i2fhirb2 import __version__
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
-from i2fhirb2.fhir.fhirspecific import FHIR
+from i2fhirb2.fhir.fhirspecific import FHIR, DEFAULT_BASE
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
 from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
 from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, FileAwareParser
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args
+from i2fhirb2.file_aware_parser import FileAwareParser
 from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables, change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
-
-Default_Metavoc_URI = "http://build.fhir.org/"
-Default_Sourcesystem_Code = 'FHIR STU3'
-Default_Base = 'FHIR'
-Default_Path_Base = '\\{}\\'.format(Default_Base)
 
 DIMENSION_LIST = Union[List[ConceptDimension], List[ModifierDimension], List[OntologyEntry]]
 
@@ -139,7 +135,7 @@ def output_table_access(opts: Namespace) -> bool:
 
 
 def update_table_access_table(opts: Namespace, table: Table, records: List[Dict[str, Any]]) -> bool:
-    ndel = opts.tables.ont_connection.execute(delete(table).where(table.c.c_table_cd == Default_Base)).rowcount
+    ndel = opts.tables.ont_connection.execute(delete(table).where(table.c.c_table_cd == DEFAULT_BASE)).rowcount
     if ndel > 0:
         print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
     nins = opts.tables.ont_connection.execute(table.insert(), records).rowcount
@@ -234,7 +230,7 @@ def load_fhir_ontology(opts: Namespace) -> Graph:
     :return: Graph containing the ontology
     """
     print("Loading fhir.ttl")
-    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc, 'fhir.ttl'))
+    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc))
     print(" (cached)" if fmv.from_cache else "(from disc)")
     print("loading w5.ttl")
     fmv.g.load(os.path.join(opts.metadatavoc, 'w5.ttl'), format="turtle")
@@ -326,12 +322,7 @@ def create_parser() -> FileAwareParser:
                        i2b2tablenames.modifier_dimension,
                        i2b2tablenames.ontology_table,
                        i2b2tablenames.table_access]
-    parser = FileAwareParser(description="FHIR in i2b2 metadata generator")
-    # For reasons we don't completely understand, the default parser doesn't split the lines...
-    parser.convert_arg_line_to_args = lambda arg_line: arg_line.split()
-    parser.add_argument("-mv", "--metadatavoc", metavar="METAVOC URI",
-                        help="Input directory or URI of w5.ttl and fhir.ttl files"
-                             "(default: {})".format(Default_Metavoc_URI), default=Default_Metavoc_URI)
+    parser = FileAwareParser(description="FHIR in i2b2 metadata generator", prog="generate_i2b2")
     parser.add_argument("-od", "--outdir", metavar="TSV OUTPUT DIR",
                         help="Output directory to store .tsv files. If absent, .tsv files are not generated.")
     parser.add_argument("-t", "--table", metavar="I2B2 TABLE",
@@ -339,19 +330,12 @@ def create_parser() -> FileAwareParser:
                         choices=metadata_tables)
     parser.add_argument("-r", "--resource",
                         help="Name of specific resource to emit (e.g. Observation). (default: all)")
-    parser.add_argument("--sourcesystem", metavar="SOURCESYSTEM_CD",
-                        default=Default_Sourcesystem_Code,
-                        help="sourcesystem code (default: \"{}\")".format(Default_Sourcesystem_Code))
-    parser.add_argument("--base",
-                        default=Default_Path_Base,
-                        help="Concept dimension base path. (default: \"{}\")".format(Default_Path_Base))
     parser.add_argument("-l", "--load",
                         help="Load i2b2 SQL tables", action="store_true")
-    parser.add_argument("-v", "--version", action='version', version='Version: {}'.format(__version__), default=None)
     parser.add_argument("--list", help="List table names", action="store_true")
     parser.add_argument("--test", help="Test the confguration", action="store_true")
     # Add the database connection arguments list
-    add_connection_args(parser)
+    add_connection_args(add_common_parameters(parser))
 
     return parser
 
@@ -369,7 +353,7 @@ def genargs(argv: List[str]) -> Namespace:
             setattr(self, vn, default)
 
     parser = create_parser()
-    opts = parser.parse_args(decode_file_args(argv))
+    opts = parser.parse_args(parser.decode_file_args(argv))
     if not (opts.version or opts.list or opts.test or opts.load or opts.outdir):
         parser.print_help()
     opts.setdefault = lambda *a: setdefault(opts, *a)
@@ -380,7 +364,7 @@ def genargs(argv: List[str]) -> Namespace:
         opts.outdir = os.path.join(opts.outdir, '')
     i2b2tablenames.ontology_table = opts.onttable
     # Set the defaults for the crc and ontology tables
-    return process_parsed_args(opts) if opts.load or opts.list or opts.test else opts
+    return process_parsed_args(opts, parser.error) if opts.load or opts.list or opts.test else opts
 
 
 def generate_i2b2(argv: List[str]) -> bool:

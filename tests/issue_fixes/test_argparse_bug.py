@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Mayo Clinic
+# Copyright (c) 2018, Mayo Clinic
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,49 +25,21 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
 import unittest
 
-import os
-
-from i2fhirb2.removefacts import remove_facts
-from tests.utils.script_test_base import ScriptTestBase
+from argparse import ArgumentParser
 
 
-class RemoveFactsTestCase(ScriptTestBase):
-    dirname, _ = os.path.split(os.path.abspath(__file__))
+class ArgparseBugTestCase(unittest.TestCase):
+    """ ``file_aware_parser.decode_file_args`` depends on the fact that ArgumentParser will overwrite arguments
+    if they appear more than once.  If this test ever fails, you need to fix decode_file_args
 
-    @classmethod
-    def setUpClass(cls):
-        cls.dirname = os.path.split(os.path.abspath(__file__))[0]
-        cls.save_output = False
-        cls.tst_dir = "removefacts"
-        cls.tst_fcn = remove_facts
-        cls.conf_file_loc = os.path.join(cls.dirname, 'data', 'db_conf')
-
-    def test_no_args(self):
-        self.check_error_output("", "noargs")
-
-    def test_help(self):
-        self.check_output_output("-h", "help", exception=True)
-
-    def test_no_config_file(self):
-        self.check_error_output("-u 12345", "noconfig")
-
-    def test_onearg(self):
-        self.check_output_output(f"--conf {self.conf_file_loc} -u 123450 -u 123450", "onearg")
-
-    def test_threeargs(self):
-        self.check_output_output(f"--conf {self.conf_file_loc} -u 123450 123460 123470", "threeargs")
-
-    def test_sourcesystem(self):
-        self.check_output_output(f"--conf {self.conf_file_loc} --sourcesystem SAMPLE", "sourcesystem")
-
-    def test_ss_and_id(self):
-        self.check_output_output(f"--conf {self.conf_file_loc} -u 123450 -ss SAMPLE", "ssandid")
-
-    def test_config_parms(self):
-        self.check_output_output(f"--conf {self.conf_file_loc} -u 123450", "confparms")
+    """
+    def test_1(self):
+        parser = ArgumentParser()
+        parser.add_argument("-u", "--ufield", type=int)
+        opts = parser.parse_args("-u 123 -u 456 --ufield 789".split())
+        self.assertEqual(789, opts.ufield)
 
 
 if __name__ == '__main__':

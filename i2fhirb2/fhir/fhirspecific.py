@@ -33,18 +33,9 @@ from rdflib.namespace import split_uri, RDFS
 from rdflib.term import Node, BNode, Literal
 
 
-# TODO: move this to a stable version when R4 is adopted
-
-DEFAULT_FMV = "http://build.fhir.org/"
-DEFAULT_PROVIDER_ID = "FHIR:DefaultProvider"
-
-DEFAULT_NAME_BASE = '\\FHIR\\'              # Default hame base
-DEFAULT_PROJECT_ID = 'fhir'                 # Default project id for mapping tables
-DEFAULT_ENCOUNTER_NUMBER_START = 500000     # Default starting encounter number if none is present
-DEFAULT_PATIENT_NUMBER_START = 100000001    # Default starting patient number if none is present
-IDE_SOURCE_HIVE = "HIVE"                    # Source for number to id mapping
-
-DEFAULT_ONTOLOGY_TABLE = "custom_meta"      # Default metadata ontology table
+DEFAULT_SOURCE_SYSTEM = 'FHIR STU3'
+DEFAULT_BASE = 'FHIR'
+DEFAULT_BASE_PATH = '\\{}\\'.format(DEFAULT_BASE)
 
 # List of W5 categores that should not be included in the output
 w5_infrastructure_categories = {W5.conformance, W5.infrastructure, W5.information}

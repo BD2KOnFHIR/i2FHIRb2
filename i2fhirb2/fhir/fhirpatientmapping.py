@@ -31,7 +31,7 @@ from typing import Tuple, Dict, Optional, NamedTuple
 from sqlalchemy import func, select
 from sqlalchemy.orm import sessionmaker
 
-from i2fhirb2.fhir.fhirspecific import DEFAULT_PROJECT_ID, IDE_SOURCE_HIVE, DEFAULT_PATIENT_NUMBER_START
+from i2fhirb2.common_cli_parameters import DEFAULT_PROJECT_ID, DEFAULT_PATIENT_NUMBER_START, IDE_SOURCE_HIVE
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping, PatientIDEStatus
 from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
 

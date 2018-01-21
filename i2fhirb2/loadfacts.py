@@ -38,20 +38,19 @@ from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
 from fhirtordf.loaders.fhirjsonloader import fhir_json_to_rdf
 from rdflib import Graph
 
+from i2fhirb2.common_cli_parameters import add_common_parameters
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.fhir.fhirspecific import DEFAULT_FMV, FHIR, DEFAULT_PROVIDER_ID
-from i2fhirb2.generate_i2b2 import Default_Sourcesystem_Code, Default_Path_Base
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
 
 from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
 from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2_Core_With_Upload_Id
+from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
 
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, decode_file_args, I2B2Tables, \
-    FileAwareParser
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
+from i2fhirb2.file_aware_parser import FileAwareParser
 
 
 # TODO: Add support for non-turtle RDF files
@@ -65,7 +64,7 @@ def load_rdf_graph(opts: Namespace) -> Optional[Graph]:
     :return: Loaded graph or None if errors were encountered
     """
     g = Graph()
-    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc, 'fhir.ttl'))
+    fmv = FHIRMetaVoc(opts.metadatavoc + '/fhir.ttl')
 
     def read_rdf_uri(uri: str) -> str:
         req = Request(uri)
@@ -105,8 +104,7 @@ def create_parser() -> FileAwareParser:
     Create a command line argument parser
     :return: parser
     """
-    parser = FileAwareParser(description="Load FHIR Resource Data into i2b2 CRC tables")
-    parser.add_argument("-v", "--version", help="Current version number", action="store_true")
+    parser = FileAwareParser(description="Load FHIR Resource Data into i2b2 CRC tables", prog="loadfacts")
     parser.add_argument("-l", "--load", help="Load SQL Tables", action="store_true")
     parser.add_file_argument("-i", "--infile",
                              metavar="Input files", help="URLs and/or name(s) of input file(s)", nargs='*')
@@ -117,22 +115,10 @@ def create_parser() -> FileAwareParser:
     parser.add_argument("-t", "--filetype",
                         help="Type of file to ask for / load - only applies for URL's and directories.",
                         choices=['json', 'rdf'], default='rdf')
-    parser.add_file_argument("-mv", "--metadatavoc", help="Location of FHIR Metavocabulary file",
-                             default=DEFAULT_FMV)
-    parser.add_argument("--sourcesystem", metavar="Source system code", default=Default_Sourcesystem_Code,
-                        help="Sourcesystem code")
-    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
-                        help="Upload identifer -- uniquely identifies this batch", type=int)
-    parser.add_argument("--base", metavar="concept identifier base (default: {})".format(Default_Path_Base),
-                        default=Default_Path_Base,
-                        help="Concept dimension and ontology base path")
-    parser.add_argument("-ub", "--uribase", help="Resource URI base", default=str(FHIR))
     parser.add_argument("-rm", "--remove", help="Remove existing entries for the upload identifier and/or"
                         " clear target tsv files", action="store_true")
-    parser.add_argument("-p", "--providerid", metavar="Default provider id", help="Default provider id",
-                        default=DEFAULT_PROVIDER_ID)
     parser.add_argument("--dupcheck", help="Check for duplicate records before add.", action="store_true")
-    return parser
+    return add_common_parameters(parser)
 
 
 def genargs(argv: List[str]) -> Optional[Namespace]:
@@ -142,7 +128,7 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
     :return: options if success or None of parameters aren't valid
     """
     parser = add_connection_args(create_parser())
-    opts = parser.parse_args(decode_file_args(argv, parser))
+    opts = parser.parse_args(parser.decode_file_args(argv))
     if opts.version:
         print("FHIR i2b2 CRC loader -- Version {}".format(__version__))
     elif not (opts.load or opts.outdir):
@@ -166,9 +152,9 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
         if opts.outdir and not opts.outdir.endswith(os.sep):
             opts.outdir = os.path.join(opts.outdir, '')
         if opts.load:
-            process_parsed_args(opts)
-        I2B2_Core_With_Upload_Id.sourcesystem_cd = opts.sourcesystem
-        I2B2_Core_With_Upload_Id.upload_id = opts.uploadid
+            process_parsed_args(opts, parser.error)
+        I2B2CoreWithUploadId.sourcesystem_cd = opts.sourcesystem
+        I2B2CoreWithUploadId.upload_id = opts.uploadid
         return opts
     return None
 

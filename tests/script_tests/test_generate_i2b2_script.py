@@ -53,8 +53,17 @@ class GenerateI2B2TestCase(ScriptTestBase):
     def test_version(self):
         self.check_output_output("-v", "version", exception=True)
 
-    def test_test(self):
+    def test_list(self):
         self.check_output_output("--list " + self.conf_file_loc, "list")
+
+    def test_test(self):
+        self.save_output = True
+        self.check_output_output("--test " + self.conf_file_loc, "test", multipart_test=True)
+
+    @unittest.skipIf(True, "Connection should not be possible with bad user/password")
+    def test_bad_test(self):
+        bad_conf_file_loc = "--conf {}".format(os.path.join(self.dirname, 'data', 'db_conf_bad_password'))
+        self.check_output_output("--test " + bad_conf_file_loc, "badtest", exception=True)
 
 
 if __name__ == '__main__':

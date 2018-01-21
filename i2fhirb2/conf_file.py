@@ -25,108 +25,111 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+import re
 from argparse import Namespace
+import shlex
 from typing import List, Optional
-
 import sys
-
 import os
-from fhirtordf.rdfsupport.namespaces import FHIR
 
 from i2fhirb2 import __version__
-from i2fhirb2.fhir.fhirspecific import DEFAULT_FMV, DEFAULT_PROVIDER_ID
-from i2fhirb2.generate_i2b2 import Default_Sourcesystem_Code, Default_Path_Base
-from i2fhirb2.sqlsupport.dbconnection import FileAwareParser, add_connection_args
+from i2fhirb2.common_cli_parameters import add_common_parameters
+from i2fhirb2.sqlsupport.dbconnection import add_connection_args
+from i2fhirb2.file_aware_parser import FileAwareParser
 
-defaults = {"metadatavoc": DEFAULT_FMV,
-            "base": Default_Path_Base,
-            "uribase": str(FHIR),
-            "providerid": DEFAULT_PROVIDER_ID,
-            "sourcesystem": Default_Sourcesystem_Code,
-            "onttable": "custom_meta"}
-
-function_parameters = ["show", "update", "create", "createorrep"]
-meta_parameters = ["file"] + function_parameters
+meta_parameters = ["file", "show", "create", "createorrep"]
 
 
 def print_conf_file(opts: Namespace) -> Optional[str]:
+    """ Print the config file contents
+
+    :param opts: Options carrying file name
+    :return: None if success otherwise error message
+    """
     with open(opts.file) as f:
-        args = f.read().split()
-    parser = create_parser()
+        args = shlex.split(f.read())
+    parser = create_parser(use_defaults=False)
     opts = parser.parse_args(args)
     for k, v in opts.__dict__.items():
-        if v is not None and defaults.get(k) != v:
+        if v is not None:
             print(f"{k}:\t\t{v}")
     return None
 
 
 def create_conf_file(opts: Namespace) -> Optional[str]:
+    """ Create the configuration file
+
+    :param opts: Creation options
+    :return: Error message if problems, otherwise None
+    """
     if not opts.createorrep:
         if os.path.exists(opts.file):
             return f"{opts.file} already exists!"
     with open(opts.file, 'w') as f:
         for k, v in opts.__dict__.items():
-            if k not in meta_parameters and v is not None and defaults.get(k) != v:
-                f.write(f"--{k} {v}\n")
+            if k not in meta_parameters and v is not None:
+                f.write(f"--{k} {esc(v)}\n")
     return None
 
 
+def esc(arg: str) -> str:
+    """ Escape arg in a way that the shlex (argv) processor keeps it whole
+
+    :param arg: argument to escape
+    :return: What to write in the file
+    """
+    arg = re.sub(r'\\', r'\\\\', str(arg))
+    return f'"{arg}"' if re.search(r'\s', arg) else arg
+
+
 def add_meta_args(parser: FileAwareParser) -> None:
-    parser.add_argument("-v", "--version", help="Show software version number and exit", action="version",
-                        version=f'Version: {__version__}')
+    """ dd the control (meta) arguments to the parser
+
+    :param parser: Parser to add arguments to
+    """
     parser.add_argument("-f", "--file", help="Configuration file", default="db_conf")
-    parser.add_argument("-s", "--show", help="Display current configuration (Default)", action="store_true")
-    parser.add_argument("--update", help="Update or change values in existing file", action="store_true")
+    parser.add_argument("-s", "--show", help="Display current configuration", action="store_true")
     parser.add_argument("-c", "--create", help="Create new configuration file if not exists", action="store_true")
     parser.add_argument("-c!", "--createorrep", help="Create or replace configuration file ", action="store_true")
 
 
-def create_parser() -> FileAwareParser:
+def create_parser(use_defaults: bool = True) -> FileAwareParser:
     """
     Create a command line argument parser
+
+    :param use_defaults: Add defaults
     :return: parser
     """
-    parser = FileAwareParser(description="Create configuration file for i2FHIRb2 software", prog="conf_file")
-    parser.add_file_argument("-mv", "--metadatavoc", help="Location of FHIR Metavocabulary file",
-                             default=DEFAULT_FMV)
-    parser.add_argument("-ss", "--sourcesystem", metavar="SOURCE SYSTEM CODE", default=Default_Sourcesystem_Code,
-                        help="Sourcesystem code")
-    parser.add_argument("-u", "--uploadid", metavar="UPLOAD IDENTIFIER",
-                        help="Upload identifer -- uniquely identifies this batch", type=int)
-    parser.add_argument("--base", metavar="CONCEPT IDENTIFIER BASE", default=Default_Path_Base,
-                        help="Concept dimension and ontology base path")
-    parser.add_argument("-ub", "--uribase", help="RESOURCE URI BASE", default=str(FHIR))
-    parser.add_argument("-p", "--providerid", metavar="DEFAULT PROVIDER ID", help="Default provider id",
-                        default=DEFAULT_PROVIDER_ID)
-    return add_connection_args(parser)
+    parser = FileAwareParser(description="Create configuration file for i2FHIRb2 software", prog="conf_file",
+                             use_defaults=use_defaults)
+    return add_connection_args(add_common_parameters(parser))
 
 
 def conf_file(argv: List[str]) -> bool:
+    """
+    Create and/or print a configuration file
+
+    :param argv: Parameter list -- see create_parser for details
+    :return: True if success - otherwise an exception is thrown
+    """
     parser = create_parser()
     add_meta_args(parser)
     opts = parser.parse_args(argv)
 
     # Note that "help" and "version" exit immediately
-    num_commands = sum(1 for k, v in opts.__dict__.items() if k in function_parameters and v)
-    if num_commands > 1:
-        parser.error("Please select only one: '-s', '--update', '-c' or '-c!'")
-    elif num_commands == 0:
-        opts.show = True
+    if not (opts.create or opts.createorrep or opts.show):
+        parser.print_usage()
+        return False
 
-    if opts.show:
+    rval = create_conf_file(opts) if opts.create or opts.createorrep else None
+
+    if not rval and opts.show:
         rval = print_conf_file(opts)
-    elif opts.create or opts.createorrep:
-        rval = create_conf_file(opts)
-    else:
-        rval = "Unimplemented option"
+
     if rval:
         parser.error(rval)
-    return True
 
-    #
-    # for k, v in opts.__dict__.items():
-    #     if v is not None:
-    #         print(f"--{k} {v}")
+    return True
 
 
 if __name__ == "__main__":

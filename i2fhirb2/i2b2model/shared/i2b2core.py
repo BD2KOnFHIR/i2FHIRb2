@@ -29,7 +29,6 @@ from datetime import datetime
 from operator import or_
 from typing import Optional, List, Tuple, Callable, Dict
 
-import sys
 from sqlalchemy import Table, and_, update, delete, select
 from sqlalchemy.engine import Connection
 
@@ -37,7 +36,7 @@ from i2fhirb2.i2b2model.shared.listchunker import ListChunker
 from i2fhirb2.sqlsupport.dynobject import DynObject, DynElements, DynamicPropType
 
 
-class I2B2_Core(DynObject):
+class I2B2Core(DynObject):
     _t = DynElements()
     _check_dups = False
 
@@ -68,8 +67,8 @@ class I2B2_Core(DynObject):
         return self._resolve(self._sourcesystem_cd) if self._sourcesystem_cd is not None else "Unspecified"
 
 
-class I2B2_Core_With_Upload_Id(I2B2_Core):
-    _t = DynElements(I2B2_Core)
+class I2B2CoreWithUploadId(I2B2Core):
+    _t = DynElements(I2B2Core)
 
     no_update_fields = ["update_date", "download_date", "import_date", "sourcesystem_cd", "upload_id"]
     key_fields = None
@@ -119,13 +118,13 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
         """
         return None if len(filters) == 0 \
             else filters[0] if len(filters) == 1 \
-            else f(filters[0], I2B2_Core_With_Upload_Id._nested_fcn(f, filters[1:]))
+            else f(filters[0], I2B2CoreWithUploadId._nested_fcn(f, filters[1:]))
 
     @classmethod
-    def _check_for_dups(cls, records: List["I2B2_Core_With_Upload_Id"]) -> \
-            Dict[Tuple, List["I2B2_Core_With_Upload_Id"]]:
-        key_map = dict()    # type: Dict[Tuple, I2B2_Core_With_Upload_Id]
-        dups = dict()       # type: Dict[Tuple, List[I2B2_Core_With_Upload_Id]]
+    def _check_for_dups(cls, records: List["I2B2CoreWithUploadId"]) -> \
+            Dict[Tuple, List["I2B2CoreWithUploadId"]]:
+        key_map = dict()    # type: Dict[Tuple, I2B2CoreWithUploadId]
+        dups = dict()       # type: Dict[Tuple, List[I2B2CoreWithUploadId]]
         for record in records:
             key = tuple(record.get(k) for k in cls.key_fields)
             if key in key_map:
@@ -136,7 +135,7 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
 
     @classmethod
     def _add_or_update_records(cls, conn: Connection, table: Table,
-                               records: List["I2B2_Core_With_Upload_Id"]) -> Tuple[int, int]:
+                               records: List["I2B2CoreWithUploadId"]) -> Tuple[int, int]:
         """
         Add or update the supplied table as needed to reflect the contents of records
         :param table: i2b2 sql connection
@@ -151,14 +150,14 @@ class I2B2_Core_With_Upload_Id(I2B2_Core):
         #    thousands to tens of thousands of records.  May want to move to ORM model if this gets to be an issue
         for record in records:
             keys = [(table.c[k] == getattr(record, k)) for k in cls.key_fields]
-            key_filter = I2B2_Core_With_Upload_Id._nested_fcn(and_, keys)
+            key_filter = I2B2CoreWithUploadId._nested_fcn(and_, keys)
             rec_exists = conn.execute(select([table.c.upload_id]).where(key_filter)).rowcount
             if rec_exists:
                 known_values = {k: v for k, v in record._freeze().items()
                                 if v is not None and k not in cls.no_update_fields and
                                 k not in cls.key_fields}
                 vals = [table.c[k] != v for k, v in known_values.items()]
-                val_filter = I2B2_Core_With_Upload_Id._nested_fcn(or_, vals)
+                val_filter = I2B2CoreWithUploadId._nested_fcn(or_, vals)
                 known_values['update_date'] = record.update_date
                 upd = update(table).where(and_(key_filter, val_filter)).values(known_values)
                 num_updates += conn.execute(upd).rowcount
