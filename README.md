@@ -4,6 +4,7 @@
 * 0.2.0 - Major overhaul
 * 0.2.1 - `Observation.referenceRange` temporarily removed to allow batch loads
 * 0.2.2 - Added `conf_file` utility and removed hard-coded configuration files.  Now available via `pip`
+* 0.2.3 - Partial refactoring and test cleanup
 
 ## Introduction
 This package creates an i2b2 ontology from the FHIR STU3/R4 resource model.  It uses a combination of the [FHIR W5 (who, what, why, where, when) ontology](http://build.fhir.org/w5.ttl) and the [FHIR Resource Ontology](http://build.fhir.org/fhir.ttl) to create an i2b2 equivalent.

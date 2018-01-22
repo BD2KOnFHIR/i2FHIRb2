@@ -183,7 +183,8 @@ class ObservationFact(I2B2CoreWithUploadId):
          ''  -- pure nval_num (?) - no tval_char?
          Note that the spec says that this is optional, but it is never null
           """
-        return self._valtype_cd if self._valtype_cd is not None else '@'
+        return self._valtype_cd.code if isinstance(self._valtype_cd, ValueTypeCd) else \
+            self._valtype_cd if self._valtype_cd is not None else '@'
 
     @DynObject.entry(_t)
     def tval_char(self) -> Optional[str]:

@@ -41,26 +41,6 @@ fhir_complex_types = {FHIR.Address, FHIR.Age, FHIR.Annotation, FHIR.Attachment,
                       FHIR.Identifier, FHIR.Money, FHIR.Period, FHIR.Quantity, FHIR.Range, FHIR.Ratio,
                       FHIR.Signature, FHIR.SimpleQuantity, FHIR.Timing}
 
-FHIR_str = str(FHIR)
-
-
-def fns(uri: URIRef) -> str:
-    """
-    Change URI into fhir:name if appropriate
-    :param uri: URI to convert
-    :return: ns/name form if FHIR URI else turtle form
-    """
-    str_uri = str(uri)
-    return str_uri.replace(FHIR_str, 'fhir:') if FHIR_str in str_uri else "<{}>".format(str_uri)
-
-
-def predicate_and_type_for(g: Graph, restriction_node: Union[URIRef, BNode]) -> Tuple[URIRef, URIRef]:
-    predicate = g.value(restriction_node, OWL.onProperty)
-    predicate_type = g.value(restriction_node, OWL.allValuesFrom)
-    if predicate_type is None:
-        predicate_type = g.value(restriction_node, OWL.someValuesFrom)
-    return predicate, predicate_type
-
 
 class FMVGraphEdge:
     def __init__(self, g: Graph, restriction_node: Union[URIRef, BNode]) -> None:
@@ -76,7 +56,7 @@ class FMVGraphEdge:
         :param g: Graph containing FMV
         :param restriction_node: Restriction entry
         """
-        self.predicate, predicate_type = predicate_and_type_for(g, restriction_node)
+        self.predicate, predicate_type = FMVGraphNode.predicate_and_type_for(g, restriction_node)
         self.multiple_entries = int(g.value(restriction_node, OWL.maxCardinality,
                                             default=int(g.value(restriction_node, OWL.cardinality,
                                                                 default=sys.maxsize)))) > 1
@@ -90,7 +70,7 @@ class FMVGraphEdge:
         if indent > 10:
             return rval + '   ...'
         else:
-            return rval + fns(self.predicate) + " " + \
+            return rval + FMVGraphNode.fns(self.predicate) + " " + \
                 self.type_node.as_indented_str(indent, self.multiple_entries)
 
     def __lt__(self, other: "FMVGraphEdge") -> bool:
@@ -125,13 +105,13 @@ class FMVGraphNode:
                 unionof_value = g.value(sc, OWL.unionOf)
                 if unionof_value:
                     for union_sc in Collection(g, unionof_value):
-                        predicate, _ = predicate_and_type_for(g, union_sc)
+                        predicate, _ = self.predicate_and_type_for(g, union_sc)
                         if predicate not in skip_fhir_predicates:
                             self.edges.append(FMVGraphEdge(g, union_sc))
                 else:
                     for sc_type in g.objects(sc, RDF.type):
                         if sc_type == OWL.Restriction:
-                            predicate, _ = predicate_and_type_for(g, sc)
+                            predicate, _ = self.predicate_and_type_for(g, sc)
                             if predicate not in skip_fhir_predicates:
                                 self.edges.append(FMVGraphEdge(g, sc))
                         elif sc_type != OWL.Class:
@@ -143,6 +123,14 @@ class FMVGraphNode:
         else:
             self.is_complex_type = False
 
+    @staticmethod
+    def predicate_and_type_for(g: Graph, restriction_node: Union[URIRef, BNode]) -> Tuple[URIRef, URIRef]:
+        predicate = g.value(restriction_node, OWL.onProperty)
+        predicate_type = g.value(restriction_node, OWL.allValuesFrom)
+        if predicate_type is None:
+            predicate_type = g.value(restriction_node, OWL.someValuesFrom)
+        return predicate, predicate_type
+
     def as_indented_str(self, indent: int=0, multiple_entries: bool = False) -> str:
         """
         Pretty-print node as an indented string
@@ -152,8 +140,19 @@ class FMVGraphNode:
         """
         modifiers = ("M" if multiple_entries else "") + ("P" if self.is_primitive else "") + \
                     ("C" if self.is_complex_type else "")
-        return "({})".format(fns(self.node)) + ("({})".format(modifiers) if modifiers else "") + \
+        return "({})".format(self.fns(self.node)) + ("({})".format(modifiers) if modifiers else "") + \
                ((':\n' + '\n'.join([e.as_indented_str(indent+1) for e in sorted(self.edges)])) if self.edges else "")
+
+    @staticmethod
+    def fns(uri: URIRef) -> str:
+        """
+        Change URI into fhir:name if appropriate
+
+        :param uri: URI to convert
+        :return: ns/name form if FHIR URI else turtle form
+        """
+        str_uri = str(uri)
+        return str_uri.replace(str(FHIR), 'fhir:') if str(FHIR) in str_uri else "<{}>".format(str_uri)
 
     def __str__(self) -> str:
         return self.as_indented_str()

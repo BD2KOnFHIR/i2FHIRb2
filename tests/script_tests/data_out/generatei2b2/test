@@ -1,0 +1,18 @@
+Validating input files
+	File: /Users/mrf7578/Development/git/BD2KOnFHIR/i2FHIRb2/tests/data/fhir_metadata_vocabulary/fhir.ttl exists
+	File: /Users/mrf7578/Development/git/BD2KOnFHIR/i2FHIRb2/tests/data/fhir_metadata_vocabulary/w5.ttl exists
+Validating sql connection
+	Connection validated
+Validating target tables
+	Table concept_dimension exists
+	Table encounter_mapping exists
+	Table modifier_dimension exists
+	Table observation_fact exists
+	Table ontology_table exists
+	Table patient_dimension exists
+	Table patient_mapping exists
+	Table provider_dimension exists
+	Table table_access exists
+	Table visit_dimension exists
+Testing write access
+	2 rows updated in table_access table 

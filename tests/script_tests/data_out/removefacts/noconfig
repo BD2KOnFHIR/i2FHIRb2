@@ -1,0 +1,10 @@
+usage: removefacts [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
+                   [-u [UPLOAD IDENTIFIER [UPLOAD IDENTIFIER ...]]]
+                   [--base CONCEPT IDENTIFIER BASE] [-ub URIBASE]
+                   [-p DEFAULT PROVIDER ID] [--conf CONFIG FILE] [-db DBURL]
+                   [--user USER] [--password PASSWORD] [--crcdb CRCDB]
+                   [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
+                   [--ontodb ONTODB] [--ontouser ONTOUSER]
+                   [--ontopassword ONTOPASSWORD]
+                   [--onttable ONTOLOGY TABLE NAME]
+removefacts: error: db url, user id and password must be supplied

@@ -26,12 +26,13 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import URIRef, Graph, BNode, RDF, XSD
 from rdflib.term import Node, Literal
 
+from i2fhirb2.fhir.fhircodemapping import coded_predicates, proc_observation_component
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
@@ -95,7 +96,8 @@ literal_conversions = {
 class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
 
-    def __init__(self, g: Graph, ofk: ObservationFactKey, concept: URIRef, modifier: Optional[URIRef], obj: Node,
+    def __init__(self, g: Graph, ofk: ObservationFactKey, concept: Union[URIRef, str],
+                 modifier: Optional[Union[URIRef, str]], obj: Optional[Node],
                  instance_num: Optional[int] = None) -> None:
         """
         Construct an observation fact entry
@@ -106,11 +108,13 @@ class FHIRObservationFact(ObservationFact):
         :param obj: object of concept_code
         :param instance_num: instance identifier
         """
-        super().__init__(ofk, concept_code(concept))
+        super().__init__(ofk, concept_code(concept) if isinstance(concept, URIRef) else concept)
         if modifier is not None:
             self._modifier_cd = concept_code(modifier)
         self._instance_num = instance_num
-        self.fhir_primitive(g, obj)
+        if obj is not None:
+            self.fhir_primitive(g, obj)
+        self.identifying_codes: List[str] = []
 
     def fhir_primitive(self, g: Graph, obj: Optional[Node]) -> None:
         assert(instance_is_primitive(g, obj))
@@ -149,12 +153,12 @@ class FHIRObservationFactFactory:
     def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]) -> None:
         self.g = g
         self.ofk = ofk
-        self.observation_facts = []         # type: List[FHIRObservationFact]
-        self.patient_dimensions = []        # type: List[FHIRPatientDimension]
-        self.provider_dimensions = []       # type: List[FHIRProviderDimension]
-        self.visit_dimensions = []          # type: List[FHIRVisitDimension]
-        self.patient_mappings = []          # type: List[FHIRPatientMapping]
-        self.encounter_mappings = []        # type: List[FHIREncounterMapping]
+        self.observation_facts: List[FHIRObservationFact] = []
+        self.patient_dimensions: List[FHIRPatientDimension] = []
+        self.provider_dimensions: List[FHIRProviderDimension] = []
+        self.visit_dimensions: List[FHIRVisitDimension] = []
+        self.patient_mappings: List[FHIRPatientMapping] = []
+        self.encounter_mappings: List[FHIREncounterMapping] = []
         self._inst_num = 0
 
         # TODO: look at DomainResource embedded entries (claim-example-oral-bridge).  Perhaps we should change the
@@ -173,25 +177,35 @@ class FHIRObservationFactFactory:
         """
         rval = []               # type: List[FHIRObservationFact]
 
+        identifying_codes = []
         for conc, obj in sorted(self.g.predicate_objects(subject)):
             if conc not in self.special_processing_list:
+                if conc in coded_predicates:
+                    coded_facts = coded_predicates[conc](self.g, subject, self.ofk)
+                    identifying_codes = [e.concept_cd for e in coded_facts]
+                    rval += coded_facts
+
                 if instance_is_primitive(self.g, obj):
                     rval.append(FHIRObservationFact(self.g, self.ofk, conc, None, obj))
                 else:
-                    rval += self.generate_modifiers(subject, conc, obj)
+                    rval += self.generate_modifiers(subject, conc, obj, identifying_codes=identifying_codes)
+
         return rval
 
     def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: BNode,
-                           parent_inst_num: int=0, same_subject: bool=False) -> List[FHIRObservationFact]:
+                           parent_inst_num: int=0, same_subject: bool=False,
+                           identifying_codes: Optional[List[str]]=None) -> List[FHIRObservationFact]:
         """
         Emit any modifiers for subject/obj.  If there is fhir:index field, this is an indication that this set
         of modifiers can occur multiple times and, as such, must be clustered.  Noting that, at the moment, we
         can only do one level of clustering, we do not generate unique instance numbers for singleton elements.
+
         :param subject: Resource subject
         :param concept: Concept identifier (first level entry)
         :param obj: inner cluster (usually a BNODE)
         :param parent_inst_num: instance number passed in recursive call
         :param same_subject: True means same parent -- don't revisit instance number
+        :param identifying_codes: Code(s) assigned to the element
         :return:
         """
         rval = []               # type: List[FHIRObservationFact]
@@ -218,5 +232,9 @@ class FHIRObservationFactFactory:
                                                 concept if inst_num else composite_uri(concept, modifier),
                                                 modifier_object,
                                                 inst_num,
-                                                same_subject=True)
+                                                same_subject=True,
+                                                identifying_codes=identifying_codes)
+        # TODO: Generalize
+        if fhir_index is not None and concept == FHIR.Observation.component:
+            rval += proc_observation_component(self.g, obj, self.ofk, inst_num, identifying_codes)
         return rval
