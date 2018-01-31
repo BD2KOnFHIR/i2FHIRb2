@@ -33,9 +33,10 @@ import os
 from i2fhirb2.loadfacts import load_facts
 from i2fhirb2.removefacts import remove_facts
 from tests.utils.base_test_case import test_conf_directory, test_data_directory
+from tests.utils.crc_testcase import CRCTestCase
 
 
-class LoadFactsHelper(unittest.TestCase):
+class LoadFactsHelper(CRCTestCase):
     caller_filename = None
 
     @classmethod
@@ -43,13 +44,6 @@ class LoadFactsHelper(unittest.TestCase):
         cls.conf = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
         cls.mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         cls.dirname, test_file = os.path.split(os.path.abspath(cls.caller_filename))
-        cls.source_system = re.sub(r'\.[^.]+$', '', test_file)
-
-    def setUp(self):
-        remove_facts(f"--sourcesystem {self.source_system} --conf {self.conf}".split())
-
-    def tearDown(self):
-        remove_facts(f"--sourcesystem {self.source_system} --conf {self.conf}".split())
 
     def create_test_output(self, infilename: str):
         """ Helper to generate test output for input file infilename """
@@ -58,6 +52,5 @@ class LoadFactsHelper(unittest.TestCase):
 
         mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         input_file = os.path.abspath(os.path.join(input_dir, infilename))
-
-        load_facts(f"--sourcesystem {self.source_system} -mv {mv} --conf {self.conf} -i {input_file}"
-                   f" -t rdf -l".split())
+        load_facts(f"--sourcesystem {self._sourcesystem_cd} -u {self._upload_id} -mv {mv} "
+                   f"--conf {self.conf} -i {input_file} -t rdf -l".split())

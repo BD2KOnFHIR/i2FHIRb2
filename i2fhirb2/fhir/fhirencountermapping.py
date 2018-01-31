@@ -27,8 +27,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from typing import Dict, Tuple, Optional
 
-from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
+from fhirtordf.rdfsupport.uriutils import parse_fhir_resource_uri
 from rdflib import URIRef
+from rdflib.namespace import split_uri
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
@@ -110,14 +111,16 @@ class FHIREncounterMapping:
         :param patient_ide_source: Associated patient identifier source
         """
         self.encounter_mapping_entries = []
-        encounter_id, encounter_ide_source = uri_to_ide_and_source(encounterURI, include_resource=True)
-        key = (encounter_id, encounter_ide_source, self.project_id, patient_id, patient_ide_source)
+        parsed_resource = parse_fhir_resource_uri(encounterURI)
+        resource_namespace = str(parsed_resource.namespace)
+        resource_ide = split_uri(parsed_resource.resource_type)[1] + '/' + parsed_resource.resource
+        key = (resource_ide, resource_namespace, self.project_id, patient_id, patient_ide_source)
         if key in self.number_map:
             self.encounter_num = self.number_map[key]
         else:
             self.encounter_num = self.number_generator.new_number()
-            pm = EncounterMapping(encounter_id, encounter_ide_source, self.project_id, self.encounter_num,
-                                  patient_id, patient_ide_source, EncounterIDEStatus.active)
+            pm = EncounterMapping(resource_ide, resource_namespace, self.project_id,
+                                  self.encounter_num, patient_id, patient_ide_source, EncounterIDEStatus.active)
             self.number_map[key] = self.encounter_num
             self.encounter_mapping_entries.append(pm)
 

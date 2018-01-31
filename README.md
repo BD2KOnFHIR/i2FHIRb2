@@ -1,5 +1,10 @@
 # i2FHIRb2 - FHIR in i2b2
 
+
+[![PyPi](https://version-image.appspot.com/pypi/?name=i2FHIRb2)](https://pypi.python.org/pypi/i2FHIRb2)
+
+[![Pyversions](https://img.shields.io/pypi/pyversions/i2FHIRb2.svg)](https://pypi.python.org/pypi/i2FHIRb2)
+
 ## Edit history
 * 0.2.0 - Major overhaul
 * 0.2.1 - `Observation.referenceRange` temporarily removed to allow batch loads

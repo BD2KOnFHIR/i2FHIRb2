@@ -142,9 +142,6 @@ class FHIROntologyTable:
         :param resource: Optional resource URI -- for debugging purposes only.  None means all resources
         :return: List of i2b2 ontology entries
         """
-        # TODO: Figure out how to get DomainResource and Resource concepts into this
-        # TODO: DomainResource entries
-        # TODO: Where is Observation.component???
         ontology_entries: List[OntologyEntry] = [cast(OntologyEntry, OntologyRoot(self._name_base))]    # FHIR root node
         concept_dimension_entries: Dict[str, ConceptDimension] = {}
         modifier_dimension_entries: Dict[str, ModifierDimension] = {}

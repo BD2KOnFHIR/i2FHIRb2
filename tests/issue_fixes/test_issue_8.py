@@ -29,18 +29,16 @@ import re
 import unittest
 
 import os
-import io
-import sys
 from functools import reduce
 
-from i2fhirb2.removefacts import remove_facts
+from tests.utils.crc_testcase import CRCTestCase
 from tests.utils.script_test_base import ScriptTestBase
 
 from i2fhirb2.loadfacts import load_facts
-from tests.utils.base_test_case import test_conf_file, test_upload_id, test_sourcesystem_cd
+from tests.utils.base_test_case import test_conf_file
 
 
-class Issue8TestCase(ScriptTestBase):
+class Issue8TestCase(ScriptTestBase, CRCTestCase):
     enc_re = r'Starting encounter number: (\d+)'
     pat_re = r'Starting patient number: (\d+)'
     triples_re = r'\d+ triples'
@@ -49,46 +47,35 @@ class Issue8TestCase(ScriptTestBase):
     obs_pat = r'\d+.*\(Observation\).*'
     del_patterns = [enc_re, pat_re, triples_re, org_pat, pat_pat, obs_pat]
 
-    @staticmethod
-    def reset_facts():
-        save_stdout = sys.stdout
-        sys.stdout = io.StringIO()
-        remove_facts(f"-u {test_upload_id} --conf {test_conf_file}".split())
-        sys.stdout = save_stdout
-
     @classmethod
     def setUpClass(cls):
         cls.dirname = os.path.split(os.path.abspath(__file__))[0]
         cls.save_output = False
         cls.tst_dir = "issue8"
         cls.tst_fcn = load_facts
-        cls.reset_facts()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.reset_facts()
 
     def test_patient_dimension_issue(self):
-        argstr = f"--conf {test_conf_file} -l -t json -u {test_upload_id} " \
-                 f"--sourcesystem {test_sourcesystem_cd} -i http://hl7.org/fhir/patient-example.json"
-        self.check_filtered_output(argstr, "first_load", self._filter_results)
-        first_enc_num = self._start_enc_number      # No encounter (visit) numbers are generated in this test
-        first_pat_num = self._start_pat_num + 1
+        with self.sourcesystem_cd():
+            argstr = f"--conf {test_conf_file} -l -t json -u {self._upload_id} " \
+                     f"--sourcesystem {self._sourcesystem_cd} -i http://hl7.org/fhir/patient-example.json"
+            self.check_filtered_output(argstr, "first_load", self._filter_results)
+            first_enc_num = self._start_enc_number      # No encounter (visit) numbers are generated in this test
+            first_pat_num = self._start_pat_num + 1
 
-        self.check_filtered_output(argstr, "second_load", self._filter_results)
-        self.assertEqual(first_enc_num, self._start_enc_number)
-        self.assertEqual(first_pat_num, self._start_pat_num)
+            self.check_filtered_output(argstr, "second_load", self._filter_results)
+            self.assertEqual(first_enc_num, self._start_enc_number)
+            self.assertEqual(first_pat_num, self._start_pat_num)
 
-        self.check_filtered_output(argstr, "third_load", self._filter_results)
-        self.assertEqual(first_enc_num, self._start_enc_number)
-        self.assertEqual(first_pat_num, self._start_pat_num)
+            self.check_filtered_output(argstr, "third_load", self._filter_results)
+            self.assertEqual(first_enc_num, self._start_enc_number)
+            self.assertEqual(first_pat_num, self._start_pat_num)
 
-        # Now add an encounter and make sure things still work out
-        argstr = f"--conf {test_conf_file} -l -t json -u {test_upload_id} " \
-                 f"--sourcesystem {test_sourcesystem_cd} -i http://hl7.org/fhir/observation-example-bmi.json"
-        self.check_filtered_output(argstr, "obs_load", self._filter_results)
-        self.assertEqual(first_enc_num, self._start_enc_number)
-        self.assertEqual(first_pat_num, self._start_pat_num)
+            # Now add an encounter and make sure things still work out
+            argstr = f"--conf {test_conf_file} -l -t json -u {self._upload_id} " \
+                     f"--sourcesystem {self._sourcesystem_cd} -i http://hl7.org/fhir/observation-example-bmi.json"
+            self.check_filtered_output(argstr, "obs_load", self._filter_results)
+            self.assertEqual(first_enc_num, self._start_enc_number)
+            self.assertEqual(first_pat_num, self._start_pat_num)
 
     def _filter_results(self, inp: str) -> str:
         self._start_enc_number = int(re.search(r'Starting encounter number: (\d+)', inp).groups()[0])

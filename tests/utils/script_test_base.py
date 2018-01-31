@@ -25,17 +25,19 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+import re
 import unittest
 from typing import Callable, List
 
 import os
 
 from tests.utils.output_redirector import OutputRedirector
+from i2fhirb2 import __version__
 
 
 class ScriptTestBase(unittest.TestCase, OutputRedirector):
     dirname = None
-    save_output: bool = False              # Override this to save output
+    save_output: bool = True              # Override this to save output
     tst_dir: str = None
     tst_fcn: Callable[[List[str]], bool] = None
 
@@ -51,7 +53,9 @@ class ScriptTestBase(unittest.TestCase, OutputRedirector):
                 outf.write(output)
         self.maxDiff = None
         with open(fullfilename) as testf:
-            self.assertEqual(testf.read(), output)
+            test_text = re.sub(r'Version: [0-9]+\.[0-9]+\.[[0-9]+', f'Version: {__version__}', testf.read(),
+                               flags=re.MULTILINE)
+            self.assertEqual(test_text, output)
         if not multipart_test:
             self.assertFalse(self.save_output, "save_output is true")
 

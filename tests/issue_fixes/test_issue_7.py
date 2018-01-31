@@ -39,8 +39,9 @@ class ReferenceRangeIssue(LoadFactsHelper):
 
     def test_reference_range(self):
         """ The example below fails with a duplicate key violation """
-        self.create_test_output('obs_sample_1134281.ttl')
-        self.assertTrue(True)
+        with self.sourcesystem_cd():
+            self.create_test_output('obs_sample_1134281.ttl')
+            self.assertTrue(True)
 
 
 if __name__ == '__main__':

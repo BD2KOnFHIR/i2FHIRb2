@@ -36,9 +36,10 @@ from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.common_cli_parameters import IDE_SOURCE_HIVE
 from tests.utils.connection_helper import connection_helper
+from tests.utils.crc_testcase import CRCTestCase
 
 
-class FHIREncounterMappingTestCase(unittest.TestCase):
+class FHIREncounterMappingTestCase(CRCTestCase):
 
     def test_basic_mapping(self):
         """ Test the basic encounter mapping entry
@@ -53,38 +54,39 @@ class FHIREncounterMappingTestCase(unittest.TestCase):
 
         EncounterMapping._clear()
         EncounterMapping.update_date = datetime.datetime(2017, 5, 25)
-        EncounterMapping.sourcesystem_cd = "FHIR"
         FHIREncounterMapping._clear()
 
-        em = FHIREncounterMapping(FHIR["Patient/f001"], "patient01", "http://hl7.org/fhir")
-        self.assertEqual(OrderedDict([
-             ('encounter_ide', 'Patient/f001'),
-             ('encounter_ide_source', 'http://hl7.org/fhir/'),
-             ('project_id', 'fhir'),
-             ('encounter_num', 500000),
-             ('patient_ide', 'patient01'),
-             ('patient_ide_source', 'http://hl7.org/fhir'),
-             ('encounter_ide_status', 'A'),
-             ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', None)]), em.encounter_mapping_entries[0]._freeze())
-        self.assertEqual(OrderedDict([
-             ('encounter_ide', '500000'),
-             ('encounter_ide_source', IDE_SOURCE_HIVE),
-             ('project_id', 'fhir'),
-             ('encounter_num', 500000),
-             ('patient_ide', 'patient01'),
-             ('patient_ide_source', 'http://hl7.org/fhir'),
-             ('encounter_ide_status', 'A'),
-             ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', None)]), em.encounter_mapping_entries[1]._freeze())
-        self.assertEqual(2, len(em.encounter_mapping_entries))
-        self.assertEqual(500000, em.encounter_num)
+        with self.sourcesystem_cd() as ss_cd:
+            EncounterMapping.sourcesystem_cd = ss_cd
+            em = FHIREncounterMapping(FHIR["Patient/f001"], "patient01", "http://hl7.org/fhir")
+            self.assertEqual(OrderedDict([
+                 ('encounter_ide', 'Patient/f001'),
+                 ('encounter_ide_source', 'http://hl7.org/fhir/'),
+                 ('project_id', 'fhir'),
+                 ('encounter_num', 500000),
+                 ('patient_ide', 'patient01'),
+                 ('patient_ide_source', 'http://hl7.org/fhir'),
+                 ('encounter_ide_status', 'A'),
+                 ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', None)]), em.encounter_mapping_entries[0]._freeze())
+            self.assertEqual(OrderedDict([
+                 ('encounter_ide', '500000'),
+                 ('encounter_ide_source', IDE_SOURCE_HIVE),
+                 ('project_id', 'fhir'),
+                 ('encounter_num', 500000),
+                 ('patient_ide', 'patient01'),
+                 ('patient_ide_source', 'http://hl7.org/fhir'),
+                 ('encounter_ide_status', 'A'),
+                 ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', None)]), em.encounter_mapping_entries[1]._freeze())
+            self.assertEqual(2, len(em.encounter_mapping_entries))
+            self.assertEqual(500000, em.encounter_num)
 
     def test_encounternum_refresh(self):
         """ Test the EncounterNumberGenerator refresh function.

@@ -39,9 +39,6 @@ test_conf_file = os.path.abspath(os.path.join(test_conf_directory, 'db_conf'))
 test_data_directory = os.path.join(test_directory, 'data')
 mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
 
-test_upload_id = 117651                 # upload identifier for test cases
-test_sourcesystem_cd = "i2FHIRb2_Test"  # source system code for test cases
-
 
 def FHIRGraph():
     print("Loading graph", end="")

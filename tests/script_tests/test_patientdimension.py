@@ -31,33 +31,33 @@ import unittest
 import os
 
 from tests.utils.base_test_case import test_data_directory, test_conf_directory
+from tests.utils.crc_testcase import CRCTestCase
 
 conf_file = os.path.join(test_conf_directory, 'db_conf')
 med_desp_upload_id = 2020
 pat_upload_id = 2021
 
 
-class PatientDimensionTestCase(unittest.TestCase):
-    @staticmethod
-    def clear_upload_id(id_: int) -> None:
-        from i2fhirb2.removefacts import remove_facts
-        remove_facts("{} --conf {}".format(id_, conf_file).split())
+class PatientDimensionScriptTestCase(CRCTestCase):
 
     @unittest.skip
     def test1(self):
         from i2fhirb2.loadfacts import load_facts
-        self.clear_upload_id(med_desp_upload_id)
+
         data_file = os.path.join(test_data_directory, 'medicationdispense0308.ttl')
-        load_facts("-i {} -l --conf {} -u {}".format(data_file, conf_file, med_desp_upload_id).split())
-        self.assertEqual(True, False)
+        with self.sourcesystem_cd():
+            load_facts(f"-i {data_file} -l --conf {conf_file} -u {med_desp_upload_id} -ss {self._sourcesystem_cd}".
+                       split())
+            self.assertEqual(True, False)
 
     @unittest.skip
     def test2(self):
         from i2fhirb2.loadfacts import load_facts
-        self.clear_upload_id(pat_upload_id)
+
         data_file = "http://hl7.org/fhir/Patient/pat1"
-        load_facts("-i {} -l --conf {} -u {}".format(data_file, conf_file, pat_upload_id).split())
-        self.assertEqual(True, False)
+        with self.sourcesystem_cd():
+            load_facts(f"-i {data_file} -l --conf {conf_file} -u {pat_upload_id} -ss {self._sourcesystem_cd}".split())
+            self.assertEqual(True, False)
 
 
 if __name__ == '__main__':

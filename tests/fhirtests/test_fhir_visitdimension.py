@@ -35,9 +35,10 @@ from isodate import FixedOffset
 from rdflib import Graph, Literal, XSD
 
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
+from tests.utils.crc_testcase import CRCTestCase
 
 
-class FHIRVisitDimensionTestCase(unittest.TestCase):
+class FHIRVisitDimensionTestCase(CRCTestCase):
 
     def test_load_ttl(self):
         from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
@@ -47,12 +48,10 @@ class FHIRVisitDimensionTestCase(unittest.TestCase):
 
         EncounterMapping._clear()
         EncounterMapping.update_date = datetime.datetime(2017, 5, 25)
-        EncounterMapping.sourcesystem_cd = "FHIR"
         EncounterMapping.upload_id = 1700043
 
         VisitDimension._clear()
         VisitDimension.update_date = datetime.datetime(2017, 5, 25)
-        VisitDimension.sourcesystem_cd = "FHIR"
         VisitDimension.upload_id = 1700043
 
         FHIREncounterMapping._clear()           # reset the encounter number generator
@@ -60,55 +59,58 @@ class FHIRVisitDimensionTestCase(unittest.TestCase):
         g = Graph()
         g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data",
                             "diagnosticreport-example-f202-bloodculture.ttl"), format="turtle")
-        pd_entry = FHIRVisitDimension(g.value(predicate=FHIR.nodeRole, object=FHIR.treeRoot), 100001,
-                                      "f201", "http://hl7.org/fhir",
-                                      Literal("2013-03-11T10:28:00+01:00", datatype=XSD.dateTime).toPython())
+        with self.sourcesystem_cd():
+            EncounterMapping.sourcesystem_cd = self._sourcesystem_cd
+            VisitDimension.sourcesystem_cd = self._sourcesystem_cd
+            pd_entry = FHIRVisitDimension(g.value(predicate=FHIR.nodeRole, object=FHIR.treeRoot), 100001,
+                                          "f201", "http://hl7.org/fhir",
+                                          Literal("2013-03-11T10:28:00+01:00", datatype=XSD.dateTime).toPython())
 
-        self.assertEqual(OrderedDict([
-             ('encounter_num', 500000),
-             ('patient_num', 100001),
-             ('active_status_cd', 'OA'),
-             ('start_date',
-              datetime.datetime(2013, 3, 11, 10, 28, tzinfo=FixedOffset(1))),
-             ('end_date', None),
-             ('inout_cd', None),
-             ('location_cd', None),
-             ('location_path', None),
-             ('length_of_stay', None),
-             ('visit_blob', None),
-             ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 1700043)]), pd_entry.visit_dimension_entry._freeze())
+            self.assertEqual(OrderedDict([
+                 ('encounter_num', 500000),
+                 ('patient_num', 100001),
+                 ('active_status_cd', 'OA'),
+                 ('start_date',
+                  datetime.datetime(2013, 3, 11, 10, 28, tzinfo=FixedOffset(1))),
+                 ('end_date', None),
+                 ('inout_cd', None),
+                 ('location_cd', None),
+                 ('location_path', None),
+                 ('length_of_stay', None),
+                 ('visit_blob', None),
+                 ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', 1700043)]), pd_entry.visit_dimension_entry._freeze())
 
-        self.assertEqual(OrderedDict([
-             ('encounter_ide', 'DiagnosticReport/f202'),
-             ('encounter_ide_source', 'http://hl7.org/fhir/'),
-             ('project_id', 'fhir'),
-             ('encounter_num', 500000),
-             ('patient_ide', 'f201'),
-             ('patient_ide_source', 'http://hl7.org/fhir'),
-             ('encounter_ide_status', 'A'),
-             ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[0]._freeze())
-        self.assertEqual(OrderedDict([
-             ('encounter_ide', '500000'),
-             ('encounter_ide_source', 'HIVE'),
-             ('project_id', 'fhir'),
-             ('encounter_num', 500000),
-             ('patient_ide', 'f201'),
-             ('patient_ide_source', 'http://hl7.org/fhir'),
-             ('encounter_ide_status', 'A'),
-             ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[1]._freeze())
-        self.assertEqual(2, len(pd_entry.encounter_mappings.encounter_mapping_entries))
+            self.assertEqual(OrderedDict([
+                 ('encounter_ide', 'DiagnosticReport/f202'),
+                 ('encounter_ide_source', 'http://hl7.org/fhir/'),
+                 ('project_id', 'fhir'),
+                 ('encounter_num', 500000),
+                 ('patient_ide', 'f201'),
+                 ('patient_ide_source', 'http://hl7.org/fhir'),
+                 ('encounter_ide_status', 'A'),
+                 ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[0]._freeze())
+            self.assertEqual(OrderedDict([
+                 ('encounter_ide', '500000'),
+                 ('encounter_ide_source', 'HIVE'),
+                 ('project_id', 'fhir'),
+                 ('encounter_num', 500000),
+                 ('patient_ide', 'f201'),
+                 ('patient_ide_source', 'http://hl7.org/fhir'),
+                 ('encounter_ide_status', 'A'),
+                 ('update_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[1]._freeze())
+            self.assertEqual(2, len(pd_entry.encounter_mappings.encounter_mapping_entries))
 
 
 if __name__ == '__main__':

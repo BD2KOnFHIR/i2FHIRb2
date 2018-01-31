@@ -1,4 +1,5 @@
 # i2b2 data model tests
+This module contains tests for the i2b2 model tools
 
 | File | Test | Function | Dependencies |
 | ---- | ---- | -------- | -------- |

@@ -25,11 +25,11 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional
+from typing import Optional, Tuple, Union
 
 from fhirtordf.rdfsupport.namespaces import W5, FHIR, namespace_for
 from rdflib import Graph, URIRef
-from rdflib.namespace import split_uri, RDFS
+from rdflib.namespace import split_uri, RDFS, NAME_START_CATEGORIES
 from rdflib.term import Node, BNode, Literal
 
 
@@ -48,6 +48,9 @@ skip_fhir_types = {FHIR.BackboneElement, FHIR.Element, FHIR.Resource}
 # TODO: FHIR.Reference shouldn't be in this list
 fhir_primitives = {FHIR.Reference, FHIR.index, FHIR.nodeRole, FHIR.value}
 
+# rdflib is a bit too strict when it comes to URI's.  This fix allows numeric codes
+if 'Nd' not in NAME_START_CATEGORIES:
+    NAME_START_CATEGORIES.append('Nd')
 
 def concept_path_sans_root(subject: URIRef) -> str:
     """

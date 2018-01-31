@@ -26,11 +26,11 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 from datetime import datetime
-from typing import Optional, Tuple, List
+from typing import Optional, List
 
 from fhirtordf.rdfsupport.fhirgraphutils import value, extension, concept_uri, codeable_concept_code
 from fhirtordf.rdfsupport.namespaces import FHIR, SNOMEDCT, V3
-from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
+from fhirtordf.rdfsupport.uriutils import parse_fhir_resource_uri
 from rdflib import Graph, URIRef, Literal, XSD
 
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
@@ -47,13 +47,14 @@ class FHIRPatientDimension:
     def __init__(self, g: Graph, tables: Optional[I2B2Tables], patient: URIRef) -> None:
         """
         Generate i2b2 patient dimension and patient_mapping records from PATIENT resources in graph g
+
         :param g: Graph containing 0 or more FHIR Patient resources
         :param tables: i2b2 tables connection if we are using a database (vs. tsv output)
         :param patient: Graph subject
         """
         assert value(g, patient, FHIR.animal) is None       # We don't do animals
-        patient_id, patient_ide_source = self.uri_to_patient_id(patient)
-        self.patient_mappings = FHIRPatientMapping(tables, patient_id, patient_ide_source)
+        parsed_resource = parse_fhir_resource_uri(patient)
+        self.patient_mappings = FHIRPatientMapping(tables, parsed_resource.resource, str(parsed_resource.namespace))
         active = value(g, patient, FHIR.Patient.active)
         if active is not None and not active:
             self.patient_mappings._patient_ide_status = PatientIDEStatus.inactive
@@ -67,15 +68,6 @@ class FHIRPatientDimension:
         self._race = None
         self._religion = None
         self.add_patient_information(g, patient)
-
-    @staticmethod
-    def uri_to_patient_id(patient: URIRef) -> Tuple[str, str]:
-        """
-        Convert a patient URI into a patient identifier / identifier source tuple
-        :param patient: patient URI
-        :return: patient_id, patient_ide_source
-        """
-        return uri_to_ide_and_source(patient)
 
     def add_patient_information(self, g: Graph, patient: URIRef) -> None:
         """

@@ -31,9 +31,10 @@ import unittest
 from datetime import datetime
 
 from tests.utils.connection_helper import connection_helper
+from tests.utils.crc_testcase import CRCTestCase
 
 
-class EncounterMappingSQLTest(unittest.TestCase):
+class EncounterMappingSQLTest(CRCTestCase):
     opts = connection_helper()
 
     def test_insert(self):
@@ -42,23 +43,24 @@ class EncounterMappingSQLTest(unittest.TestCase):
         EncounterMapping.delete_upload_id(self.opts.tables, self.opts.uploadid)
         EncounterMapping._clear()
         EncounterMapping.update_date = datetime(2017, 5, 25)
-        EncounterMapping.sourcesystem_cd = "FHIR"
         EncounterMapping.upload_id = self.opts.uploadid
 
-        em = EncounterMapping("f001", "http://hl7.org/fhir", "FHIR", 5000017, "patient01",
-                              "http://hl7.org/fhir", EncounterIDEStatus.active)
+        with self.sourcesystem_cd() as ss_cd:
+            EncounterMapping.sourcesystem_cd = self._sourcesystem_cd
+            em = EncounterMapping("f001", "http://hl7.org/fhir", "FHIR", 5000017, "patient01",
+                                  "http://hl7.org/fhir", EncounterIDEStatus.active)
 
-        n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em])
-        self.assertEqual((0, 1), (n_upd, n_ins))
-        n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em])
-        self.assertEqual((0, 0), (n_upd, n_ins))
+            n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em])
+            self.assertEqual((0, 1), (n_upd, n_ins))
+            n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em])
+            self.assertEqual((0, 0), (n_upd, n_ins))
 
-        em._project_id = "TEST"
-        em2 = EncounterMapping("f002", "http://hl7.org/fhir", "FHIR", 5000018, "patient02",
-                               "http://hl7.org/fhir", EncounterIDEStatus.active)
-        n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em, em2])
-        self.assertEqual((0, 2), (n_upd, n_ins))
-        self.assertEqual(3, EncounterMapping.delete_upload_id(self.opts.tables, self.opts.uploadid))
+            em._project_id = "TEST"
+            em2 = EncounterMapping("f002", "http://hl7.org/fhir", "FHIR", 5000018, "patient02",
+                                   "http://hl7.org/fhir", EncounterIDEStatus.active)
+            n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em, em2])
+            self.assertEqual((0, 2), (n_upd, n_ins))
+            self.assertEqual(3, EncounterMapping.delete_upload_id(self.opts.tables, self.opts.uploadid))
 
 
 if __name__ == '__main__':

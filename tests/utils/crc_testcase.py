@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Mayo Clinic
+# Copyright (c) 2018, Mayo Clinic
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,38 +25,32 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
+import io
 import unittest
-from collections import OrderedDict
-from datetime import datetime
 
-from tests.utils.crc_testcase import CRCTestCase
+import sys
+from contextlib import contextmanager, redirect_stdout
 
-
-class PatientMappingTestCase(CRCTestCase):
-    def test_patient_mapping(self):
-        from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
-        from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
-
-        PatientMapping._clear()
-        PatientMapping.update_date = datetime(2017, 5, 25)
-        with self.sourcesystem_cd():
-            PatientMapping.sourcesystem_cd = self._sourcesystem_cd
-            pm = PatientMapping(10000001, "p123", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
-            pm._upload_id = 17443
-
-            self.assertEqual(OrderedDict([
-                 ('patient_ide', 'p123'),
-                 ('patient_ide_source', 'http://hl7.org/fhir/'),
-                 ('patient_num', 10000001),
-                 ('patient_ide_status', 'A'),
-                 ('project_id', 'fhir'),
-                 ('update_date', datetime(2017, 5, 25, 0, 0)),
-                 ('download_date', datetime(2017, 5, 25, 0, 0)),
-                 ('import_date', datetime(2017, 5, 25, 0, 0)),
-                 ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 17443)]), pm._freeze())
+from i2fhirb2.removefacts import remove_facts
+from tests.utils.base_test_case import test_conf_file
 
 
-if __name__ == '__main__':
-    unittest.main()
+class CRCTestCase(unittest.TestCase):
+
+    @contextmanager
+    def sourcesystem_cd(self) -> str:
+        """ Generate a sourcesystem_code that identifies the test case and make sure it doesn't pollute the database.
+        _sourcesystem_cd and _upload_id are added to the specific object
+
+        :return: sourcesystem code
+        """
+        self._sourcesystem_cd = "test_i2FHIRb2_" + type(self).__name__
+        self._upload_id = 117651
+        try:
+            yield self._sourcesystem_cd
+        finally:
+            with redirect_stdout(io.StringIO()):
+                remove_facts(f"--conf {test_conf_file} -ss {self._sourcesystem_cd}".split())
+            print(f"Removed facts for {self._sourcesystem_cd}")
+            delattr(self, '_sourcesystem_cd')
+            delattr(self, '_upload_id')

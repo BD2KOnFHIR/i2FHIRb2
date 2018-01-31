@@ -35,35 +35,33 @@ from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
 from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
 from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyRoot, OntologyEntry
 from tests.utils.base_test_case import BaseTestCase
+from tests.utils.crc_testcase import CRCTestCase
 from tests.utils.shared_graph import shared_graph
 
 # True means create the output file -- false means test it
 create_output_files = False         # Be very careful when setting this to 'true'
 
 
-class FHIROntologyTestCase(BaseTestCase):
+class FHIROntologyTestCase(BaseTestCase, CRCTestCase):
     output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))
 
     def setUp(self):
+        super().setUp()
         from i2fhirb2.i2b2model.metadata import dimensionmetadata
         ref_datetime = datetime(2017, 5, 25, 13, 0)
         dimensionmetadata.creation_date = ref_datetime
 
         from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
         OntologyEntry._clear()
-        OntologyEntry.sourcesystem_cd = "FHIR STU3"
         OntologyEntry.update_date = OntologyRoot.update_date = ref_datetime
-        OntologyRoot.sourcesystem_cd = "FHIR STU3"
 
         from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
         ModifierDimension._clear()
-        ModifierDimension.sourcesystem_cd = "FHIR STU3"
         ModifierDimension.update_date = ref_datetime
         ModifierDimension.graph = shared_graph
 
         from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
         ConceptDimension._clear()
-        ConceptDimension.sourcesystem_cd = "FHIR STU3"
         ConceptDimension.update_date = ConceptDimension.import_date = ConceptDimension.download_date = \
             ref_datetime
         ConceptDimension.graph = shared_graph
@@ -71,6 +69,13 @@ class FHIROntologyTestCase(BaseTestCase):
     @staticmethod
     def esc_output(txt: str) -> str:
         return txt.replace('\r\n', '').replace('\r', '').replace('\n', '').strip('\t')
+
+    def set_sourcesystem_cds(self) -> None:
+        OntologyEntry.sourcesystem_cd = self._sourcesystem_cd
+        OntologyRoot.sourcesystem_cd = self._sourcesystem_cd
+        ModifierDimension.sourcesystem_cd = self._sourcesystem_cd
+        ConceptDimension.sourcesystem_cd = self._sourcesystem_cd
+
 
     def tst_dimension(self, header: str, dimension_entries: List, fname: str) -> None:
         """
@@ -102,6 +107,7 @@ class FHIROntologyTestCase(BaseTestCase):
         :param dimensions: ontology, concept and modifier dimension entries
         :param resource_name: name of specific test file (e.g. 'observation', 'domain_resource', etc.)
         """
+        self.set_sourcesystem_cds()
         self.tst_dimension(OntologyEntry._header(), dimensions[0], 'fhir_ontology_' + resource_name)
         self.tst_dimension(ConceptDimension._header(), dimensions[1], 'fhir_concept_dimension_' + resource_name)
         self.tst_dimension(ModifierDimension._header(), dimensions[2], 'fhir_modifier_dimension_' + resource_name)
@@ -112,8 +118,9 @@ class FHIROntologyTestCase(BaseTestCase):
         """
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 
-        self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.Observation), "observation")
-        self.assertFalse(create_output_files, "New output files generated")
+        with self.sourcesystem_cd() as ss_cd:
+            self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.Observation), "observation")
+            self.assertFalse(create_output_files, "New output files generated")
 
     def test_complete_load(self):
         """
@@ -121,8 +128,11 @@ class FHIROntologyTestCase(BaseTestCase):
         :return:
         """
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
-        FHIROntologyTable(shared_graph).dimension_list()
-        self.assertTrue(True)
+
+        with self.sourcesystem_cd():
+            self.set_sourcesystem_cds()
+            FHIROntologyTable(shared_graph).dimension_list()
+            self.assertTrue(True)
 
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@ upload_id: 117651
 
 ---> Graph map phase complete
 Generated:
-    18 Observation facts
+    19 Observation facts
     1 Patients
     0 Patient mappings
 
@@ -15,4 +15,4 @@ Generated:
 0 / 0 patient_mapping records added / modified
 1 / 0 visit_dimension records added / modified
 2 / 0 encounter_mapping records added / modified
-18 / 0 observation_fact records added / modified
+19 / 0 observation_fact records added / modified

@@ -32,48 +32,51 @@ from datetime import datetime
 
 from i2fhirb2.fhir.fhirpatientmapping import PatientNumberGenerator
 from tests.utils.connection_helper import connection_helper
+from tests.utils.crc_testcase import CRCTestCase
 
 
-class FHIRPatientMappingTestCase(unittest.TestCase):
+class FHIRPatientMappingTestCase(CRCTestCase):
+
     def test_patient_mapping(self):
         from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
         from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
 
         PatientMapping._clear()
         PatientMapping.update_date = datetime(2017, 5, 25)
-        PatientMapping.sourcesystem_cd = "FHIR"
         FHIRPatientMapping._clear()
         PatientMapping.upload_id = 1773486
 
-        pm = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
+        with self.sourcesystem_cd():
+            PatientMapping.sourcesystem_cd = self._sourcesystem_cd
+            pm = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
 
-        self.assertEqual(OrderedDict([
-             ('patient_ide', 'p123'),
-             ('patient_ide_source', 'http://hl7.org/fhir'),
-             ('patient_num', 100000001),
-             ('patient_ide_status', 'A'),
-             ('project_id', 'fhir'),
-             ('update_date', datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 1773486)]), pm.patient_mapping_entries[0]._freeze())
-        self.assertEqual(OrderedDict([
-             ('patient_ide', '100000001'),
-             ('patient_ide_source', 'HIVE'),
-             ('patient_num', 100000001),
-             ('patient_ide_status', 'A'),
-             ('project_id', 'fhir'),
-             ('update_date', datetime(2017, 5, 25, 0, 0)),
-             ('download_date', datetime(2017, 5, 25, 0, 0)),
-             ('import_date', datetime(2017, 5, 25, 0, 0)),
-             ('sourcesystem_cd', 'FHIR'),
-             ('upload_id', 1773486)]), pm.patient_mapping_entries[1]._freeze())
-        self.assertEqual(2, len(pm.patient_mapping_entries))
+            self.assertEqual(OrderedDict([
+                 ('patient_ide', 'p123'),
+                 ('patient_ide_source', 'http://hl7.org/fhir'),
+                 ('patient_num', 100000001),
+                 ('patient_ide_status', 'A'),
+                 ('project_id', 'fhir'),
+                 ('update_date', datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', 1773486)]), pm.patient_mapping_entries[0]._freeze())
+            self.assertEqual(OrderedDict([
+                 ('patient_ide', '100000001'),
+                 ('patient_ide_source', 'HIVE'),
+                 ('patient_num', 100000001),
+                 ('patient_ide_status', 'A'),
+                 ('project_id', 'fhir'),
+                 ('update_date', datetime(2017, 5, 25, 0, 0)),
+                 ('download_date', datetime(2017, 5, 25, 0, 0)),
+                 ('import_date', datetime(2017, 5, 25, 0, 0)),
+                 ('sourcesystem_cd', self._sourcesystem_cd),
+                 ('upload_id', 1773486)]), pm.patient_mapping_entries[1]._freeze())
+            self.assertEqual(2, len(pm.patient_mapping_entries))
 
-        pm2 = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
-        self.assertEqual(2, len(pm.patient_mapping_entries))
-        self.assertEqual(pm2.patient_num, pm.patient_num)
+            pm2 = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
+            self.assertEqual(2, len(pm.patient_mapping_entries))
+            self.assertEqual(pm2.patient_num, pm.patient_num)
 
     def test_patientnum_refresh(self):
         # Not a lot we can do to test this without knowing what is in the database.   We COULD add something to the

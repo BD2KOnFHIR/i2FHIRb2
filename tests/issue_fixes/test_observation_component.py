@@ -75,6 +75,8 @@ class ObservationComponentTestCase(unittest.TestCase):
             rslt = DictReader(output_tsv_file, delimiter="\t", quoting=QUOTE_NONE)
             inst_codes = {}            # type: Dict[int, str]
             for row in rslt:
+                # print('\t'.join((row['instance_num'], row['concept_cd'], row['modifier_cd'],
+                #       row['tval_char'], row['nval_num'])))
                 inst_num = int(row['instance_num'])
                 if inst_num > 0:
                     if inst_num in inst_codes:

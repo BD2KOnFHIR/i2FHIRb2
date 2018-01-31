@@ -5,4 +5,3 @@ i2b2
 --password
 demouser
 -mv ../data/fhir_metadata_vocabulary
-

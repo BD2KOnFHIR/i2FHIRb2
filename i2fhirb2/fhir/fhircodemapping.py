@@ -25,21 +25,29 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from typing import List, Dict, Callable, Optional
+from typing import List, Dict, Callable, Optional, Union
 
 from fhirtordf.rdfsupport.namespaces import FHIR
 from fhirtordf.rdfsupport import fhirgraphutils
 from rdflib import URIRef, Graph, RDF
-from rdflib.term import Node, Literal
+from rdflib.term import Node, Literal, BNode
 
 from i2fhirb2.fhir.fhirspecific import concept_code
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact, valuetype_text, \
     valuetype_number, valuetype_novalue
 
 
-def value_string(g: Graph, subject: Literal, obs_fact: ObservationFact) -> None:
+def value_string(g: Graph, node: Node, obs_fact: ObservationFact) -> ObservationFact:
+    """ Convert a FHIR.string type value into the i2b2 equivalent
+
+    :param g: Graph containing the data
+    :param node: Node containing the string value
+    :param obs_fact: target fact
+    :return: target fact
+    """
     obs_fact._valtype_cd = valuetype_text
-    obs_fact._tval_char = fhirgraphutils.value(g, subject, FHIR.string)
+    obs_fact._tval_char = g.value(node, FHIR.value, default=Literal(""), any=False).value
+    return obs_fact
 
 
 comparator_map = {'<': 'L',
@@ -48,7 +56,7 @@ comparator_map = {'<': 'L',
                   '>': 'G'}
 
 
-def value_quantity(g: Graph, subject: Node, obs_fact: ObservationFact) -> None:
+def value_quantity(g: Graph, subject: Node, obs_fact: ObservationFact) -> ObservationFact:
     # def value(g: Graph, subject: Node, predicate: URIRef, asLiteral=False) -> \
     #         Union[None, BNode, URIRef, str, date, bool, datetime, int, float]:
     units = fhirgraphutils.value(g, subject, FHIR.Quantity.unit)
@@ -58,32 +66,48 @@ def value_quantity(g: Graph, subject: Node, obs_fact: ObservationFact) -> None:
         obs_fact._valtype_cd = valuetype_number
         obs_fact._nval_num = value
         obs_fact._tval_char = 'E' if comparator is None else comparator_map.get(str(comparator), '?')
-        obs_fact._units_cd = str(units)
+        obs_fact._units_cd = str(units) if units else None
     else:
         obs_fact._valtype_cd = valuetype_novalue
+    return obs_fact
 
 
-def value_integer(g: Graph, subject: Literal, obs_fact: ObservationFact) -> None:
+def value_integer(g: Graph, node: BNode, obs_fact: ObservationFact) -> ObservationFact:
     obs_fact._valtype_cd = valuetype_number
-    obs_fact._nval_num = fhirgraphutils.value(g, subject, FHIR.integer)
+    obs_fact._nval_num = g.value(node, FHIR.value, any=False).value
     obs_fact._tval_char = 'E'
+    return obs_fact
 
 
-def value_codeable_concept(g: Graph, subject: Node, obs_fact: ObservationFact) -> None:
-    coding = g.value(subject, FHIR.CodeableConcept.coding)
-    if coding is not None:
-        code = g.value(coding, RDF.type)
-        if code:
-            obs_fact._modifier_cd = concept_code(code)
+def value_codeable_concept(g: Graph, subject: Node, obs_fact: ObservationFact) -> List[ObservationFact]:
+    """ Map the FHIR.CodeableConcept(s) referenced by ``subject`` into an observation fact
+
+    :param g: Graph containing the data
+    :param subject: CodeableConcept node
+    :param obs_fact: target fact(s)
+    """
+    assert obs_fact.modifier_cd == '@', "Overwriting an existing modifier code"
+
     text = fhirgraphutils.value(g, subject, FHIR.CodeableConcept.text)
     if text:
         obs_fact._valtype_cd = valuetype_text
         obs_fact._tval_char = text
 
+    rval = [obs_fact]
+    for coding in g.objects(subject, FHIR.CodeableConcept.coding):
+        code = g.value(coding, RDF.type)
+        if code:
+            if obs_fact.modifier_cd != '@':
+                obs_fact = obs_fact.copy()
+                rval.append(obs_fact)
+            obs_fact._modifier_cd = concept_code(code)
+    return rval
 
-value_processors: Dict[str, Callable[[Graph, Node, ObservationFact], None]] = {
+
+# Table of value types to i2b2 converters
+value_processors: Dict[str, Callable[[Graph, Node, ObservationFact], Union[ObservationFact, List[ObservationFact]]]] = {
     "valueQuantity": value_quantity,
-    "valueCodeableConcept": None,
+    "valueCodeableConcept": value_codeable_concept,
     "valueString": value_string,
     "valueBoolean": None,
     "valueInteger": value_integer,
@@ -96,40 +120,45 @@ value_processors: Dict[str, Callable[[Graph, Node, ObservationFact], None]] = {
 }
 
 
-def proc_value_node(g: Graph, obs_fact, predicate: URIRef, object: Node) -> None:
+def proc_value_node(g: Graph, obs_fact: ObservationFact, predicate: URIRef, object: Node) -> ObservationFact:
     # TODO: Interpretation
     value_type = str(predicate).split('.')[-1]
     if value_type not in value_processors:
         raise NotImplementedError(f"Unrecognized value type: {value_type}")
     if value_processors[value_type] is not None:
-        value_processors[value_type](g, object, obs_fact)
+        return value_processors[value_type](g, object, obs_fact)
+    return obs_fact
+
+
+def is_fhir_value(p: URIRef) -> bool:
+    return str(p).startswith(str(FHIR)) and str(p).split('.')[-1].startswith('value')
 
 
 def proc_observation_component(g: Graph, subject: Node, ofk: ObservationFactKey, inst_num: int, 
                                identifying_codes: Optional[List[str]]) -> List[ObservationFact]:
     # TODO: Highly redundant code
     from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
+
     rval: List[ObservationFact] = []
     codeable_concept = g.value(subject, FHIR.Observation.component.code, any=False)
     if codeable_concept:
         for coding in g.objects(codeable_concept, FHIR.CodeableConcept.coding):
+            # Add the following entries:
+            #   1) concept_cd = concept_code_coding, modifier_cd = '@' inst_num = 0
+            #   2) concept_cd = identifying_code, modifier_cd=concept_code_coding, inst_num = 0
+            #   3) concept_cd = FHIR.Observation.component, modifier_cd=concept_code_coding, inst_num = inst_num
             concept_code_coding = g.value(coding, RDF.type)
-            coded_fact = FHIRObservationFact(g, ofk, concept_code_coding, None, None, instance_num=inst_num)
-            for p, o in g.predicate_objects(subject):
-                if str(p).startswith(str(FHIR)):
-                    vtype = str(p).split('.')[-1]
-                    if vtype.startswith('value'):
-                        proc_value_node(g, coded_fact, p, o)
-            rval.append(coded_fact)
+            coded_entries: List[ObservationFact] = [
+                FHIRObservationFact(g, ofk, concept_code_coding, None, None, 0),
+                FHIRObservationFact(g, ofk, FHIR.Observation.component, concept_code_coding, None, inst_num)]
             for id_code in identifying_codes:
-                coded_fact_2 = FHIRObservationFact(g, ofk, id_code, concept_code_coding, None, instance_num=inst_num)
-                for p, o in g.predicate_objects(subject):
-                    if str(p).startswith(str(FHIR)):
-                        vtype = str(p).split('.')[-1]
-                        if vtype.startswith('value'):
-                            proc_value_node(g, coded_fact_2, p, o)
-                rval.append(coded_fact_2)
-
+                coded_entries.append(FHIRObservationFact(g, ofk, id_code, concept_code_coding, None, 0))
+            for p, o in g.predicate_objects(subject):
+                if is_fhir_value(p):
+                    for cf in coded_entries:
+                        proc_value_node(g, cf, p, o)
+                    break
+            rval += coded_entries
     return rval
 
 

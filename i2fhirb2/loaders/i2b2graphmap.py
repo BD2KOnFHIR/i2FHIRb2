@@ -30,7 +30,7 @@ from datetime import datetime
 from typing import List, Tuple, Optional
 
 from fhirtordf.rdfsupport.fhirgraphutils import value
-from fhirtordf.rdfsupport.uriutils import uri_to_ide_and_source
+from fhirtordf.rdfsupport.uriutils import parse_fhir_resource_uri
 from rdflib import Graph, RDF, URIRef
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFactFactory
@@ -109,13 +109,14 @@ class I2B2GraphMap:
             -> Tuple[Optional[FHIRPatientMapping], Optional[FHIRVisitDimension], Optional[datetime]]:
         patient_id_uri, encounter_id_uri, provider_id = mapped_type.fact_key_for(self._g, subj)
         if patient_id_uri is not None:
-            patient_id, patient_ide_source = uri_to_ide_and_source(patient_id_uri)
-            pm = FHIRPatientMapping(self.tables, patient_id, patient_ide_source)
+            parsed_resource = parse_fhir_resource_uri(patient_id_uri)
+            pm = FHIRPatientMapping(self.tables, parsed_resource.resource, str(parsed_resource.namespace))
             self.patient_mappings += pm.patient_mapping_entries
             start_date = value(self._g, subj, FHIR.Observation.effectiveDateTime)
             if not start_date:
                 start_date = datetime.now()
-            vd = FHIRVisitDimension(subj, pm.patient_num, patient_id, patient_ide_source, start_date)
+            vd = FHIRVisitDimension(subj, pm.patient_num, parsed_resource.resource, str(parsed_resource.namespace),
+                                    start_date)
             self.visit_dimensions.append(vd.visit_dimension_entry)
             self.encounter_mappings += vd.encounter_mappings.encounter_mapping_entries
             return pm, vd, start_date
