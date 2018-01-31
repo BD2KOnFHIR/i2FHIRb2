@@ -25,10 +25,9 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-
+import io
 import unittest
-
-from tests.utils.output_redirector import OutputRedirector
+from contextlib import redirect_stdout
 
 output1 = """.abcdefgh-
 .ijklmnop-
@@ -38,7 +37,7 @@ yz-
 """
 
 
-class ListChunkerTestCase(unittest.TestCase, OutputRedirector):
+class ListChunkerTestCase(unittest.TestCase):
 
     def test_basics(self):
         from i2fhirb2.i2b2model.shared.listchunker import ListChunker
@@ -61,25 +60,25 @@ class ListChunkerTestCase(unittest.TestCase, OutputRedirector):
         from i2fhirb2.i2b2model.shared.listchunker import ListChunker
         alphabet = "abcdefghijklmnopqrstuvwxyz"
         lc = ListChunker(alphabet, 8)
-        self._push_stdout()
-        for c in lc:
-            print(c + '-')
-        result = self._pop_stdout()
-        self.assertEqual(output1, result.getvalue())
+        output = io.StringIO()
+        with redirect_stdout(output):
+            for c in lc:
+                print(c + '-')
+        self.assertEqual(output1, output.getvalue())
 
         lc = ListChunker(alphabet, 8)
-        self._push_stdout()
-        for _ in lc:
-            pass
-        result = self._pop_stdout()
-        self.assertEqual('...\n', result.getvalue())
+        output = io.StringIO()
+        with redirect_stdout(output):
+            for _ in lc:
+                pass
+        self.assertEqual('...\n', output.getvalue())
 
         lc = ListChunker(alphabet, 8, False)
-        self._push_stdout()
-        for _ in lc:
-            pass
-        result = self._pop_stdout()
-        self.assertEqual('', result.getvalue())
+        output = io.StringIO()
+        with redirect_stdout(output):
+            for _ in lc:
+                pass
+        self.assertEqual('', output.getvalue())
 
 
 if __name__ == '__main__':
