@@ -6,5 +6,6 @@ usage: removefacts [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
                    [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
                    [--ontodb ONTODB] [--ontouser ONTOUSER]
                    [--ontopassword ONTOPASSWORD]
-                   [--onttable ONTOLOGY TABLE NAME]
-removefacts: error: Upload identifiers and/or source system codes must be supplied
+                   [--onttable ONTOLOGY TABLE NAME] [--testlist]
+                   [--removetestlist]
+removefacts: error: Option must be one of: -ss, -u, --testlist, --removetestlist)

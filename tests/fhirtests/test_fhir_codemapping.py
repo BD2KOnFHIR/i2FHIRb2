@@ -144,7 +144,5 @@ class CodeMappingTestCase(unittest.TestCase):
         self.assertTrue(found)
 
 
-
-
 if __name__ == '__main__':
     unittest.main()

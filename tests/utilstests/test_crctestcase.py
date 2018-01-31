@@ -25,33 +25,21 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import io
+
 import unittest
 
-import sys
-from contextlib import contextmanager, redirect_stdout
-
-from i2fhirb2.removefacts import remove_facts
-from tests.utils.base_test_case import test_conf_file
+from i2fhirb2.removefacts import list_test_artifacts
+from tests.utils.connection_helper import connection_helper
 
 
-class CRCTestCase(unittest.TestCase):
+class CRCTestCaseTestCase(unittest.TestCase):
 
-    @contextmanager
-    def sourcesystem_cd(self) -> str:
-        """ Generate a sourcesystem_code that identifies the test case and make sure it doesn't pollute the database.
-        _sourcesystem_cd and _upload_id are added to the specific object
+    def test_clean_exit(self):
+        """ Determine whether the test cases all cleaned up after themselves """
+        ch = connection_helper()
+        qr = list_test_artifacts(None, ch.tables)
+        self.assertFalse(bool(qr))
 
-        :return: sourcesystem code
-        """
-        self._sourcesystem_cd = "test_i2FHIRb2_" + type(self).__name__
-        self._upload_id = 117651
-        print(f"+++++ {self._sourcesystem_cd}")
-        try:
-            yield self._sourcesystem_cd
-        finally:
-            # with redirect_stdout(io.StringIO()):
-            remove_facts(f"--conf {test_conf_file} -ss {self._sourcesystem_cd}".split())
-            print(f"----- {self._sourcesystem_cd}")
-            delattr(self, '_sourcesystem_cd')
-            delattr(self, '_upload_id')
+
+if __name__ == '__main__':
+    unittest.main()

@@ -6,7 +6,8 @@ usage: removefacts [-h] [-v] [-mv METADATAVOC] [-ss SOURCE SYSTEM CODE]
                    [--crcuser CRCUSER] [--crcpassword CRCPASSWORD]
                    [--ontodb ONTODB] [--ontouser ONTOUSER]
                    [--ontopassword ONTOPASSWORD]
-                   [--onttable ONTOLOGY TABLE NAME]
+                   [--onttable ONTOLOGY TABLE NAME] [--testlist]
+                   [--removetestlist]
 
 Clear data from FHIR observation fact table
 
@@ -40,3 +41,5 @@ optional arguments:
                         Password for ontology database. (default: password)
   --onttable ONTOLOGY TABLE NAME
                         Ontology table name (default: custom_meta)
+  --testlist            List leftover test suite entries
+  --removetestlist      Remove leftover test suite entries
