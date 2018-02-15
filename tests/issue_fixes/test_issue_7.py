@@ -30,7 +30,7 @@ import unittest
 
 from tests.utils.load_facts_helper import LoadFactsHelper
 
-# TODO: This issue is NOT fixed!  There is a temporary patch in FHIRObservationFactFactory.special_processing_list that
+# TODO: This issue is NOT fixed!  There is a temporary patch in FHIRObservationFactFactory.skip_predicates that
 #       ignores Observation.referenceRange
 
 
@@ -40,7 +40,7 @@ class ReferenceRangeIssue(LoadFactsHelper):
     def test_reference_range(self):
         """ The example below fails with a duplicate key violation """
         with self.sourcesystem_cd():
-            self.create_test_output('obs_sample_1134281.ttl')
+            self.load_named_resource('obs_sample_1134281.ttl')
             self.assertTrue(True)
 
 

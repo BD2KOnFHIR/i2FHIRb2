@@ -25,13 +25,12 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import re
-import unittest
 
 import os
+from typing import Optional, List
 
-from i2fhirb2.loadfacts import load_facts
-from i2fhirb2.removefacts import remove_facts
+from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
+from i2fhirb2.loadfacts import load_facts, load_graph_map, genargs
 from tests.utils.base_test_case import test_conf_directory, test_data_directory
 from tests.utils.crc_testcase import CRCTestCase
 
@@ -45,12 +44,31 @@ class LoadFactsHelper(CRCTestCase):
         cls.mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
         cls.dirname, test_file = os.path.split(os.path.abspath(cls.caller_filename))
 
-    def create_test_output(self, infilename: str):
-        """ Helper to generate test output for input file infilename """
+    def _setup_opts_string(self, resource_name: str, resource_path: Optional[str]) -> List[str]:
+        if resource_path is None:
+            resource_path = os.path.join(self.dirname, 'data')
+        if ":" in resource_path:
+            input_file = resource_path + ('' if resource_path.endswith(('#', '/')) else '/') + resource_name
+        else:
+            input_file = os.path.abspath(os.path.join(resource_path, resource_name))
+        fmt = 'json' if resource_name.endswith('.json') else 'rdf'
+        return f"--sourcesystem {self._sourcesystem_cd} -u {self._upload_id} -mv {self.mv} " \
+               f"--conf {self.conf} -i {input_file} -t {fmt} -l".split()
 
-        input_dir = os.path.abspath((os.path.join(self.dirname, 'data')))
+    def load_named_resource(self, resource_name: str, resource_path: Optional[str] = None) -> None:
+        """ Load resource_name from resource path and save it into the i2b2 facts table
 
-        mv = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
-        input_file = os.path.abspath(os.path.join(input_dir, infilename))
-        load_facts(f"--sourcesystem {self._sourcesystem_cd} -u {self._upload_id} -mv {mv} "
-                   f"--conf {self.conf} -i {input_file} -t rdf -l".split())
+        :param resource_name: name of resource
+        :param resource_path: Directory or URI. If none, self.dirname will be used
+        """
+        with self.sourcesystem_cd():
+            load_facts(self._setup_opts_string(resource_name, resource_path))
+
+    def load_i2b2_to_memory(self, resource_name: str, resource_path: Optional[str] = None) -> Optional[I2B2GraphMap]:
+        """ Load resource_name from resource path
+
+        :param resource_name: name of resource
+        :param resource_path: Directory or URI. If none, self.dirname will be used
+        :return: in-memory representation of resource
+        """
+        return load_graph_map(genargs(self._setup_opts_string(resource_name, resource_path)))

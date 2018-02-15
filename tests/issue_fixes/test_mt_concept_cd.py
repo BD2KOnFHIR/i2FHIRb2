@@ -25,36 +25,32 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-import io
+
 import unittest
 
-import sys
-from contextlib import contextmanager, redirect_stdout
+import os
 
-from i2fhirb2.removefacts import remove_facts
-from tests.utils.base_test_case import test_conf_file
+from tests.utils.base_test_case import test_data_directory
+from tests.utils.load_facts_helper import LoadFactsHelper
 
 
-class CRCTestCase(unittest.TestCase):
+class MtConceptTestCase(LoadFactsHelper):
+    caller_filename = __file__
 
-    @contextmanager
-    def sourcesystem_cd(self) -> str:
-        """ Generate a sourcesystem_code that identifies the test case and make sure it doesn't pollute the database.
-        _sourcesystem_cd and _upload_id are added to the specific object
+    def test_mt_concept_code(self):
+        """ Test for a problem encountered in SMARTONFHIR load where concept_cd was null """
+        test_dir = os.path.join(test_data_directory, 'smartonfhir_testdata', 'samples')
+        with self.sourcesystem_cd():
+            self.load_named_resource('mt_concept_cd.json', test_dir)
+        self.assertTrue(True)
 
-        :return: sourcesystem code
-        """
-        self.set_sourcesystem_cd()
-        print(f"+++++ {self._sourcesystem_cd}")
-        try:
-            yield self._sourcesystem_cd
-        finally:
-            # with redirect_stdout(io.StringIO()):
-            remove_facts(f"--conf {test_conf_file} -ss {self._sourcesystem_cd}".split())
-            print(f"----- {self._sourcesystem_cd}")
-            delattr(self, '_sourcesystem_cd')
-            delattr(self, '_upload_id')
+    def test_loinc_concept_code(self):
+        """ Test for a problem encountered in SMARTONFHIR load where concept_cd was null """
+        test_dir = os.path.join(test_data_directory, 'smartonfhir_testdata', 'samples')
+        with self.sourcesystem_cd():
+            self.load_named_resource('obs_sample_1134281.ttl', test_dir)
+        self.assertTrue(True)
 
-    def set_sourcesystem_cd(self) -> None:
-        self._sourcesystem_cd = "test_i2FHIRb2_" + type(self).__name__
-        self._upload_id = 117651
+
+if __name__ == '__main__':
+    unittest.main()

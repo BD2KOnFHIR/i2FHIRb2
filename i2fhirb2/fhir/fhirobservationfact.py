@@ -25,76 +25,31 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 
 from fhirtordf.rdfsupport.namespaces import FHIR
-from rdflib import URIRef, Graph, BNode, RDF, XSD
-from rdflib.term import Node, Literal
+from rdflib import URIRef, Graph, BNode, RDF
+from rdflib.term import Node
 
-from i2fhirb2.fhir.fhircodemapping import coded_predicates, proc_observation_component
+from i2fhirb2.fhir.fhircodemapping import process_concept_code
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
+from i2fhirb2.fhir.fhirnamespaces import fhir_namespace_for
 from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
+from i2fhirb2.fhir.fhirprimitivetypes import i2b2_primitive, I2B2Value
 from i2fhirb2.fhir.fhirproviderdimension import FHIRProviderDimension
-from i2fhirb2.fhir.fhirspecific import concept_code, composite_uri, instance_is_primitive
+from i2fhirb2.fhir.fhirspecific import composite_uri, instance_is_primitive
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey, valuetype_blob, \
-    valuetype_text, valuetype_date, valuetype_number
+from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
 from i2fhirb2.sqlsupport.dynobject import DynElements
+
 
 # TODO: Same patient_ide/patient_ide_src + visit_ide / visit_ide_src == duplicate
 
 
-def literal_val(val: Literal) -> str:
-    return '"{}"'.format(str(val).replace('\n', '\\n').replace(r'\t', '\\t'))
-
-
-def boolean_val(val: Literal) -> str:
-    return val.value
-
-
-def date_val(val: Literal) -> datetime:
-    return val.value
-
-
-def datetime_val(val: Literal) -> datetime:
-    return datetime.strptime(val.value, '%Y-%m-%dT%H:%M:%SZ')
-
-
-def decimal_val(val: Literal) -> float:
-    return float(val.value)
-
-
-def gyear_val(val: Literal) -> datetime:
-    return datetime.strptime(val.value, '%Y')
-
-
-def gYearMonth_val(val: Literal) -> datetime:
-    return datetime.strptime(val.value, '%Y-%m')
-
-
-def time_val(val: Literal) -> datetime:
-    return datetime.strptime(val.value, '%H:%M:%S')
-
-
-# Conversion table from XSD data type to corresponding i2b2 field
-literal_conversions = {
-    XSD.base64Binary: (literal_val, valuetype_blob),
-    XSD.boolean: (boolean_val, valuetype_text),
-    XSD.date: (date_val, valuetype_date),
-    XSD.dateTime: (datetime_val, valuetype_date),
-    XSD.decimal: (decimal_val, valuetype_number),
-    XSD.gYear: (gyear_val, valuetype_date),
-    XSD.gYearMonth: (gYearMonth_val, valuetype_date),
-    XSD.integer: (decimal_val, valuetype_number),
-    XSD.nonNegativeInteger: (decimal_val, valuetype_number),
-    XSD.positiveInteger: (decimal_val, valuetype_number),
-    XSD.time: (time_val, valuetype_date)}
-
-
 class FHIRObservationFact(ObservationFact):
     _t = DynElements(ObservationFact)
+    _unknown_namespaces: List[str] = []         # URI's that have been reported as being unknown
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, concept: Union[URIRef, str],
                  modifier: Optional[Union[URIRef, str]], obj: Optional[Node],
@@ -108,36 +63,50 @@ class FHIRObservationFact(ObservationFact):
         :param obj: object of concept_code
         :param instance_num: instance identifier
         """
-        super().__init__(ofk, concept_code(concept) if isinstance(concept, URIRef) else concept)
+        super().__init__(ofk, self.ns_name_for(concept) if isinstance(concept, URIRef) else concept)
         if modifier is not None:
-            self._modifier_cd = concept_code(modifier)
+            self._modifier_cd = self.ns_name_for(modifier)
         self._instance_num = instance_num
         if obj is not None:
-            self.fhir_primitive(g, obj)
+            v: I2B2Value = i2b2_primitive(g.value(obj, FHIR.value, any=False))
+            self._valtype_cd = v.valtype
+            self._tval_char = v.tval_char
+            self._nval_num = v.nval_num
+            self._observation_blob = v.observation_blob
         self.identifying_codes: List[str] = []
 
-    def fhir_primitive(self, g: Graph, obj: Optional[Node]) -> None:
-        assert(instance_is_primitive(g, obj))
-        val = g.value(obj, FHIR.value, any=False)
-        # TODO: remove the conversions that aren't needed (toPython does the same thing)
-        if val.datatype in literal_conversions:
-            f, t = literal_conversions[val.datatype]
-            if t == valuetype_text:
-                self._tval_char = val.toPython()
-            elif t == valuetype_number:
-                self._tval_char = 'E'
-                self._nval_num = val.toPython()
-            elif t == valuetype_blob:
-                self._observation_blob = val.toPython()
-            elif t == valuetype_date:
-                dt = val.toPython()
-                self._date_val(dt)
-            else:
-                self._tval_char = val.toPython()
-            self._valtype_cd = t.code
+    @classmethod
+    def ns_name_for(cls, concept_uri: Union[URIRef, str]) -> Optional[str]:
+        """ Convert concept_uri into a NS:code construct if the namespace is known
+
+        :param concept_uri: URI to convert
+        :return: NS:code representation if NS is known, else None
+        """
+        concept_uri = str(concept_uri)
+        if '#' in concept_uri:
+            nsuri, cd = concept_uri.rsplit('#', 1)
+            nsuri += '#'
         else:
-            self._tval_char = val.toPython()
-            self._valtype_cd = valuetype_text.code
+            nsuri, cd = concept_uri.rsplit('/', 1)
+            nsuri += '/'
+        ns = fhir_namespace_for(nsuri)
+        if ns is None:
+            if nsuri not in cls._unknown_namespaces:
+                cls._unknown_namespaces.append(nsuri)
+                print(f"----> Unrecognized namespace: {nsuri}\n")
+            return None
+
+        ns = ns.upper()
+        # Some FHIR resources seem to include the namespace as part of the code (?)
+        return cd if cd.startswith(ns + ':') else ns.upper() + ':' + cd
+
+    @classmethod
+    def _clear(cls):
+        cls._unknown_namespaces = []
+        super()._clear()
+
+    def summary(self) -> str:
+        return f"({self.instance_num}, {self.concept_cd}, {self.modifier_cd}, {self.tval_char}, {self.nval_num})"
 
 
 class FHIRObservationFactFactory:
@@ -146,9 +115,9 @@ class FHIRObservationFactFactory:
     visit_dimension, provider_dimension, patient_mapping and encounter_mapping entries
     """
 
-    # TODO: FHIR.Observation.referenceRange predicates are a temporary fix to issue 7.  Get a real fix in!
-    special_processing_list = {RDF.type: None, FHIR.nodeRole: None, FHIR.index: None, FHIR.link: None,
-                               FHIR.Observation.referenceRange: None}
+    # List of predicates to be ignored in primary node generation
+    # TODO: FHIR.Observation.referenceRange predicates are a temporary fix to issue 7.  Get a real fix in
+    skip_predicates = [RDF.type, FHIR.nodeRole, FHIR.index, FHIR.link, FHIR.Observation.referenceRange]
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, subject: Optional[URIRef]) -> None:
         self.g = g
@@ -172,24 +141,46 @@ class FHIRObservationFactFactory:
         is not primitive (i.e. it has a non-value BNode as a target), generate a series of modifiers for each element
         in the BNode.  Note -- this generation sorts the inputs because the order is indirectly preserved in the output
         instance numbers.
-        :param subject: Subject of the observation (Patient)
-        :return:
-        """
-        rval = []               # type: List[FHIRObservationFact]
 
-        identifying_codes = []
+        :param subject: Resource subject
+        :return: List of observation facts for subject
+        """
+        rval: List[FHIRObservationFact] = []            # List of observation facts to add
+        identifying_codes: List[str] = []               # Identifying code(s) for this type of entry
         for conc, obj in sorted(self.g.predicate_objects(subject)):
-            if conc not in self.special_processing_list:
-                if conc in coded_predicates:
-                    coded_facts = coded_predicates[conc](self.g, subject, self.ofk)
+            if conc not in self.skip_predicates:
+                coded_facts = process_concept_code(self.g, subject, subject, conc, self.ofk)
+                if coded_facts:
                     identifying_codes = [e.concept_cd for e in coded_facts]
                     rval += coded_facts
 
                 if instance_is_primitive(self.g, obj):
-                    rval.append(FHIRObservationFact(self.g, self.ofk, conc, None, obj))
+                    # The presence of a type arc on a primitive node indicates a code -- the value will be recorded
+                    # elsewhere
+                    if not self.g.value(obj, RDF.type):
+                        rval.append(FHIRObservationFact(self.g, self.ofk, conc, None, obj))
                 else:
                     rval += self.generate_modifiers(subject, conc, obj, identifying_codes=identifying_codes)
+            elif conc == RDF.type:
+                rval.append(FHIRObservationFact(self.g, self.ofk, obj, None, None))
 
+        return self.removeduplicates(rval)
+
+    @staticmethod
+    def removeduplicates(facts: List[FHIRObservationFact]) -> List[FHIRObservationFact]:
+        """ The process of adding modifiers can result in more than one subject concept_cd for the same value.  As an
+        example, visionprescription-example-1.ttl.html has two products that are dispensed, both of which are contacts.
+
+        :param facts: List of facts to be pruned
+        :return: List with duplicates removed
+        """
+        fact_keys: List[Tuple[int, str, str]] = []
+        rval: List[FHIRObservationFact] = []
+        for fact in facts:
+            k = (fact.instance_num, fact.concept_cd, fact.modifier_cd)
+            if k not in fact_keys:
+                fact_keys.append(k)
+                rval.append(fact)
         return rval
 
     def generate_modifiers(self, subject: URIRef, concept: URIRef, obj: BNode,
@@ -211,7 +202,7 @@ class FHIRObservationFactFactory:
         rval = []               # type: List[FHIRObservationFact]
         fhir_index = self.g.value(obj, FHIR.index, any=False) if not same_subject else None
         pred_obj_list = \
-            sorted([(p, o) for p, o in self.g.predicate_objects(obj) if p not in self.special_processing_list])
+            sorted([(p, o) for p, o in self.g.predicate_objects(obj) if p not in self.skip_predicates])
 
         if fhir_index is not None and len(pred_obj_list):
             self._inst_num += 1
@@ -234,7 +225,5 @@ class FHIRObservationFactFactory:
                                                 inst_num,
                                                 same_subject=True,
                                                 identifying_codes=identifying_codes)
-        # TODO: Generalize
-        if fhir_index is not None and concept == FHIR.Observation.component:
-            rval += proc_observation_component(self.g, obj, self.ofk, inst_num, identifying_codes)
+            rval += process_concept_code(self.g, concept, obj, modifier, self.ofk, inst_num, identifying_codes)
         return rval

@@ -77,11 +77,12 @@ class I2B2GraphMap:
         nresources = 0
         for subj, subj_type in g.subject_objects(RDF.type):
             if isinstance(subj, URIRef) and subj_type in FHIR_RESOURCE_MAP:
-                print("{}: ({}) - {}".format(nresources, str(subj_type).split('/')[-1], subj))
+                action =  f"{nresources}: ({str(subj_type).split('/')[-1]}) - {subj}"
                 nresources += 1
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]
                 if isinstance(mapped_type, FHIR_Infrastructure_type):
                     self.num_infrastructure += 1
+                    rslt = "Skipped"
                 elif isinstance(mapped_type, FHIR_Observation_Fact_type):
                     pm, vd, start_date = self.process_resource_instance(subj, mapped_type)
                     if pm is not None:
@@ -91,18 +92,26 @@ class I2B2GraphMap:
                                                                              opts.providerid, start_date), subj)
                         # TODO: Decide what do do with the other mappings in the observation factory
                         self.observation_facts += obsfactory.observation_facts
+                    rslt = f"pnum: {pm.patient_num if pm is not None else 'NONE'} " \
+                           f"enum:{vd.visit_dimension_entry.encounter_num if vd is not None else 'NONE'}"
                 elif isinstance(mapped_type, FHIR_Visit_Dimension_type):
                     self.num_visit += 1
+                    rslt = "Not Implemented"
                 elif isinstance(mapped_type, FHIR_Provider_Dimension_type):
                     self.num_provider += 1
+                    rslt = "Not Implemented"
                 elif isinstance(mapped_type, FHIR_Patient_Dimension_type):
                     pd = FHIRPatientDimension(self._g, self.tables, subj)
                     self.patient_dimensions.append(pd.patient_dimension_entry)
                     self.patient_mappings += pd.patient_mappings.patient_mapping_entries
+                    rslt = f"pnum: {pd.patient_dimension_entry.patient_num}"
                 elif isinstance(mapped_type, FHIR_Bundle_type):
                     self.num_bundle += 1
+                    rslt = "Skipped"
                 else:
                     self.num_unmapped += 1
+                    rslt = "Unmapped"
+                print(f"{action} ({rslt})")
         print("---> Graph map phase complete")
 
     def process_resource_instance(self, subj: URIRef,  mapped_type: FHIR_Resource_type) \

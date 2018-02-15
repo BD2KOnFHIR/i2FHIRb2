@@ -1,0 +1,94 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix loinc: <http://loinc.org/rdf#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix observation-status: <http://hl7.org/fhir/observation-status/> .
+
+# - resource -------------------------------------------------------------------
+
+<http://hl7.org/fhir/Observation/glasgow> a fhir:Observation;
+  fhir:nodeRole fhir:treeRoot;
+  fhir:Resource.id [ fhir:value "glasgow"];
+  fhir:DomainResource.text [
+     fhir:Narrative.status [ fhir:value "generated" ];
+     fhir:Narrative.div "<div xmlns=\"http://www.w3.org/1999/xhtml\">REDACTED</div>"
+  ];
+  # Additional element: ObsElement("FHIR:Observation.status", "OBSERVATION-STATUS:final", tval_char='final')
+  fhir:Observation.status [a observation-status:final; fhir:value "final"];
+  # Additional element: ObsElement("LOINC:9269-2", tval_char="E", nval_num=13, units_cd="{score}"),
+  fhir:Observation.code [
+     fhir:CodeableConcept.coding [
+       fhir:index 0;
+       a loinc:9269-2;
+       fhir:Coding.system [ fhir:value "http://loinc.org" ];
+       fhir:Coding.code [ fhir:value "9269-2" ];
+       fhir:Coding.display [ fhir:value "Glasgow coma score total" ]
+     ];
+     fhir:CodeableConcept.text [ fhir:value "Glasgow Coma Scale , (GCS)" ]
+  ];
+  fhir:Observation.subject [
+     fhir:link <http://hl7.org/fhir/Patient/example>;
+     fhir:Reference.reference [ fhir:value "Patient/example" ];
+     fhir:Reference.display [ fhir:value "Peter James Chalmers" ]
+  ];
+  fhir:Observation.effectiveDateTime [ fhir:value "2014-12-11T04:44:16Z"^^xsd:dateTime];
+  fhir:Observation.valueQuantity [
+     fhir:Quantity.value [ fhir:value "13"^^xsd:decimal ];
+     fhir:Quantity.system [ fhir:value "http://unitsofmeasure.org" ];
+     fhir:Quantity.code [ fhir:value "{score}" ]
+  ];
+  fhir:Observation.component [
+     fhir:index 0;
+     # entry 0
+     # Additional element: ObsElement("LOINC:9268-4", tval_char="Localizes painful stimuli (acme)"),
+     # Additional element: ObsElement("LOINC:9626-2", "LOINC:9268-4", tval_char="Localizes painful stimuli (acme)")
+     # entry 1
+     # Additional element: ObsElement("LOINC:9268-4", "LOINC:LA6566-9", tval_char="Localizing pain"),
+     # Additional element: ObsElement("LOINC:9626-2", "LOINC:9268-4", "LOINC:LA6566-9", tval_char="Localizing pain"),
+     # text
+     # Additional element: ObsElement("LOINC:9268-4", tval_char="5 (Localizes painful stimuli)")
+     # Additional element: ObsElement("LOINC:9626-2", "LOINC:9268-4", tval_char="5 (Localizes painful stimuli)")
+     fhir:Observation.component.code [
+       fhir:CodeableConcept.coding [
+         fhir:index 0;
+         a loinc:9268-4;
+         fhir:Coding.system [ fhir:value "http://loinc.org" ];
+         fhir:Coding.code [ fhir:value "9268-4" ];
+         fhir:Coding.display [ fhir:value "Glasgow coma score motor" ]
+       ];
+       fhir:CodeableConcept.text [ fhir:value "GCS Motor" ]
+     ];
+     fhir:Observation.component.valueCodeableConcept [
+       fhir:CodeableConcept.coding [
+         fhir:index 0;
+         fhir:Coding.system [ fhir:value "http:/acme.ec/codes" ];
+         fhir:Coding.code [ fhir:value "5" ];
+         fhir:Coding.display [ fhir:value "Localizes painful stimuli (acme)" ]
+       ], [
+         fhir:index 1;
+         a loinc:LA6566-9;
+         fhir:Element.extension [
+           fhir:index 0;
+           fhir:Extension.url [ fhir:value "http://hl7.org/fhir/StructureDefinition/iso21090-CO-value" ];
+           fhir:Extension.valueDecimal [ fhir:value "5"^^xsd:decimal ]
+         ];
+         fhir:Coding.system [ fhir:value "http://loinc.org" ];
+         fhir:Coding.code [ fhir:value "LA6566-9" ];
+         fhir:Coding.display [ fhir:value "Localizing pain" ]
+       ];
+       fhir:CodeableConcept.text [ fhir:value "5 (Localizes painful stimuli)" ]
+     ]
+
+  ] .
+
+<http://hl7.org/fhir/Patient/example> a fhir:Patient .
+
+# - ontology header ------------------------------------------------------------
+
+<http://hl7.org/fhir/Observation/glasgow.ttl> a owl:Ontology;
+  owl:imports fhir:fhir.ttl;
+  owl:versionIRI <http://build.fhir.org/Observation/glasgow.ttl> .
+
+# -------------------------------------------------------------------------------------
+
