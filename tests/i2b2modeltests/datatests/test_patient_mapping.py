@@ -43,7 +43,7 @@ class PatientMappingTestCase(CRCTestCase):
         with self.sourcesystem_cd():
             PatientMapping.sourcesystem_cd = self._sourcesystem_cd
             pm = PatientMapping(10000001, "p123", PatientIDEStatus.active, "http://hl7.org/fhir/", "fhir")
-            pm._upload_id = 17443
+            PatientMapping.upload_id = 17443
 
             self.assertEqual(OrderedDict([
                  ('patient_ide', 'p123'),

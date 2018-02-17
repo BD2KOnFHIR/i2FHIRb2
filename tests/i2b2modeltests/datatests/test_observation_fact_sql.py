@@ -31,13 +31,17 @@ from datetime import datetime
 
 from tests.utils.connection_helper import connection_helper
 from tests.utils.crc_testcase import CRCTestCase
+from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
 
 
 class ObservationFactSQLTestCase(CRCTestCase):
     opts = connection_helper()
 
+    def tearDown(self):
+        ObservationFact._clear()
+
     def test_insert(self):
-        from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+        from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey
 
         print("{} records deleted".format(ObservationFact.delete_upload_id(self.opts.tables, self.opts.uploadid)))
         ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
@@ -45,11 +49,11 @@ class ObservationFactSQLTestCase(CRCTestCase):
         with self.sourcesystem_cd():
             ObservationFact.sourcesystem_cd = self._sourcesystem_cd
             ObservationFact.upload_id = self.opts.uploadid
-            obsf = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR STU3")
+            obsf = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR R4")
             n_ins, n_upd = ObservationFact.add_or_update_records(self.opts.tables, [obsf])
             self.assertEqual((0, 1), (n_upd, n_ins))
             obsf._instance_num = 2
-            obsf2 = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR STU3")
+            obsf2 = ObservationFact(ofk, 'fhir:concept', sourcesystem_cd="FHIR R4z")
             obsf2._instance_num = 2
             obsf2._modifier_cd = "fhir:modifier"
             n_ins, n_upd = ObservationFact.add_or_update_records(self.opts.tables, [obsf, obsf2])

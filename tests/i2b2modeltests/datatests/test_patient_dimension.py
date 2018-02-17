@@ -35,6 +35,10 @@ from tests.utils.crc_testcase import CRCTestCase
 
 
 class PatientDimensionTestCase(CRCTestCase):
+
+    def tearDown(self):
+        PatientDimension._clear()
+
     def test_basics(self):
         PatientDimension._clear()
         PatientDimension.update_date = datetime(2017, 1, 3)

@@ -84,8 +84,10 @@ class DynElements:
         """ Indicator to insert the parent dynelements here instead of at the end """
         self.elements[""] = (False, None)
 
-    def clear_overrides(self):
+    def clear_overrides(self, complete=True):
         self.override_elements.clear()
+        if complete and self.parent_dynelements:
+            self.parent_dynelements.clear_overrides(complete)
 
     def clear_override(self, item):
         if item in self.override_elements:
@@ -182,8 +184,8 @@ class DynObject(metaclass=DynObjectMetaClass):
         return f
 
     @classmethod
-    def _clear(cls):
-        cls._t.clear_overrides()
+    def _clear(cls, complete: bool=True) -> None:
+        cls._t.clear_overrides(complete)
 
     def __setattr__(self, key, value):
         """

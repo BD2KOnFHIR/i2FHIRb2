@@ -1,13 +1,13 @@
-upload_id: 117651
+upload_id: 6028
   
   
---> loading http://hl7.org/fhir/observation-example-bmi.json
+--> 
 
 
 
 ---> Graph map phase complete
 Generated:
-    19 Observation facts
+    22 Observation facts
     1 Patients
     0 Patient mappings
 
@@ -15,4 +15,4 @@ Generated:
 0 / 0 patient_mapping records added / modified
 1 / 0 visit_dimension records added / modified
 2 / 0 encounter_mapping records added / modified
-19 / 0 observation_fact records added / modified
+22 / 0 observation_fact records added / modified

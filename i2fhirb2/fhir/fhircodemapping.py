@@ -33,6 +33,7 @@ from fhirtordf.rdfsupport.namespaces import FHIR
 from rdflib import URIRef, Graph, RDF
 from rdflib.term import Node, Literal
 
+from i2fhirb2.fhir.fhirnamespaces import fhir_namespace_for
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact, valuetype_text, \
     valuetype_number, valuetype_novalue
 
@@ -64,8 +65,14 @@ def value_quantity(g: Graph, subject: Node, obs_fact: ObservationFact) -> List[O
     :param obs_fact: Fact to add the information to
     :return: Empty list - no additional facts are generated
     """
-    units = fhirgraphutils.value(g, subject, FHIR.Quantity.code)
-    # TODO: should units have URI's as well?  If so, how do we include in i2b2?
+    units = fhirgraphutils.value(g, subject, FHIR.Quantity.unit)
+    if not units:
+        system = fhirgraphutils.value(g, subject, FHIR.Quantity.system)
+        code = fhirgraphutils.value(g, subject, FHIR.Quantity.code)
+        if code:
+            ns = fhir_namespace_for(system)
+            units = ((ns.upper() + ':') if ns else '') + code
+
     comparator = fhirgraphutils.value(g, subject, FHIR.Quantity.comparator)
     value_ = fhirgraphutils.value(g, subject, FHIR.Quantity.value)
     if value_ is not None:
@@ -107,7 +114,7 @@ def value_codeable_concept(g: Graph, subject: Node, obs_fact: ObservationFact) -
     rval = []
     if obs_fact.modifier_cd != '@':
         print(f"{obs_fact.concept_cd}, {obs_fact.modifier_cd}: Modifier on modifier!")
-    codings = list(g.objects(subject, FHIR.CodeableConcept.coding))
+    codings = sorted(list(g.objects(subject, FHIR.CodeableConcept.coding)))
     additional_entries = False
     if codings:
         for coding in codings:

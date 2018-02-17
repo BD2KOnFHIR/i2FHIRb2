@@ -29,12 +29,20 @@
 import unittest
 from collections import OrderedDict
 from datetime import datetime
+from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
 
 
 class EncounterMappingTestCase(unittest.TestCase):
 
+    def tearDown(self):
+        EncounterMapping._clear()
+
     def test_encounter_mapping(self):
-        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
+        """ Test i2b2 EncounterMapping resource
+
+        :return:
+        """
+        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterIDEStatus
 
         EncounterMapping._clear()
         EncounterMapping.update_date = datetime(2017, 5, 25)

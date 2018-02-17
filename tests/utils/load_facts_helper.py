@@ -71,4 +71,5 @@ class LoadFactsHelper(CRCTestCase):
         :param resource_path: Directory or URI. If none, self.dirname will be used
         :return: in-memory representation of resource
         """
-        return load_graph_map(genargs(self._setup_opts_string(resource_name, resource_path)))
+        with self.sourcesystem_cd():
+            return load_graph_map(genargs(self._setup_opts_string(resource_name, resource_path)))

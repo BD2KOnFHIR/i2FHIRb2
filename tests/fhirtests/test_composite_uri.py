@@ -39,7 +39,9 @@ test_list = [("Account.guarantor.period", "Period.end", "Account.guarantor.perio
 
 
 class CompositeURITestCase(unittest.TestCase):
-    """ Test composite URI construction """
+    """ Test composite URI construction
+
+    """
     def test1(self):
         from i2fhirb2.fhir.fhirspecific import composite_uri, FHIR
         for parent, mod, rslt in test_list:

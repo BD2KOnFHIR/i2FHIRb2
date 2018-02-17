@@ -1,0 +1,46 @@
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sct: <http://snomed.info/id/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# - resource -------------------------------------------------------------------
+
+<http://hl7.org/fhir/Observation/f204> a fhir:Observation;
+  fhir:nodeRole fhir:treeRoot;
+  fhir:Resource.id [ fhir:value "f204"];
+  # Units = "umol/L"
+  fhir:Observation.valueQuantity1 [
+     fhir:Quantity.value [ fhir:value "122"^^xsd:decimal ];
+     fhir:Quantity.unit [ fhir:value "umol/L" ];
+     fhir:Quantity.system [ fhir:value "http://snomed.info/sct" ];
+     fhir:Quantity.code [ fhir:value "258814008" ]
+  ];
+  # Units = "SCT:258814008"
+  fhir:Observation.valueQuantity2 [
+  fhir:Quantity.value [ fhir:value "122"^^xsd:decimal ];
+     fhir:Quantity.system [ fhir:value "http://snomed.info/sct" ];
+     fhir:Quantity.code [ fhir:value "258814008" ]
+  ];
+  # Units = "GPF"
+  fhir:Observation.valueQuantity3 [
+     fhir:Quantity.value [ fhir:value "122"^^xsd:decimal ];
+     fhir:Quantity.code [ fhir:value "GPF" ]
+  ];
+    # Units = None
+  fhir:Observation.valueQuantity4 [
+     fhir:Quantity.value [ fhir:value "122"^^xsd:decimal ];
+  ].
+
+<http://hl7.org/fhir/Patient/f201> a fhir:Patient .
+
+<http://hl7.org/fhir/Practitioner/f202> a fhir:Practitioner .
+
+# - ontology header ------------------------------------------------------------
+
+<http://hl7.org/fhir/Observation/f204.ttl> a owl:Ontology;
+  owl:imports fhir:fhir.ttl;
+  owl:versionIRI <http://build.fhir.org/Observation/f204.ttl> .
+
+# -------------------------------------------------------------------------------------
+

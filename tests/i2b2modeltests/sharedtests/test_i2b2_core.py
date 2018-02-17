@@ -60,6 +60,8 @@ class I2B2CoreTestCase(BaseTestCase):
 
         I2B2Core._clear()
         rtn = I2B2CoreWithUploadId(upload_id=1777439)
+        if rtn.sourcesystem_cd != 'Unspecified':
+            print("Caught it")
         self.assertEqual('Unspecified', rtn.sourcesystem_cd)
         self.assertEqual(1777439, rtn.upload_id)
         self.assertEqual('update_date\tdownload_date\timport_date\tsourcesystem_cd\tupload_id', rtn._header())

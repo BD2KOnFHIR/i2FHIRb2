@@ -48,7 +48,7 @@ from i2fhirb2.sqlsupport.dynobject import DynElements
 
 
 class FHIRObservationFact(ObservationFact):
-    _t = DynElements(ObservationFact)
+
     _unknown_namespaces: List[str] = []         # URI's that have been reported as being unknown
 
     def __init__(self, g: Graph, ofk: ObservationFactKey, concept: Union[URIRef, str],
@@ -101,12 +101,9 @@ class FHIRObservationFact(ObservationFact):
         return cd if cd.startswith(ns + ':') else ns.upper() + ':' + cd
 
     @classmethod
-    def _clear(cls):
+    def _clear(cls, complete=True):
         cls._unknown_namespaces = []
-        super()._clear()
-
-    def summary(self) -> str:
-        return f"({self.instance_num}, {self.concept_cd}, {self.modifier_cd}, {self.tval_char}, {self.nval_num})"
+        ObservationFact._clear(complete)
 
 
 class FHIRObservationFactFactory:

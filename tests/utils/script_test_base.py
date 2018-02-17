@@ -41,6 +41,7 @@ class ScriptTestBase(unittest.TestCase):
     save_output: bool = True              # Override this to save output
     tst_dir: str = None
     tst_fcn: Callable[[List[str]], bool] = None
+    print_prefiltered = False
 
     @classmethod
     def call_tst_fcn(cls, args: str):
@@ -75,6 +76,8 @@ class ScriptTestBase(unittest.TestCase):
         output = StringIO()
         with redirect_stdout(output):
             self.call_tst_fcn(args)
+        if self.print_prefiltered:
+            print(output.getvalue())
         self.check_output(test_file, filtr(output.getvalue()))
 
     def check_error_output(self, args: str, test_file: str) -> None:

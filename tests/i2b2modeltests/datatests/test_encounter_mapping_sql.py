@@ -32,21 +32,24 @@ from datetime import datetime
 
 from tests.utils.connection_helper import connection_helper
 from tests.utils.crc_testcase import CRCTestCase
+from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
 
 
 class EncounterMappingSQLTest(CRCTestCase):
     opts = connection_helper()
 
-    def test_insert(self):
-        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping, EncounterIDEStatus
+    def tearDown(self):
+        EncounterMapping._clear()
 
-        EncounterMapping.delete_upload_id(self.opts.tables, self.opts.uploadid)
+    def test_insert(self):
+        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterIDEStatus
+
         EncounterMapping._clear()
         EncounterMapping.update_date = datetime(2017, 5, 25)
-        EncounterMapping.upload_id = self.opts.uploadid
 
         with self.sourcesystem_cd() as ss_cd:
             EncounterMapping.sourcesystem_cd = self._sourcesystem_cd
+            EncounterMapping.upload_id = self._upload_id
             em = EncounterMapping("f001", "http://hl7.org/fhir", "FHIR", 5000017, "patient01",
                                   "http://hl7.org/fhir", EncounterIDEStatus.active)
 
@@ -60,7 +63,7 @@ class EncounterMappingSQLTest(CRCTestCase):
                                    "http://hl7.org/fhir", EncounterIDEStatus.active)
             n_ins, n_upd = EncounterMapping.add_or_update_records(self.opts.tables, [em, em2])
             self.assertEqual((0, 2), (n_upd, n_ins))
-            self.assertEqual(3, EncounterMapping.delete_upload_id(self.opts.tables, self.opts.uploadid))
+            self.assertEqual(3, EncounterMapping.delete_upload_id(self.opts.tables, self._upload_id))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,56 @@
+{ "entry": [
+    {
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "code": {
+          "coding": [
+            {
+              "system": "http:\/\/www.genenames.org",
+              "code": "HGNC:3467",
+              "display": "estrogen receptor 1"
+            }
+          ],
+          "text": "ER Pct"
+        },
+        "interpretation": {
+          "coding": [
+            {
+              "system": "http:\/\/hl7.org\/fhir\/v2\/0078",
+              "code": "POS",
+              "display": "Positive"
+            }
+          ]
+        },
+        "meta": {
+          "lastUpdated": "2017-05-07T05:02:17.000+00:00",
+          "versionId": "3"
+        },
+        "subject": {
+          "reference": "Patient\/hca-pat-67",
+          "display": "Ackerman Brittany"
+        },
+        "modifierExtension": [
+          {
+            "valueReference": {
+              "reference": "Condition\/hca-con-1c5e373a1052",
+              "display": "IDC"
+            },
+            "url": "http:\/\/fhir-registry.smarthealthit.org\/StructureDefinition\/gene-expression-in"
+          }
+        ],
+        "id": "hca-obs-827f38d1448e",
+        "resourceType": "Observation",
+        "status": "final",
+        "valueQuantity": {
+          "unit": "%",
+          "system": "http:\/\/unitsofmeasure.org",
+          "code": "%",
+          "value": 88
+        }
+      },
+      "fullUrl": "https:\/\/sb-fhir-dstu2.smarthealthit.org\/api\/smartdstu2\/open\/Observation\/hca-obs-827f38d1448e"
+    }
+  ]
+}

@@ -134,6 +134,7 @@ class ObservationFactTestCase(CRCTestCase):
         FHIRObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
         with self.sourcesystem_cd():
             FHIRObservationFact.sourcesystem_cd = self._sourcesystem_cd
+            FHIRObservationFact.upload_id = self._upload_id
             oflist = FHIRObservationFactFactory(self.g, ofk, None)
 
             test_fname = os.path.join(filedir, 'data', 'test_complete_fact_list.tsv')

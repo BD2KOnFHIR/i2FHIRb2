@@ -30,12 +30,22 @@ import unittest
 
 import sys
 from contextlib import contextmanager, redirect_stdout
+from functools import reduce
 
 from i2fhirb2.removefacts import remove_facts
 from tests.utils.base_test_case import test_conf_file
 
 
 class CRCTestCase(unittest.TestCase):
+
+    def tearDown(self):
+        if getattr(self, "_sourcesystem_cd", None):
+            remove_facts(f"--conf {test_conf_file} -ss {self._sourcesystem_cd}".split())
+
+    @staticmethod
+    def text_to_number(txt: str) -> int:
+        return reduce(lambda acc, upd: (((acc ^ ord(upd)) << 8) + ord(upd)) % 0xFFFF, txt, sys.maxsize)
+
 
     @contextmanager
     def sourcesystem_cd(self) -> str:
@@ -44,17 +54,22 @@ class CRCTestCase(unittest.TestCase):
 
         :return: sourcesystem code
         """
-        self.set_sourcesystem_cd()
+        save_ss_cd = getattr(self, "_sourcesystem_cd", None)
+        save_up_id = getattr(self, "_upload_id", None)
+        self._sourcesystem_cd = "test_i2FHIRb2_" + type(self).__name__
+        self._upload_id = self.text_to_number(self._sourcesystem_cd)
         print(f"+++++ {self._sourcesystem_cd}")
+        print(f"      {self._upload_id}")
         try:
             yield self._sourcesystem_cd
         finally:
             # with redirect_stdout(io.StringIO()):
             remove_facts(f"--conf {test_conf_file} -ss {self._sourcesystem_cd}".split())
+            print(f"      {self._upload_id}")
             print(f"----- {self._sourcesystem_cd}")
-            delattr(self, '_sourcesystem_cd')
-            delattr(self, '_upload_id')
-
-    def set_sourcesystem_cd(self) -> None:
-        self._sourcesystem_cd = "test_i2FHIRb2_" + type(self).__name__
-        self._upload_id = 117651
+            if save_ss_cd:
+                self._sourcesystem_cd = save_ss_cd
+                self._upload_id = save_up_id
+            else:
+                delattr(self, '_sourcesystem_cd')
+                delattr(self, '_upload_id')

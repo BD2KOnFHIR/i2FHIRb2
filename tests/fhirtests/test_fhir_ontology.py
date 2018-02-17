@@ -76,7 +76,6 @@ class FHIROntologyTestCase(BaseTestCase, CRCTestCase):
         ModifierDimension.sourcesystem_cd = self._sourcesystem_cd
         ConceptDimension.sourcesystem_cd = self._sourcesystem_cd
 
-
     def tst_dimension(self, header: str, dimension_entries: List, fname: str) -> None:
         """
         Test dimension entries against the supplied output file

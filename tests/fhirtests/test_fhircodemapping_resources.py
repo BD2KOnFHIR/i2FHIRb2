@@ -35,6 +35,7 @@ from functools import total_ordering
 from io import StringIO
 from typing import List, Optional
 
+from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
 from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
 from tests.utils.base_test_case import test_data_directory
 from tests.utils.load_facts_helper import LoadFactsHelper
@@ -103,11 +104,11 @@ def obs_element(fact: ObservationFact) -> ObsElement:
 not_expected_in_output = [r'Unrecognized namespace: .*', r'Collision: .*', r'.*Modifier on modifier']
 
 
-class CodeMappingTestCase(LoadFactsHelper):
+class CodeMappingResourcesTestCase(LoadFactsHelper):
     caller_filename = __file__
     data_source = 'http://build.fhir.org/'
-    print_output = True             # Print the output log
-    summarize_output = True         # Print the results
+    print_output = False            # Print the output log
+    summarize_output = False         # Print the results
     print_output_filter = ""        # Results filter
 
     @staticmethod
@@ -116,10 +117,8 @@ class CodeMappingTestCase(LoadFactsHelper):
 
     @contextmanager
     def synthea_test(self) -> None:
-        """ Generate a sourcesystem_code that identifies the test case and make sure it doesn't pollute the database.
-        _sourcesystem_cd and _upload_id are added to the specific object
+        """ Run the test against the synthea_data/ttl test directory instead of the default
 
-        :return: sourcesystem code
         """
         old_data_source = self.data_source
         self.data_source = os.path.join(test_data_directory, 'synthea_data', 'ttl')
@@ -130,10 +129,8 @@ class CodeMappingTestCase(LoadFactsHelper):
 
     @contextmanager
     def fhir_core(self) -> None:
-        """ Generate a sourcesystem_code that identifies the test case and make sure it doesn't pollute the database.
-        _sourcesystem_cd and _upload_id are added to the specific object
+        """ Run the test against the data/fhir_core_ttl directory rather than the default
 
-        :return: sourcesystem code
         """
         old_data_source = self.data_source
         self.data_source = os.path.join(test_data_directory, 'fhir_core_ttl')
@@ -144,7 +141,7 @@ class CodeMappingTestCase(LoadFactsHelper):
 
     def run_test(self, fname: str, expected_facts: List[ObsElement], unexpected_facts: List[ObsElement] = None,
                  expected_in_output: Optional[List[str]]=()) -> None:
-        self.set_sourcesystem_cd()
+        FHIRObservationFact._clear()
         output_buffer = StringIO()
         with redirect_stdout(output_buffer):
             ofl = self.load_i2b2_to_memory(fname, self.data_source)
@@ -170,8 +167,6 @@ class CodeMappingTestCase(LoadFactsHelper):
 
         # Check for expected facts
         for expected_fact in expected_facts:
-            if not self._has_entry(ofl.observation_facts, expected_fact):
-                print("HERE")
             self.assertTrue(self._has_entry(ofl.observation_facts, expected_fact), f"Missing entry: {expected_fact}")
 
         # Make sure unexpected facts aren't there
@@ -180,6 +175,7 @@ class CodeMappingTestCase(LoadFactsHelper):
                              f"Should not be emitted: {unexpected_fact}")
 
     def test_adverse_event(self):
+        """ Test adverseevent-example.ttl """
         # TODO: causality assessment and method are untested
         self.run_test('adverseevent-example.ttl', [
             ObsElement("FHIR:AdverseEvent.category", "ADVERSE-EVENT-CATEGORY:ProductUseError"),
@@ -204,14 +200,17 @@ class CodeMappingTestCase(LoadFactsHelper):
                            ObsElement("SCT:247472004")])
 
     def test_allergy_intolerance_2(self):
+        """ Test Schaefer199_Vivienne674_19.ttl """
         with self.synthea_test():
             self.run_test('Schaefer199_Vivienne674_19.ttl', [])
 
     def test_care_plan(self):
+        """ Test careplan-example-integrated.ttl """
         self.run_test('careplan-example-integrated.ttl',
                       [ObsElement("FHIR:CarePlan")])
 
     def test_care_plan_2(self):
+        """ Test Roob122_Jennie897_53.ttl """
         with self.synthea_test():
             self.run_test('Roob122_Jennie897_53.ttl',
                           [
@@ -228,39 +227,66 @@ class CodeMappingTestCase(LoadFactsHelper):
                             ObsElement("FHIR:CarePlan.activity", "SCT:171245007", 2)])
 
     def test_condition(self):
+        """ Test: condition-example-f002-lung.ttl """
         self.run_test('condition-example-f002-lung.ttl',
-                      [])
+                      [
+                          ObsElement("SCT:254637007"),
+                          ObsElement("SCT:254637007", "SCT:169069000"),
+                          ObsElement("FHIR:Condition.bodySite", "SCT:51185008"),
+                          ObsElement("FHIR:Condition.category", "SCT:439401001"),
+                          ObsElement("FHIR:Condition.code", "SCT:254637007"),
+                          ObsElement("FHIR:Condition.evidence", "SCT:169069000", 3),
+                          ObsElement("FHIR:Condition.severity", "SCT:24484000"),
+                          ObsElement("FHIR:Condition.stage", "SCT:258219007", 4),
+                          ObsElement("FHIR:Condition.stage", "SCT:260998006", 4)
+                      ])
 
     def test_observation(self):
+        """ Test: observation-example-glasgow.ttl """
         with self.fhir_core():
             self.run_test('observation-example-glasgow.ttl',
                           [ObsElement("FHIR:Observation.status", "OBSERVATION-STATUS:final", tval_char='final'),
-                           ObsElement("LOINC:9267-6", "LOINC:LA6556-0", tval_char="4 (Opens eyes spontaneously)"),
-                           ObsElement("LOINC:9268-4", "LOINC:LA6566-9", tval_char="5 (Localizes painful stimuli)"),
+                           ObsElement("FHIR:Observation"),
+                           ObsElement("FHIR:Observation.code", "LOINC:9269-2", tval_char="E", nval_num=13,
+                                      units_cd="{score}"),
+                           ObsElement("LOINC:9267-6", tval_char="Opens eyes spontaneously"),
+                           ObsElement("LOINC:9267-6", "LOINC:LA6556-0", tval_char="Eyes open spontaneously"),
+                           ObsElement("LOINC:9268-4", tval_char="Localizes painful stimuli (acme)"),
+                           ObsElement("LOINC:9268-4", "LOINC:LA6566-9", tval_char="Localizing pain"),
                            ObsElement("LOINC:9269-2", tval_char="E", nval_num=13, units_cd="{score}"),
-                           ObsElement("LOINC:9269-2", "LOINC:9267-6", tval_char="4 (Opens eyes spontaneously)"),
-                           ObsElement("LOINC:9269-2", "LOINC:9268-4", tval_char="5 (Localizes painful stimuli)"),
-                           ObsElement("LOINC:9269-2", "LOINC:9270-0", tval_char="4 (Confused, disoriented)"),
-                           ObsElement("LOINC:9269-2", "LOINC:LA6556-0", tval_char="4 (Opens eyes spontaneously)"),
-                           ObsElement("LOINC:9269-2", "LOINC:LA6560-2", tval_char="4 (Confused, disoriented)"),
-                           ObsElement("LOINC:9269-2", "LOINC:LA6566-9", tval_char="5 (Localizes painful stimuli)"),
-                           ObsElement("LOINC:9270-0", "LOINC:LA6560-2", tval_char="4 (Confused, disoriented)"),
+                           ObsElement("LOINC:9269-2", "LOINC:9267-6", tval_char="Opens eyes spontaneously"),
+                           ObsElement("LOINC:9269-2", "LOINC:9268-4", tval_char="Localizes painful stimuli (acme)"),
+                           ObsElement("LOINC:9269-2", "LOINC:9270-0", tval_char="Confused, disoriented"),
+                           ObsElement("LOINC:9269-2", "LOINC:LA6556-0", tval_char="Opens eyes spontaneously"),
+                           ObsElement("LOINC:9269-2", "LOINC:LA6560-2", tval_char="Confused, disoriented"),
+                           ObsElement("LOINC:9269-2", "LOINC:LA6566-9", tval_char="Localizes painful stimuli (acme)"),
+                           ObsElement("LOINC:9270-0", tval_char="Confused, disoriented"),
+                           ObsElement("LOINC:9270-0", "LOINC:LA6560-2", tval_char="Confused"),
                            ObsElement("FHIR:Observation.component", "LOINC:9270-0", 1,
-                                      tval_char="4 (Confused, disoriented)"),
+                                      tval_char="Confused, disoriented"),
                            ObsElement("FHIR:Observation.component", "LOINC:LA6560-2", 1,
-                                      tval_char="4 (Confused, disoriented)"),
+                                      tval_char="Confused, disoriented"),
                            ObsElement("FHIR:Observation.component", "LOINC:9267-6", 2,
-                                      tval_char="4 (Opens eyes spontaneously)"),
+                                      tval_char="Opens eyes spontaneously"),
                            ObsElement("FHIR:Observation.component", "LOINC:LA6556-0", 2,
-                                      tval_char="4 (Opens eyes spontaneously)"),
+                                      tval_char="Opens eyes spontaneously"),
                            ObsElement("FHIR:Observation.component", "LOINC:9268-4", 3,
-                                      tval_char="5 (Localizes painful stimuli)"),
+                                      tval_char="Localizes painful stimuli (acme)"),
                            ObsElement("FHIR:Observation.component", "LOINC:LA6566-9", 3,
-                                      tval_char="5 (Localizes painful stimuli)")
+                                      tval_char="Localizes painful stimuli (acme)")
                            ], [],
-                          [r'Unrecognized namespace: http:/acme.ec/codes/'])
+                          [
+                                'Unrecognized namespace: http:/acme.ec/codes/',
+                                'FHIR:Observation.component, LOINC:9270-0: Modifier on modifier',
+                                'FHIR:Observation.component, LOINC:LA6560-2: Modifier on modifier',
+                                'FHIR:Observation.component, LOINC:9267-6: Modifier on modifier',
+                                'FHIR:Observation.component, LOINC:LA6556-0: Modifier on modifier',
+                                'FHIR:Observation.component, LOINC:9268-4: Modifier on modifier',
+                                'FHIR:Observation.component, LOINC:LA6566-9: Modifier on modifier',
+                          ])
 
     def test_observation_2(self):
+        """ Test observation-example-glasgow-short.ttl"""
         with self.fhir_core():
             self.run_test('observation-example-glasgow-short.ttl',
                           [ObsElement("FHIR:Observation.status", "OBSERVATION-STATUS:final", tval_char='final'),
@@ -283,6 +309,7 @@ class CodeMappingTestCase(LoadFactsHelper):
                            r'FHIR:Observation.component, LOINC:9268-4: Modifier on modifier'])
 
     def test_visionprescription(self):
+        """ Test: visionprescription-example-1.ttl """
         with self.fhir_core():
             self.run_test('visionprescription-example-1.ttl',
                           [ObsElement("EX-VISIONPRESCRIPTIONPRODUCT:contact"),

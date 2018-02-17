@@ -43,6 +43,7 @@ class FHIREncounterMappingTestCase(CRCTestCase):
 
     def test_basic_mapping(self):
         """ Test the basic encounter mapping entry
+
         Process:
         1) Prime the EncounterMapping tables
         2) Generate a simple FHIR EncounterMapping entry and verify that two
