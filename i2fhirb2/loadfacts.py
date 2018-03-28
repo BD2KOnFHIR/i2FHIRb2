@@ -41,16 +41,15 @@ from rdflib import Graph
 from i2fhirb2.common_cli_parameters import add_common_parameters
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
+from i2b2model.data.i2b2observationfact import ObservationFact
 
-from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
-from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2CoreWithUploadId
-
+from i2b2model.data.i2b2patientdimension import PatientDimension
+from i2b2model.data.i2b2patientmapping import PatientMapping
+from i2b2model.shared.i2b2core import I2B2CoreWithUploadId, I2B2Core
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
-from i2fhirb2.file_aware_parser import FileAwareParser
+from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
+from i2b2model.sqlsupport.file_aware_parser import FileAwareParser
 
 
 # TODO: Add support for non-turtle RDF files
@@ -153,7 +152,7 @@ def genargs(argv: List[str]) -> Optional[Namespace]:
             opts.outdir = os.path.join(opts.outdir, '')
         if opts.load:
             process_parsed_args(opts, parser.error)
-        I2B2CoreWithUploadId.sourcesystem_cd = opts.sourcesystem
+        I2B2Core.sourcesystem_cd = opts.sourcesystem
         I2B2CoreWithUploadId.upload_id = opts.uploadid
         return opts
     return None
@@ -190,9 +189,7 @@ def load_graph_map(opts: Namespace) -> Optional[I2B2GraphMap]:
     if g:
         update_dt = datetime.now()
         update_dt_coarse = datetime(update_dt.year, update_dt.month, update_dt.day, update_dt.hour, update_dt.minute)
-        ObservationFact.update_date = update_dt_coarse
-        PatientDimension.update_date = update_dt_coarse
-        PatientMapping.update_date = update_dt_coarse
+        I2B2Core.update_date = update_dt_coarse
         print_rdf_summary(g)
         return I2B2GraphMap(g, opts)
     return None

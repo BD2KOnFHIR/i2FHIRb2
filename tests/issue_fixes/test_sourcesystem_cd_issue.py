@@ -31,12 +31,13 @@ import unittest
 from rdflib import Graph
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+from i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+from dynprops import clear
 
 
 class SourcesystemCdTestCase(unittest.TestCase):
     def test_sourcesystem_cd(self):
-        ObservationFact._clear()
+        clear(ObservationFact)
         ofk = ObservationFactKey(1, 1, "Provider")
         obsf = ObservationFact(ofk, "FHIR:Test")
         fobsf = FHIRObservationFact(Graph(), ofk, "FHIR:test", None, None)
@@ -50,10 +51,9 @@ class SourcesystemCdTestCase(unittest.TestCase):
         ObservationFact.sourcesystem_cd = cd1
         FHIRObservationFact.sourcesystem_cd = cd2
 
-
         self.assertEqual(cd2, obsf.sourcesystem_cd)
         self.assertEqual(cd2, fobsf.sourcesystem_cd)
-        ObservationFact._clear()
+        clear(ObservationFact)
         self.assertEqual("Unspecified", obsf.sourcesystem_cd)
         self.assertEqual("Unspecified", fobsf.sourcesystem_cd)
 
@@ -61,14 +61,14 @@ class SourcesystemCdTestCase(unittest.TestCase):
         FHIRObservationFact.sourcesystem_cd = cd2
         self.assertEqual(cd2, obsf.sourcesystem_cd)
         self.assertEqual(cd2, fobsf.sourcesystem_cd)
-        FHIRObservationFact._clear()
+        clear(FHIRObservationFact)
         self.assertEqual("Unspecified", obsf.sourcesystem_cd)
         self.assertEqual("Unspecified", fobsf.sourcesystem_cd)
 
         ObservationFact.sourcesystem_cd = cd1
         self.assertEqual(cd1, obsf.sourcesystem_cd)
         self.assertEqual(cd1, fobsf.sourcesystem_cd)
-        FHIRObservationFact._clear()
+        clear(FHIRObservationFact)
         self.assertEqual("Unspecified", obsf.sourcesystem_cd)
         self.assertEqual("Unspecified", fobsf.sourcesystem_cd)
 

@@ -29,10 +29,11 @@
 import os
 from typing import Optional, List
 
+from tests.utils.crc_testcase import CRCTestCase
+
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
 from i2fhirb2.loadfacts import load_facts, load_graph_map, genargs
-from tests.utils.base_test_case import test_conf_directory, test_data_directory
-from tests.utils.crc_testcase import CRCTestCase
+from tests.utils.fhir_graph import test_conf_directory, test_data_directory
 
 
 class LoadFactsHelper(CRCTestCase):

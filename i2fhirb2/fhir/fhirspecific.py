@@ -52,6 +52,7 @@ fhir_primitives = {FHIR.Reference, FHIR.index, FHIR.nodeRole, FHIR.value}
 if 'Nd' not in NAME_START_CATEGORIES:
     NAME_START_CATEGORIES.append('Nd')
 
+
 def concept_path_sans_root(subject: URIRef) -> str:
     """
     Generate a concept path without the root node (e.g. Observation//component//code --> component//code

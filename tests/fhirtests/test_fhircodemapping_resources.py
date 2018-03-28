@@ -36,9 +36,10 @@ from io import StringIO
 from typing import List, Optional
 
 from i2fhirb2.fhir.fhirobservationfact import FHIRObservationFact
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact
-from tests.utils.base_test_case import test_data_directory
+from i2b2model.data.i2b2observationfact import ObservationFact
+from tests.utils.fhir_graph import test_data_directory
 from tests.utils.load_facts_helper import LoadFactsHelper
+from dynprops import clear, row
 
 
 @total_ordering
@@ -141,7 +142,7 @@ class CodeMappingResourcesTestCase(LoadFactsHelper):
 
     def run_test(self, fname: str, expected_facts: List[ObsElement], unexpected_facts: List[ObsElement] = None,
                  expected_in_output: Optional[List[str]]=()) -> None:
-        FHIRObservationFact._clear()
+        clear(FHIRObservationFact)
         output_buffer = StringIO()
         with redirect_stdout(output_buffer):
             ofl = self.load_i2b2_to_memory(fname, self.data_source)
@@ -149,8 +150,8 @@ class CodeMappingResourcesTestCase(LoadFactsHelper):
             print(output_buffer.getvalue())
         if self.summarize_output:
             print("*" * 20)
-            print(',\n'.join([repr(e) for e in sorted([obs_element(e) for e in ofl.observation_facts
-                                                       if e.concept_cd.startswith(self.print_output_filter)])]))
+            print(',\n'.join([row(e) for e in sorted([obs_element(e) for e in ofl.observation_facts
+                                                      if e.concept_cd.startswith(self.print_output_filter)])]))
 
         output = output_buffer.getvalue()
 

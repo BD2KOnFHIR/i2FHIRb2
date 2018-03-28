@@ -33,12 +33,14 @@ from datetime import datetime
 import os
 from io import StringIO
 
+from dynprops import clear
 from fhirtordf.rdfsupport.namespaces import FHIR
+from i2b2model.shared.i2b2core import I2B2Core
 from rdflib import Graph, URIRef
 
 from i2fhirb2.fhir.fhircodemapping import value_string, value_quantity, value_integer, value_processors, \
     proc_value_node, value_codeable_concept
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, valuetype_text, valuetype_number
+from i2b2model.data.i2b2observationfact import ObservationFact, valuetype_text, valuetype_number
 
 
 # Note: while less than an ideal architecture, the current value conversion model takes a single observation fact
@@ -46,7 +48,7 @@ from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, valuety
 #       value produces multiple observation facts, the first fact will be the argument and the subsequent facts
 #       will be in the return value.  Thus, if you have to facts from one value, you would get one in the passed
 #       fact and the second as a return value.
-from tests.utils.base_test_case import test_data_directory
+from tests.utils.fhir_graph import test_data_directory
 
 
 class CodeMappingTestCase(unittest.TestCase):
@@ -55,9 +57,9 @@ class CodeMappingTestCase(unittest.TestCase):
         cls.test_dir = os.path.join(os.path.split(os.path.abspath(__file__))[0], 'data', 'codemapping')
 
     def setUp(self):
-        from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
-        ObservationFact._clear()
-        ObservationFact.update_date = datetime(2017, 2, 19, 12, 33)
+        from i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+        clear(ObservationFact)
+        I2B2Core.update_date = datetime(2017, 2, 19, 12, 33)
         # Patient / provider / encounter / start date
         self.ofk = ObservationFactKey(12345, 23456, 'provider', datetime(2017, 5, 23, 11, 17))
         

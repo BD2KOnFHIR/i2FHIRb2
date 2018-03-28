@@ -30,7 +30,7 @@ import unittest
 
 import os
 
-from tests.utils.base_test_case import test_data_directory
+from tests.utils.fhir_graph import test_data_directory
 from tests.utils.load_facts_helper import LoadFactsHelper
 
 

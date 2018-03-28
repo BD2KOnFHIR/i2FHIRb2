@@ -34,8 +34,8 @@ import os
 
 from i2fhirb2 import __version__
 from i2fhirb2.common_cli_parameters import add_common_parameters
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args
-from i2fhirb2.file_aware_parser import FileAwareParser
+from i2b2model.sqlsupport.dbconnection import add_connection_args
+from i2b2model.sqlsupport.file_aware_parser import FileAwareParser
 
 meta_parameters = ["file", "show", "create", "createorrep"]
 

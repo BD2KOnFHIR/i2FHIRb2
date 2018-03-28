@@ -35,26 +35,26 @@ from urllib import request
 from urllib.error import HTTPError
 
 from fhirtordf.fhir.fhirmetavoc import FHIRMetaVoc
+from i2b2model.shared.i2b2core import I2B2Core
 
 from i2fhirb2.common_cli_parameters import add_common_parameters
-from i2fhirb2.i2b2model.metadata.commondimension import CommonDimension
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimensionRoot
+from i2b2model.metadata.commondimension import CommonDimension
 from rdflib import Graph
 from sqlalchemy import delete, Table, update
 
+from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
+from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import FHIR, DEFAULT_BASE
-from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
-from i2fhirb2.i2b2model.metadata.i2b2tableaccess import TableAccess
-from i2fhirb2.i2b2model.shared.tablenames import i2b2tablenames
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args
-from i2fhirb2.file_aware_parser import FileAwareParser
-from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables, change_column_length
+from i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
+from i2b2model.metadata.i2b2tableaccess import TableAccess
+from i2b2model.shared.tablenames import i2b2tablenames
+from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args
+from i2b2model.sqlsupport.file_aware_parser import FileAwareParser
+from i2b2model.sqlsupport.i2b2tables import I2B2Tables, change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
 
-DIMENSION_LIST = Union[List[ConceptDimension], List[ModifierDimension], List[OntologyEntry]]
+DIMENSION_LIST = Union[List[FHIRConceptDimension], List[FHIRModifierDimension], List[OntologyEntry]]
 
 
 def pluralize(cnt: int, base: Any) -> str:
@@ -76,25 +76,8 @@ def initialize_table_defaults(g: Graph, opts: Namespace) -> None:
     # TODO: This is kind of messy -- we've refactored so we should be able to consolidate this
     CommonDimension.graph = g
 
-    ConceptDimension._clear()
-    ConceptDimension.sourcesystem_cd = opts.sourcesystem
-    ConceptDimension.update_date = opts.updatedate
-
-    ConceptDimensionRoot._clear()
-    ConceptDimensionRoot.sourcesystem_cd = opts.sourcesystem
-    ConceptDimensionRoot.update_date = opts.updatedate
-
-    ModifierDimension._clear()
-    ModifierDimension.sourcesystem_cd = opts.sourcesystem
-    ModifierDimension.update_date = opts.updatedate
-
-    OntologyEntry._clear()
-    OntologyEntry.sourcesystem_cd = opts.sourcesystem
-    OntologyEntry.update_date = opts.updatedate
-
-    OntologyRoot._clear()
-    OntologyRoot.sourcesystem_cd = opts.sourcesystem
-    OntologyRoot.update_date = opts.updatedate
+    I2B2Core.sourcesystem_cd = opts.sourcesystem
+    I2B2Core.update_date = opts.updatedate
 
 
 def generate_i2b2_files(g: Graph, opts: Namespace) -> bool:
@@ -125,11 +108,11 @@ def output_table_access(opts: Namespace) -> bool:
     :return: True if success or generation is not needed
     """
     if not opts.table or opts.table == i2b2tablenames.table_access:
-        table_access = TableAccess()
+        table_access = TableAccess('FHIR')
         if opts.outdir:
-            return write_tsv(opts.outdir, 'table_access', table_access._header(), [table_access])
+            return write_tsv(opts.outdir, 'table_access', heading(table_access), [table_access])
         else:
-            return update_table_access_table(opts, opts.tables.table_access, [table_access._freeze()])
+            return update_table_access_table(opts, opts.tables.table_access, as_dict([table_access)])
     else:
         return True
 
@@ -143,7 +126,7 @@ def update_table_access_table(opts: Namespace, table: Table, records: List[Dict[
     return True
 
 
-def output_concept_dimension(opts: Namespace, output: List[ConceptDimension]) -> bool:
+def output_concept_dimension(opts: Namespace, output: List[FHIRConceptDimension]) -> bool:
     """
     Generate the concept dimension output if required
     :param opts: input options
@@ -153,16 +136,16 @@ def output_concept_dimension(opts: Namespace, output: List[ConceptDimension]) ->
     table_name = i2b2tablenames.concept_dimension
     if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table_name, ConceptDimension._header(), output)
+            return write_tsv(opts.outdir, table_name, heading(FHIRConceptDimension), output)
         else:
             table = opts.tables.concept_dimension
             change_column_length(table, table.c.concept_cd, 200, opts.tables.crc_engine)
-            return update_dimension_table(output, opts, table, 'concept_path', [opts.base])
+            return update_dimension_table(output, opts, table)
     else:
         return True
 
 
-def output_modifier_dimension(opts: Namespace, output: List[ModifierDimension]) -> bool:
+def output_modifier_dimension(opts: Namespace, output: List[FHIRModifierDimension]) -> bool:
     """
     Generate the modifier dimension output if required
     :param opts: input options
@@ -172,11 +155,11 @@ def output_modifier_dimension(opts: Namespace, output: List[ModifierDimension]) 
     table_name = i2b2tablenames.modifier_dimension
     if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table_name, ModifierDimension._header(), output)
+            return write_tsv(opts.outdir, table_name, heading(FHIRModifierDimension), output)
         else:
             table = opts.tables.modifier_dimension
             change_column_length(table, table.c.modifier_cd, 200, opts.tables.crc_engine)
-            return update_dimension_table(output, opts, table, 'modifier_path', [opts.base])
+            return update_dimension_table(output, opts, table)
     else:
         return True
 
@@ -191,34 +174,32 @@ def output_ontology(opts: Namespace, output: List[OntologyEntry]) -> bool:
     table_name = i2b2tablenames.ontology_table
     if not opts.table or opts.table == table_name:
         if opts.outdir:
-            return write_tsv(opts.outdir, table_name, OntologyEntry._header(), output)
+            return write_tsv(opts.outdir, table_name, heading(OntologyEntry), output)
         else:
             table = opts.tables.ontology_table
             change_column_length(table, table.c.c_basecode, 200, opts.tables.ont_engine)
             # MedicationStatement is 1547 long
             change_column_length(table, table.c.c_tooltip, 1600, opts.tables.ont_engine)
-            return update_dimension_table(output, opts, table, 'c_basecode', [opts.base.replace('\\', '') + ':', 'W5'])
+            return update_dimension_table(output, opts, table)
     else:
         return True
 
 
-def update_dimension_table(output: DIMENSION_LIST, opts: Namespace, table: Table, table_key: str, key_match: List[str])\
+def update_dimension_table(output: DIMENSION_LIST, opts: Namespace, table: Table) \
         -> bool:
     """
     Update the supplied dimension table, removing all existing records
+
     :param output: list of dimension entries
     :param opts: input options
     :param table: table to be updated
-    :param table_key: key to use for removing existing entries
-    :param key_match: list of key roots (delete all keys that start with this)
     :return: Success indicator
     """
-    for km in key_match:
-        q = delete(table).where(table.c[table_key].startswith(km.replace('\\', '\\\\')))
-        ndel = opts.tables.crc_connection.execute(q).rowcount
-        if ndel > 0:
-            print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
-    nins = opts.tables.crc_connection.execute(table.insert(), [e._freeze() for e in output]).rowcount
+    q = delete(table).where(table.c.sourcesystem_cd == opts.sourcesystem)
+    ndel = opts.tables.crc_connection.execute(q).rowcount
+    if ndel > 0:
+        print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
+    nins = opts.tables.crc_connection.execute(table.insert(), as_dict([e) for e in output]).rowcount
     print("{} {} {} inserted".format(nins, table, pluralize(nins, "record")))
     return True
 
@@ -230,7 +211,7 @@ def load_fhir_ontology(opts: Namespace) -> Graph:
     :return: Graph containing the ontology
     """
     print("Loading fhir.ttl")
-    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc))
+    fmv = FHIRMetaVoc(os.path.join(opts.metadatavoc, 'fhir.ttl'))
     print(" (cached)" if fmv.from_cache else "(from disc)")
     print("loading w5.ttl")
     fmv.g.load(os.path.join(opts.metadatavoc, 'w5.ttl'), format="turtle")

@@ -34,7 +34,7 @@ from rdflib import URIRef, Graph, RDF
 from rdflib.term import Node, Literal
 
 from i2fhirb2.fhir.fhirnamespaces import fhir_namespace_for
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact, valuetype_text, \
+from i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact, valuetype_text, \
     valuetype_number, valuetype_novalue
 
 
@@ -46,8 +46,8 @@ def value_string(g: Graph, node: Node, obs_fact: ObservationFact) -> List[Observ
     :param obs_fact: target fact to have string added to it
     :return: Empty list - no additional facts are generated
     """
-    obs_fact._valtype_cd = valuetype_text
-    obs_fact._tval_char = g.value(node, FHIR.value, default=Literal(""), any=False).value
+    obs_fact.valtype_cd = valuetype_text
+    obs_fact.tval_char = g.value(node, FHIR.value, default=Literal(""), any=False).value
     return []
 
 
@@ -76,12 +76,12 @@ def value_quantity(g: Graph, subject: Node, obs_fact: ObservationFact) -> List[O
     comparator = fhirgraphutils.value(g, subject, FHIR.Quantity.comparator)
     value_ = fhirgraphutils.value(g, subject, FHIR.Quantity.value)
     if value_ is not None:
-        obs_fact._valtype_cd = valuetype_number
-        obs_fact._nval_num = value_
-        obs_fact._tval_char = 'E' if comparator is None else comparator_map.get(str(comparator), '?')
-        obs_fact._units_cd = str(units) if units else None
+        obs_fact.valtype_cd = valuetype_number
+        obs_fact.nval_num = value_
+        obs_fact.tval_char = 'E' if comparator is None else comparator_map.get(str(comparator), '?')
+        obs_fact.units_cd = str(units) if units else None
     else:
-        obs_fact._valtype_cd = valuetype_novalue
+        obs_fact.valtype_cd = valuetype_novalue
     return []
 
 
@@ -93,9 +93,9 @@ def value_integer(g: Graph, subject: Node, obs_fact: ObservationFact) -> List[Ob
     :param obs_fact: Fact to add the information to
     :return: Empty list - no additional facts are generated
     """
-    obs_fact._valtype_cd = valuetype_number
-    obs_fact._nval_num = g.value(subject, FHIR.value, any=False).value
-    obs_fact._tval_char = 'E'
+    obs_fact.valtype_cd = valuetype_number
+    obs_fact.nval_num = g.value(subject, FHIR.value, any=False).value
+    obs_fact.tval_char = 'E'
     return []
 
 
@@ -123,13 +123,13 @@ def value_codeable_concept(g: Graph, subject: Node, obs_fact: ObservationFact) -
                 concept_uri = concept_uri_for(g, coding)
                 concept_ns_name = FHIRObservationFact.ns_name_for(concept_uri) if concept_uri else None
                 if concept_ns_name:
-                    obs_fact._modifier_cd = concept_ns_name
+                    obs_fact.modifier_cd = concept_ns_name
             display = fhirgraphutils.value(g, coding, FHIR.Coding.display)
             if not display:
                 display = fhirgraphutils.value(g, subject, FHIR.CodeableConcept.text)
             if display:
-                obs_fact._valtype_cd = valuetype_text
-                obs_fact._tval_char = display
+                obs_fact.valtype_cd = valuetype_text
+                obs_fact.tval_char = display
                 if additional_entries:
                     rval.append(obs_fact)
                 else:
@@ -138,8 +138,8 @@ def value_codeable_concept(g: Graph, subject: Node, obs_fact: ObservationFact) -
     else:
         text = fhirgraphutils.value(g, subject, FHIR.CodeableConcept.text)
         if text:
-            obs_fact._valtype_cd = valuetype_text
-            obs_fact._tval_char = text
+            obs_fact.valtype_cd = valuetype_text
+            obs_fact.tval_char = text
 
     return rval
 
@@ -294,9 +294,9 @@ def process_concept_code(g: Graph, root_concept: URIRef, subject: Node, predicat
                             if not id_code.startswith("FHIR:"):
                                 for entry in base_entries:
                                     fact_entry = copy.copy(entry)
-                                    fact_entry._concept_cd = id_code
-                                    fact_entry._modifier_cd = FHIRObservationFact.ns_name_for(target_concept_code)
-                                    fact_entry._instance_num = 0
+                                    fact_entry.concept_cd = id_code
+                                    fact_entry.modifier_cd = FHIRObservationFact.ns_name_for(target_concept_code)
+                                    fact_entry.instance_num = 0
                                     rval.append(fact_entry)
                                 if not base_entries:
                                     rval.append(FHIRObservationFact(g, ofk, id_code, target_concept_code, None))
@@ -309,8 +309,8 @@ def process_concept_code(g: Graph, root_concept: URIRef, subject: Node, predicat
                                                predicate,
                                                subject)
                     cval = cvals[0]
-                    cval._valtype_cd = valuetype_text
-                    cval._tval_char = str(g.value(target, FHIR.value))
+                    cval.valtype_cd = valuetype_text
+                    cval.tval_char = str(g.value(target, FHIR.value))
                     rval += cvals
     return rval
 

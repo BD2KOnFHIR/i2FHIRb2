@@ -41,7 +41,7 @@ import os
 #   2) Config files can be nested and/or occur multiple times.  There is only one rel_path
 #
 from i2fhirb2.loadfacts import create_parser
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args
+from i2b2model.sqlsupport.dbconnection import add_connection_args
 
 script_tmpl = "-i {}/data/synthea_data/fhir/Zieme803_Caroline16_2.json" \
               " -u 119651 -l -rm --conf {}/conf/db_conf --sourcesystem SMARTONFHIR"

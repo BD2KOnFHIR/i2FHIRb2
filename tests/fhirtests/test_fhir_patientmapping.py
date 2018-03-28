@@ -30,24 +30,26 @@ import unittest
 from collections import OrderedDict
 from datetime import datetime
 
+from i2b2model.shared.i2b2core import I2B2Core, I2B2CoreWithUploadId
+from dynprops import as_dict
+
+from tests.utils.crc_testcase import CRCTestCase
+
 from i2fhirb2.fhir.fhirpatientmapping import PatientNumberGenerator
 from tests.utils.connection_helper import connection_helper
-from tests.utils.crc_testcase import CRCTestCase
 
 
 class FHIRPatientMappingTestCase(CRCTestCase):
 
     def test_patient_mapping(self):
         from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-        from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
+        from i2b2model.data.i2b2patientmapping import PatientMapping
 
-        PatientMapping._clear()
-        PatientMapping.update_date = datetime(2017, 5, 25)
-        FHIRPatientMapping._clear()
-        PatientMapping.upload_id = 1773486
+        I2B2Core.update_date = datetime(2017, 5, 25)
+        I2B2CoreWithUploadId.upload_id = 1773486
 
         with self.sourcesystem_cd():
-            PatientMapping.sourcesystem_cd = self._sourcesystem_cd
+            I2B2Core.sourcesystem_cd = self._sourcesystem_cd
             pm = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")
 
             self.assertEqual(OrderedDict([
@@ -60,7 +62,7 @@ class FHIRPatientMappingTestCase(CRCTestCase):
                  ('download_date', datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 1773486)]), pm.patient_mapping_entries[0]._freeze())
+                 ('upload_id', 1773486)]), as_dict(pm.patient_mapping_entries[0]))
             self.assertEqual(OrderedDict([
                  ('patient_ide', '100000001'),
                  ('patient_ide_source', 'HIVE'),
@@ -71,7 +73,7 @@ class FHIRPatientMappingTestCase(CRCTestCase):
                  ('download_date', datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 1773486)]), pm.patient_mapping_entries[1]._freeze())
+                 ('upload_id', 1773486)]), as_dict(pm.patient_mapping_entries[1]))
             self.assertEqual(2, len(pm.patient_mapping_entries))
 
             pm2 = FHIRPatientMapping(connection_helper().tables, "p123", "http://hl7.org/fhir")

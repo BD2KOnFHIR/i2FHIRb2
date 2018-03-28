@@ -34,7 +34,8 @@ from csv import DictReader
 from typing import Dict
 
 from i2fhirb2.loadfacts import load_facts
-from tests.utils.base_test_case import test_data_directory, test_conf_directory, make_and_clear_directory
+from tests.utils.fhir_graph import test_data_directory, test_conf_directory
+from tests.utils.make_and_clear_directory import make_and_clear_directory
 
 
 class ObservationComponentTestCase(unittest.TestCase):

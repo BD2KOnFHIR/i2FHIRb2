@@ -33,8 +33,8 @@ import os
 from fhirtordf.rdfsupport.namespaces import namespace_for, FHIR
 from sqlalchemy import select, and_, or_
 
-from i2fhirb2.sqlsupport.dbconnection import process_parsed_args
-from tests.utils.base_test_case import test_conf_directory
+from i2b2model.sqlsupport.dbconnection import process_parsed_args
+from tests.utils.fhir_graph import test_conf_directory
 
 fhir_concept_prefix = namespace_for(FHIR).upper() + ':'
 max_to_print = 100
@@ -65,7 +65,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         # i2b2demodata.concept_dimension.concept_cd is null
 # group by i2b2demodata.observation_fact.concept_cd;
 
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         s = select([x.observation_fact.c.concept_cd.distinct()]).\
@@ -93,7 +93,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         matching codes in the modifier_dimension
         """
 
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         s = select([x.observation_fact.c.modifier_cd.distinct()]).\
@@ -118,7 +118,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         Locate any ontology table concept references that aren't in the concept file.  Note that 'like' queries
         (which we don't currently emit) should probably produce values but don't require exact matches
         """
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         ont_table = x.ontology_table
@@ -146,7 +146,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         """
         Locate any concept file entries that don't have ontology table references
         """
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         ont_table = x.ontology_table
@@ -173,7 +173,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         """
         Locate any ontology table modifier references that aren't in the modifier dimension
         """
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         ont_table = x.ontology_table
@@ -201,7 +201,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
         """
         Determine whether there is a 1-1 mapping betwen the FHIR ontology and the dimension tables
         """
-        from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
+        from i2b2model.sqlsupport.dbconnection import I2B2Tables
         x = I2B2Tables(self.opts)
 
         ont_table = x.ontology_table

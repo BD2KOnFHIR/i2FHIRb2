@@ -32,10 +32,11 @@ import os
 from functools import reduce
 
 from tests.utils.crc_testcase import CRCTestCase
+
 from tests.utils.script_test_base import ScriptTestBase
 
 from i2fhirb2.loadfacts import load_facts
-from tests.utils.base_test_case import test_conf_file
+from tests.utils.fhir_graph import test_conf_file
 
 
 class Issue8TestCase(ScriptTestBase, CRCTestCase):

@@ -34,13 +34,13 @@ from fhirtordf.rdfsupport.uriutils import parse_fhir_resource_uri
 from rdflib import Graph, URIRef, Literal, XSD
 
 from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-from i2fhirb2.i2b2model.data.i2b2codes import I2B2DemographicsCodes
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
-from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
+from i2b2model.data.i2b2codes import I2B2DemographicsCodes
+from i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
+from i2b2model.data.i2b2patientdimension import PatientDimension, VitalStatusCd
 # TODO: is there any reason to pull patient_id from Patient.identifier rather than URL?
 # TODO: what of foreign addresses?
-from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientIDEStatus
-from i2fhirb2.sqlsupport.i2b2tables import I2B2Tables
+from i2b2model.data.i2b2patientmapping import PatientIDEStatus
+from i2b2model.sqlsupport.i2b2tables import I2B2Tables
 
 
 class FHIRPatientDimension:
@@ -79,16 +79,16 @@ class FHIRPatientDimension:
             # gender
             gender = value(g, patient, FHIR.Patient.gender)
             if gender == "male":
-                self.patient_dimension_entry._sex_cd = 'M'
+                self.patient_dimension_entry.sex_cd = 'M'
             elif gender == "female":
-                self.patient_dimension_entry._sex_cd = 'F'
+                self.patient_dimension_entry.sex_cd = 'F'
             elif gender == "other":
-                self.patient_dimension_entry._sex_cd = 'U'
+                self.patient_dimension_entry.sex_cd = 'U'
 
             # deceased.deceasedBoolean --> vital_status_code.deathInd
             isdeceased = value(g, patient, FHIR.Patient.deceasedBoolean)
             if isdeceased is not None:
-                self.patient_dimension_entry._vital_status_cd = VitalStatusCd.dd_deceased if isdeceased \
+                self.patient_dimension_entry.vital_status_cd_.deathcode = VitalStatusCd.dd_deceased if isdeceased \
                     else VitalStatusCd.dd_living
 
             # deceased.deceasedDateTime --> deathcode / death_date
@@ -115,9 +115,9 @@ class FHIRPatientDimension:
                         state = value(g, address, FHIR.Address.state)
                         zipcode = value(g, address, FHIR.Address.postalCode)
                         if zipcode:
-                            self.patient_dimension_entry._zip_cd = zipcode
+                            self.patient_dimension_entry.zip_cd = zipcode
                             if city and state:
-                                self.patient_dimension_entry._statecityzip_path = \
+                                self.patient_dimension_entry.statecityzip_path = \
                                     'Zip codes\\' + state + '\\' + city + '\\' + zipcode + '\\'
 
             # maritalStatus --> map to 'single', 'married', 'divorced', 'widow', other?
@@ -164,29 +164,29 @@ class FHIRPatientDimension:
     @birthdate.setter
     def birthdate(self, bd: Optional[Literal]) -> None:
         if bd is None:
-            self.patient_dimension_entry._birth_date = None
+            self.patient_dimension_entry.birth_date = None
         else:
             # TODO: decide whether we want to refine this further
             if bd.datatype == XSD.gYear:
-                self.patient_dimension_entry._vital_status_code.birthcode = VitalStatusCd.bd_year
+                self.patient_dimension_entry.vital_status_cd_.birthcode = VitalStatusCd.bd_year
             elif bd.datatype == XSD.gYearMonth:
-                self.patient_dimension_entry._vital_status_code.birthcode = VitalStatusCd.bd_month
+                self.patient_dimension_entry.vital_status_cd_.birthcode = VitalStatusCd.bd_month
             elif bd.datatype == XSD.date:
-                self.patient_dimension_entry._vital_status_code.birthcode = VitalStatusCd.bd_day
+                self.patient_dimension_entry.vital_status_cd_.birthcode = VitalStatusCd.bd_day
             else:
-                self.patient_dimension_entry._vital_status_code.birthcode = VitalStatusCd.bd_hour
-            self.patient_dimension_entry._birth_date = bd.toPython()
+                self.patient_dimension_entry.vital_status_cd_.birthcode = VitalStatusCd.bd_hour
+            self.patient_dimension_entry.birth_date = bd.toPython()
 
             # Age calculation --
             # TODO: figure out what to do with tzoffset
             # TODO: figure out what rdflib delivers in the toPython() function
             niave_bd = bd.toPython()
             ref_date = None
-            if self.patient_dimension_entry._vital_status_code.deathcode \
+            if self.patient_dimension_entry.vital_status_cd_.deathcode \
                     in {VitalStatusCd.dd_living, VitalStatusCd.dd_unknown}:
                 ref_date = datetime.now()
-            elif self.patient_dimension_entry._death_date is not None:
-                ref_date = self.patient_dimension_entry._death_date
+            elif self.patient_dimension_entry.death_date is not None:
+                ref_date = self.patient_dimension_entry.death_date
             if ref_date is not None:
                 age = ref_date.year - niave_bd.year
                 if age > 0:
@@ -195,7 +195,7 @@ class FHIRPatientDimension:
                     elif ref_date.month == niave_bd.month:
                         if ref_date.day > niave_bd.day:
                             age -= 1
-                self.patient_dimension_entry._age_in_years_num = age
+                self.patient_dimension_entry.age_in_years_num = age
 
     @property
     def deathdate(self) -> Literal:
@@ -204,18 +204,18 @@ class FHIRPatientDimension:
     @deathdate.setter
     def deathdate(self, dd: Optional[Literal]) -> None:
         if dd is None:
-            self.patient_dimension_entry._death_date = None
+            self.patient_dimension_entry.death_date = None
         else:
             # TODO: decide whether we want to refine this further
             if dd.datatype == XSD.gYear:
-                self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_year
+                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_year
             elif dd.datatype == XSD.gYearMonth:
-                self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_month
+                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_month
             elif dd.datatype == XSD.date:
-                self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_day
+                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_day
             else:
-                self.patient_dimension_entry._vital_status_code.deathcode = VitalStatusCd.dd_hour
-            self.patient_dimension_entry._death_date = dd.toPython()
+                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_hour
+            self.patient_dimension_entry.death_date = dd.toPython()
 
     def as_observation_facts(self, encounter_num: int, provider_id: str, start_date: datetime) -> List[ObservationFact]:
         rval = []
@@ -261,8 +261,8 @@ class FHIRPatientDimension:
         rval.append(
             ObservationFact(ofk,
                             I2B2DemographicsCodes.vital_living
-                            if pde._vital_status_code.dd_deceased == VitalStatusCd.dd_living
-                            else I2B2DemographicsCodes.vital_unknown if pde._vital_status_code.dd_unknown
+                            if pde.vital_status_code.dd_deceased == VitalStatusCd.dd_living
+                            else I2B2DemographicsCodes.vital_unknown if pde.vital_status_code.dd_unknown
                             else I2B2DemographicsCodes.vital_dead))
 
         # zip

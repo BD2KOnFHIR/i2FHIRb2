@@ -31,7 +31,7 @@ import unittest
 from rdflib import Graph
 
 from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
-from tests.utils.base_test_case import test_data_directory
+from tests.utils.fhir_graph import test_data_directory
 from tests.utils.shared_graph import shared_graph
 
 

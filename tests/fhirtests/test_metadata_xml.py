@@ -35,7 +35,7 @@ from i2fhirb2.fhir.fhirspecific import FHIR
 class MetadataXMLTestCase(unittest.TestCase):
 
     def test_basics(self):
-        from i2fhirb2.i2b2model.metadata.dimensionmetadata import metadata_xml
+        from i2fhirb2.fhir.fhirdimensionmetadata import metadata_xml
         rval = metadata_xml(FHIR.string, "FHIR:Text.string", "Text value", datetime(2017, 7, 31))
         self.assertEqual("""<?xml version="1.0"?>
 <ValueMetadata>

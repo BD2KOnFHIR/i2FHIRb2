@@ -31,38 +31,27 @@ from typing import Optional, List, cast, Dict, NamedTuple, Set
 from fhirtordf.rdfsupport.namespaces import FHIR, W5
 from rdflib import URIRef, Graph, RDFS
 
+from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
 from i2fhirb2.fhir.fhirmetadatavocabulary import FMVGraphNode, FMVGraphEdge, FMVGraphNodeWithMultiplicity
+from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
+from i2fhirb2.fhir.fhirontology import ModifierOntologyEntry, ConceptOntologyEntry, OntologyRoot
 from i2fhirb2.fhir.fhirspecific import concept_path, concept_path_sans_root, concept_code, rightmost_element, \
-    skip_fhir_predicates, skip_fhir_types, composite_uri, DEFAULT_BASE_PATH, w5_infrastructure_categories
+    skip_fhir_predicates, skip_fhir_types, composite_uri, DEFAULT_BASE_PATH, w5_infrastructure_categories, concept_name
 from i2fhirb2.fhir.fhirw5ontology import FHIRW5Ontology
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot, ConceptOntologyEntry, \
-    ModifierOntologyEntry
+from i2b2model.metadata.i2b2ontology import OntologyEntry
 
 
 class DimensionSet(NamedTuple):
     """ A collection of defining elements """
     ontology_dimension: List[OntologyEntry]
-    concept_dimension: List[ConceptDimension]
-    modifier_dimension: List[ModifierDimension]
+    concept_dimension: List[FHIRConceptDimension]
+    modifier_dimension: List[FHIRModifierDimension]
 
 
 class FHIROntologyTable:
     """  The set of i2b2 ontology table entries for the supplied subject or all root concepts
     """
     def __init__(self, g: Graph, name_base: str=DEFAULT_BASE_PATH, modifier_base: str = None) -> None:
-        # TODO: Remove these tests once we submit -- this is just a code check
-        has_fhir = has_w5 = False
-        for s in g.subjects():
-            if isinstance(s, URIRef):
-                if str(s).startswith(str(W5)):
-                    has_w5 = True
-                elif str(s).startswith(str(FHIR)):
-                    has_fhir = True
-            if has_fhir and has_w5:
-                break
-        assert has_fhir and has_w5, "Graph not correctly initialized"
 
         self._name_base = name_base if name_base.endswith('\\') else name_base + '\\'
         self._modifier_base = modifier_base if modifier_base else self._name_base[:-1] + 'Mod'
@@ -87,7 +76,7 @@ class FHIROntologyTable:
         return rval
 
     def _modifier_ontology_list(self, parent_path: str, parent_uri: URIRef, modifier_base_path: str, node: FMVGraphNode,
-                                modifier_dims: Dict[str, ModifierDimension], in_multiple_elements: bool,
+                                modifier_dims: Dict[str, FHIRModifierDimension], in_multiple_elements: bool,
                                 inside: Set[URIRef] = None, depth: int=1) \
             -> List[ModifierOntologyEntry]:
         """
@@ -117,7 +106,7 @@ class FHIROntologyTable:
                                           edge.predicate,   #
                                           edge.type_node.node))  # actual type of modifier
                 if edge.type_node.is_primitive:
-                    modifier_entry = ModifierDimension(edge.predicate, self._name_base)
+                    modifier_entry = FHIRModifierDimension(edge.predicate,  self._name_base)
                     if modifier_entry.modifier_path not in modifier_dims:
                         modifier_dims[modifier_entry.modifier_path] = modifier_entry
                 elif in_multiple_elements:
@@ -143,8 +132,8 @@ class FHIROntologyTable:
         :return: List of i2b2 ontology entries
         """
         ontology_entries: List[OntologyEntry] = [cast(OntologyEntry, OntologyRoot(self._name_base))]    # FHIR root node
-        concept_dimension_entries: Dict[str, ConceptDimension] = {}
-        modifier_dimension_entries: Dict[str, ModifierDimension] = {}
+        concept_dimension_entries: Dict[str, FHIRConceptDimension] = {}
+        modifier_dimension_entries: Dict[str, FHIRModifierDimension] = {}
 
         # Create an entry for all of the W5 paths
         for w5_node in self.w5_ontology.w5_paths():
@@ -154,7 +143,7 @@ class FHIROntologyTable:
                                      w5_node.path,                  # navigational path
                                      ontological_path,              # Ontological path
                                      is_leaf=False,
-                                     is_draggable=False))
+                                     is_draggable=True))
 
             if w5_node.fhir_resource_uri and (resource is None or w5_node.fhir_resource_uri == resource):
                 for conc_uri, conc_node_ent in self.fhir_concepts(w5_node.fhir_resource_uri).items():
@@ -170,7 +159,8 @@ class FHIROntologyTable:
                                                  is_draggable=True,
                                                  primitive_type=conc_node.node if conc_node.is_primitive else None))
 
-                        concept_dimension_entries[ontological_path] = ConceptDimension(conc_uri, self._name_base)
+                        concept_dimension_entries[ontological_path] = \
+                            FHIRConceptDimension(conc_uri, concept_name(self.graph, conc_uri), self._name_base)
                         ontology_entries += self._modifier_ontology_list(navigational_path,
                                                                          conc_uri,
                                                                          concept_path(conc_uri),
@@ -190,13 +180,13 @@ class FHIROntologyTable:
         """
         target[concept_cd] = FMVGraphNodeWithMultiplicity(type_node, False)
         for edge in type_node.edges:
-            extended_concept_cd = composite_uri(concept_cd, edge.predicate)
+            extendedconcept_cd = composite_uri(concept_cd, edge.predicate)
             if not edge.type_node.is_primitive:
-                target[extended_concept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
+                target[extendedconcept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
                 if not edge.multiple_entries:
-                    self._fhir_concept_expansion(extended_concept_cd, edge.type_node, target, nested=True)
+                    self._fhir_concept_expansion(extendedconcept_cd, edge.type_node, target, nested=True)
             elif not nested:
-                target[extended_concept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
+                target[extendedconcept_cd] = FMVGraphNodeWithMultiplicity(edge.type_node, edge.multiple_entries)
 
     def fhir_concepts(self, resource: Optional[URIRef]=None) -> Dict[URIRef, FMVGraphNodeWithMultiplicity]:
         """

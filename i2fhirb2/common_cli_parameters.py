@@ -28,7 +28,7 @@
 from fhirtordf.rdfsupport.namespaces import FHIR
 
 from i2fhirb2.fhir.fhirspecific import DEFAULT_SOURCE_SYSTEM, DEFAULT_BASE_PATH
-from i2fhirb2.sqlsupport.dbconnection import FileAwareParser
+from i2b2model.sqlsupport.dbconnection import FileAwareParser
 from i2fhirb2 import __version__
 
 

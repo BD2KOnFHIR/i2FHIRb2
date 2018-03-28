@@ -40,8 +40,7 @@ from i2fhirb2.fhir.fhirprimitivetypes import i2b2_primitive, I2B2Value
 from i2fhirb2.fhir.fhirproviderdimension import FHIRProviderDimension
 from i2fhirb2.fhir.fhirspecific import composite_uri, instance_is_primitive
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
-from i2fhirb2.sqlsupport.dynobject import DynElements
+from i2b2model.data.i2b2observationfact import ObservationFact, ObservationFactKey
 
 
 # TODO: Same patient_ide/patient_ide_src + visit_ide / visit_ide_src == duplicate
@@ -65,14 +64,15 @@ class FHIRObservationFact(ObservationFact):
         """
         super().__init__(ofk, self.ns_name_for(concept) if isinstance(concept, URIRef) else concept)
         if modifier is not None:
-            self._modifier_cd = self.ns_name_for(modifier)
-        self._instance_num = instance_num
+            self.modifier_cd = self.ns_name_for(modifier)
+        if instance_num is not None:
+            self.instance_num = instance_num
         if obj is not None:
             v: I2B2Value = i2b2_primitive(g.value(obj, FHIR.value, any=False))
-            self._valtype_cd = v.valtype
-            self._tval_char = v.tval_char
-            self._nval_num = v.nval_num
-            self._observation_blob = v.observation_blob
+            self.valtype_cd = v.valtype
+            self.tval_char = v.tval_char
+            self.nval_num = v.nval_num
+            self.observation_blob = v.observation_blob
         self.identifying_codes: List[str] = []
 
     @classmethod
@@ -103,7 +103,6 @@ class FHIRObservationFact(ObservationFact):
     @classmethod
     def _clear(cls, complete=True):
         cls._unknown_namespaces = []
-        ObservationFact._clear(complete)
 
 
 class FHIRObservationFactFactory:

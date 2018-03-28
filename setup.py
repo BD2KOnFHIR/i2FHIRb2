@@ -4,8 +4,8 @@ import sys
 
 from i2fhirb2 import __version__
 
-requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2', 'jsonasobj>=1.1.1',
-            'dirlistproc', 'fhirtordf>=0.9.3', 'isodate']
+requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2-binary', 'jsonasobj>=1.1.1',
+            'dirlistproc', 'fhirtordf>=0.9.3', 'isodate', 'i2b2model>=0.2.1', 'dynprops']
 if sys.version_info < (3, 5):
     requires.append('typing')
 

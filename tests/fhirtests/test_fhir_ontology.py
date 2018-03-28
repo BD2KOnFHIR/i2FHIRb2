@@ -30,51 +30,43 @@ import unittest
 from datetime import datetime
 from typing import List, Tuple
 
-from i2fhirb2.fhir.fhirspecific import FHIR
-from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyRoot, OntologyEntry
-from tests.utils.base_test_case import BaseTestCase
+from dynprops import row, heading
+from i2b2model.shared.i2b2core import I2B2Core
+
 from tests.utils.crc_testcase import CRCTestCase
+
+from i2fhirb2.fhir import fhirdimensionmetadata
+from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
+from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
+from i2fhirb2.fhir.fhirspecific import FHIR
+from i2b2model.metadata.i2b2ontology import OntologyEntry
 from tests.utils.shared_graph import shared_graph
 
 # True means create the output file -- false means test it
 create_output_files = False         # Be very careful when setting this to 'true'
 
 
-class FHIROntologyTestCase(BaseTestCase, CRCTestCase):
+class FHIROntologyTestCase(CRCTestCase):
     output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))
 
     def setUp(self):
         super().setUp()
-        from i2fhirb2.i2b2model.metadata import dimensionmetadata
         ref_datetime = datetime(2017, 5, 25, 13, 0)
-        dimensionmetadata.creation_date = ref_datetime
+        fhirdimensionmetadata.creation_date = ref_datetime
 
-        from i2fhirb2.i2b2model.metadata.i2b2ontology import OntologyEntry
-        OntologyEntry._clear()
-        OntologyEntry.update_date = OntologyRoot.update_date = ref_datetime
+        from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
+        I2B2Core.update_date = ref_datetime
+        FHIRModifierDimension.graph = shared_graph
 
-        from i2fhirb2.i2b2model.metadata.i2b2modifierdimension import ModifierDimension
-        ModifierDimension._clear()
-        ModifierDimension.update_date = ref_datetime
-        ModifierDimension.graph = shared_graph
-
-        from i2fhirb2.i2b2model.metadata.i2b2conceptdimension import ConceptDimension
-        ConceptDimension._clear()
-        ConceptDimension.update_date = ConceptDimension.import_date = ConceptDimension.download_date = \
-            ref_datetime
-        ConceptDimension.graph = shared_graph
+        from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
+        FHIRConceptDimension.graph = shared_graph
 
     @staticmethod
     def esc_output(txt: str) -> str:
         return txt.replace('\r\n', '').replace('\r', '').replace('\n', '').strip('\t')
 
     def set_sourcesystem_cds(self) -> None:
-        OntologyEntry.sourcesystem_cd = self._sourcesystem_cd
-        OntologyRoot.sourcesystem_cd = self._sourcesystem_cd
-        ModifierDimension.sourcesystem_cd = self._sourcesystem_cd
-        ConceptDimension.sourcesystem_cd = self._sourcesystem_cd
+        I2B2Core.sourcesystem_cd = self._sourcesystem_cd
 
     def tst_dimension(self, header: str, dimension_entries: List, fname: str) -> None:
         """
@@ -88,28 +80,28 @@ class FHIROntologyTestCase(BaseTestCase, CRCTestCase):
             with open(full_fname, 'w') as outf:
                 outf.write(header + '\n')
                 for e in sorted(dimension_entries):
-                    outf.write(self.esc_output(repr(e)) + '\n')
+                    outf.write(self.esc_output(row(e)) + '\n')
             self.maxDiff = None
             with open(full_fname, 'r') as outf:
                 self.assertEqual(outf.readline().strip(), header, "Header mismatch")
                 line_number = 1
                 for e in sorted(dimension_entries):
                     line_number += 1
-                    self.assertEqual(outf.readline().strip('\r\n\t'), self.esc_output(repr(e)),
+                    self.assertEqual(outf.readline().strip('\r\n\t'), self.esc_output(row(e)),
                                      "Mismatch on line {}".format(line_number))
                 self.assertEqual(outf.read(), "")
 
-    def tst_output(self, dimensions: Tuple[List[OntologyEntry], List[ConceptDimension], List[ModifierDimension]],
-                   resource_name: str) -> None:
+    def tst_output(self, dimensions: Tuple[List[OntologyEntry], List[FHIRConceptDimension],
+                                           List[FHIRModifierDimension]], resource_name: str) -> None:
         """
         Test the output of FHIROntologyTable.dimension_list as generated against resource
         :param dimensions: ontology, concept and modifier dimension entries
         :param resource_name: name of specific test file (e.g. 'observation', 'domain_resource', etc.)
         """
         self.set_sourcesystem_cds()
-        self.tst_dimension(OntologyEntry._header(), dimensions[0], 'fhir_ontology_' + resource_name)
-        self.tst_dimension(ConceptDimension._header(), dimensions[1], 'fhir_concept_dimension_' + resource_name)
-        self.tst_dimension(ModifierDimension._header(), dimensions[2], 'fhir_modifier_dimension_' + resource_name)
+        self.tst_dimension(heading(OntologyEntry), dimensions[0], 'fhir_ontology_' + resource_name)
+        self.tst_dimension(heading(FHIRConceptDimension), dimensions[1], 'fhir_concept_dimension_' + resource_name)
+        self.tst_dimension(heading(FHIRModifierDimension), dimensions[2], 'fhir_modifier_dimension_' + resource_name)
 
     def test_ontology(self):
         """
@@ -117,7 +109,7 @@ class FHIROntologyTestCase(BaseTestCase, CRCTestCase):
         """
         from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 
-        with self.sourcesystem_cd() as ss_cd:
+        with self.sourcesystem_cd():
             self.tst_output(FHIROntologyTable(shared_graph).dimension_list(FHIR.Observation), "observation")
             self.assertFalse(create_output_files, "New output files generated")
 

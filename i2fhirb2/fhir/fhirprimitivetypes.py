@@ -30,7 +30,7 @@ from typing import Optional, Dict, Callable
 
 from rdflib import Literal, URIRef, XSD
 
-from i2fhirb2.i2b2model.data.i2b2observationfact import ValueTypeCd, valuetype_text, valuetype_blob, valuetype_date, \
+from i2b2model.data.i2b2observationfact import ValueTypeCd, valuetype_text, valuetype_blob, valuetype_date, \
     valuetype_number
 
 

@@ -31,12 +31,15 @@ import unittest
 import datetime
 from collections import OrderedDict
 
+from dynprops import clear, as_dict
+from i2b2model.shared.i2b2core import I2B2Core
+
+from tests.utils.crc_testcase import CRCTestCase
 
 from i2fhirb2.fhir.fhirencountermapping import EncounterNumberGenerator
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.common_cli_parameters import IDE_SOURCE_HIVE
 from tests.utils.connection_helper import connection_helper
-from tests.utils.crc_testcase import CRCTestCase
 
 
 class FHIREncounterMappingTestCase(CRCTestCase):
@@ -51,14 +54,13 @@ class FHIREncounterMappingTestCase(CRCTestCase):
            for the HIVE ide
         """
         from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
-        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
+        from i2b2model.data.i2b2encountermapping import EncounterMapping
 
-        EncounterMapping._clear()
-        EncounterMapping.update_date = datetime.datetime(2017, 5, 25)
-        FHIREncounterMapping._clear()
+        I2B2Core.update_date = datetime.datetime(2017, 5, 25)
+        clear(FHIREncounterMapping)           # reset number generators
 
         with self.sourcesystem_cd() as ss_cd:
-            EncounterMapping.sourcesystem_cd = ss_cd
+            I2B2Core.sourcesystem_cd = ss_cd
             em = FHIREncounterMapping(FHIR["Patient/f001"], "patient01", "http://hl7.org/fhir")
             self.assertEqual(OrderedDict([
                  ('encounter_ide', 'Patient/f001'),
@@ -72,7 +74,7 @@ class FHIREncounterMappingTestCase(CRCTestCase):
                  ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', None)]), em.encounter_mapping_entries[0]._freeze())
+                 ('upload_id', None)]), as_dict(em.encounter_mapping_entries[0]))
             self.assertEqual(OrderedDict([
                  ('encounter_ide', '500000'),
                  ('encounter_ide_source', IDE_SOURCE_HIVE),
@@ -85,7 +87,7 @@ class FHIREncounterMappingTestCase(CRCTestCase):
                  ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', None)]), em.encounter_mapping_entries[1]._freeze())
+                 ('upload_id', None)]), as_dict(em.encounter_mapping_entries[1]))
             self.assertEqual(2, len(em.encounter_mapping_entries))
             self.assertEqual(500000, em.encounter_num)
 

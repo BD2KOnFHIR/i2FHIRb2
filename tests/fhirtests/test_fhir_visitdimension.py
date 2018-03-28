@@ -31,11 +31,14 @@ import unittest
 import datetime
 from collections import OrderedDict
 
+from i2b2model.shared.i2b2core import I2B2Core, I2B2CoreWithUploadId
+
+from tests.utils.crc_testcase import CRCTestCase
 from isodate import FixedOffset
 from rdflib import Graph, Literal, XSD
 
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
-from tests.utils.crc_testcase import CRCTestCase
+from dynprops import clear, as_dict
 
 
 class FHIRVisitDimensionTestCase(CRCTestCase):
@@ -43,25 +46,19 @@ class FHIRVisitDimensionTestCase(CRCTestCase):
     def test_load_ttl(self):
         from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
         from i2fhirb2.fhir.fhirspecific import FHIR
-        from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
-        from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
+        from i2b2model.data.i2b2visitdimension import VisitDimension
+        from i2b2model.data.i2b2encountermapping import EncounterMapping
 
-        EncounterMapping._clear()
-        EncounterMapping.update_date = datetime.datetime(2017, 5, 25)
-        EncounterMapping.upload_id = 1700043
+        I2B2Core.update_date = datetime.datetime(2017, 5, 25)
+        I2B2CoreWithUploadId.upload_id = 1700043
 
-        VisitDimension._clear()
-        VisitDimension.update_date = datetime.datetime(2017, 5, 25)
-        VisitDimension.upload_id = 1700043
-
-        FHIREncounterMapping._clear()           # reset the encounter number generator
+        clear(FHIREncounterMapping)           # reset the encounter number generator
 
         g = Graph()
         g.load(os.path.join(os.path.split(os.path.abspath(__file__))[0], "data",
                             "diagnosticreport-example-f202-bloodculture.ttl"), format="turtle")
         with self.sourcesystem_cd():
-            EncounterMapping.sourcesystem_cd = self._sourcesystem_cd
-            VisitDimension.sourcesystem_cd = self._sourcesystem_cd
+            I2B2Core.sourcesystem_cd = self._sourcesystem_cd
             pd_entry = FHIRVisitDimension(g.value(predicate=FHIR.nodeRole, object=FHIR.treeRoot), 100001,
                                           "f201", "http://hl7.org/fhir",
                                           Literal("2013-03-11T10:28:00+01:00", datatype=XSD.dateTime).toPython())
@@ -82,7 +79,7 @@ class FHIRVisitDimensionTestCase(CRCTestCase):
                  ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 1700043)]), pd_entry.visit_dimension_entry._freeze())
+                 ('upload_id', 1700043)]), as_dict(pd_entry.visit_dimension_entry))
 
             self.assertEqual(OrderedDict([
                  ('encounter_ide', 'DiagnosticReport/f202'),
@@ -96,7 +93,7 @@ class FHIRVisitDimensionTestCase(CRCTestCase):
                  ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[0]._freeze())
+                 ('upload_id', 1700043)]), as_dict(pd_entry.encounter_mappings.encounter_mapping_entries[0]))
             self.assertEqual(OrderedDict([
                  ('encounter_ide', '500000'),
                  ('encounter_ide_source', 'HIVE'),
@@ -109,7 +106,7 @@ class FHIRVisitDimensionTestCase(CRCTestCase):
                  ('download_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('import_date', datetime.datetime(2017, 5, 25, 0, 0)),
                  ('sourcesystem_cd', self._sourcesystem_cd),
-                 ('upload_id', 1700043)]), pd_entry.encounter_mappings.encounter_mapping_entries[1]._freeze())
+                 ('upload_id', 1700043)]), as_dict(pd_entry.encounter_mappings.encounter_mapping_entries[1]))
             self.assertEqual(2, len(pd_entry.encounter_mappings.encounter_mapping_entries))
 
 

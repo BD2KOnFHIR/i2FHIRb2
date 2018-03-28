@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Mayo Clinic
+# Copyright (c) 2018, Mayo Clinic
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,30 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from tests.utils.fhir_graph import FHIRGraph
+from fhirtordf.rdfsupport.namespaces import namespace_for
+from i2b2model.metadata.i2b2conceptdimension import ConceptDimension
+from rdflib import Graph, URIRef
+from rdflib.namespace import split_uri
 
-shared_graph = FHIRGraph()
+from i2fhirb2.fhir.fhirspecific import concept_path, concept_code
+
+
+class FHIRConceptDimension(ConceptDimension):
+    graph: Graph = None
+
+    def __init__(self, subject: URIRef, subject_name: str, base_path: str = '\\') -> None:
+        """ FHIR wrapper for CommonDimension
+
+        :param subject: URI of the subject
+        :param subject_name: name of subject
+        :param base_path: base path of items
+        """
+        ns, code = split_uri(subject)
+        ns_prefix = namespace_for(ns).upper()
+        super().__init__(ns_prefix, code, subject_name, concept_path(subject)[:-1].split('\\'), base_path)
+
+    def path(self) -> str:
+        return self._base_path + self._subject_path
+
+    def name_char_(self) -> str:
+        return self._name

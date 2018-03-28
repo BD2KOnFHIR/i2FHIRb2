@@ -29,6 +29,8 @@
 import unittest
 
 import os
+from contextlib import redirect_stdout
+from io import StringIO
 
 from i2fhirb2.generate_i2b2 import generate_i2b2
 from tests.utils.script_test_base import ScriptTestBase
@@ -54,7 +56,17 @@ class GenerateI2B2TestCase(ScriptTestBase):
         self.check_output_output("-v", "version", exception=True)
 
     def test_list(self):
-        self.check_output_output("--list " + self.conf_file_loc, "list")
+        # Make sure we have the basic files -- that everything in list is in our list. There may be more, however
+        output = StringIO()
+        with redirect_stdout(output):
+            generate_i2b2(("--list " + self.conf_file_loc).split())
+        fullfilename = os.path.join(self.dirname, 'data_out', self.tst_dir, "list")
+        output_list_lines = output.getvalue().split('\n')
+        with open(fullfilename) as list_f:
+            list_f_lines = list_f.read().split('\n')
+        for line in list_f_lines:
+            if line not in output_list_lines:
+                self.assertFalse(f"Missing file in db: {line}")
 
     def test_test(self):
         self.save_output = True

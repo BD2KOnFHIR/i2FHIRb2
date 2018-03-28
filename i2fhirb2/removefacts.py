@@ -34,9 +34,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.orm import sessionmaker, Session
 
 from i2fhirb2.common_cli_parameters import add_common_parameters
-from i2fhirb2.file_aware_parser import FileAwareParser
+from i2b2model.sqlsupport.file_aware_parser import FileAwareParser
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
-from i2fhirb2.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
+from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables
 
 
 def create_parser() -> FileAwareParser:

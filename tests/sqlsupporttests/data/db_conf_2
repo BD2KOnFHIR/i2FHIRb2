@@ -1,8 +1,0 @@
---dburl postgresql+psycopg2://localhost:5431/i2b2
---user user1
---password password1
-
---crcuser user2
-
---ontodb postgresql+psycopg2://localhost:5433/i2b2
-

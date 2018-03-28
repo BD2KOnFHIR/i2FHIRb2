@@ -30,7 +30,7 @@ from datetime import datetime
 from rdflib import URIRef
 
 from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
-from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension, ActiveStatusCd
+from i2b2model.data.i2b2visitdimension import VisitDimension, ActiveStatusCd
 
 
 class FHIRVisitDimension:

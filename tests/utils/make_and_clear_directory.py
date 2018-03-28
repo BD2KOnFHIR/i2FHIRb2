@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Mayo Clinic
+# Copyright (c) 2018, Mayo Clinic
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,16 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-from tests.utils.fhir_graph import FHIRGraph
+import os
 
-shared_graph = FHIRGraph()
+
+def make_and_clear_directory(dirbase: str):
+    import shutil
+    safety_file = os.path.join(dirbase, "generated")
+    if os.path.exists(dirbase):
+        if not os.path.exists(safety_file):
+            raise FileExistsError("{} not found in test directory".format(safety_file))
+        shutil.rmtree(dirbase)
+    os.makedirs(dirbase)
+    with open(os.path.join(dirbase, "generated"), "w") as f:
+        f.write("Generated for safety.  Must be present for test to remove this directory.")

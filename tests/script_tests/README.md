@@ -12,7 +12,7 @@
 | test_loadfacts_script.py | test_no_args | Test the output of loadfacts when invoked with no arguments | data_out/loadfacts/noargs |
 | | test_no_input | Test the error message where no input is supplied | data_out/loadfacts/noinput | 
 | | test_help | Test the "-h" output | data_out/loadfacts/help |
-| test_patientdimension.py | test1 | Load `data/medicationdispense0308.ttl`. **Note:** this test is incomplete and is currently skipped | data/medicationdispense0308.ttl |
+| test_loadfacts_patientdimension.py | test1 | Load `data/medicationdispense0308.ttl`. **Note:** this test is incomplete and is currently skipped | data/medicationdispense0308.ttl |
 |  | test2 | Load `http://hl7.org/fhir/Patient/pat1`. **Note:** this test is incomplete and is currently skipped | dhttp://hl7.org/fhir/Patient/pat1 |
 | test_removefacts_script.py | test_no_args | Test the output of removefacts when invoked with no arguments | data_out/removefacts/noargs |
 | | test_help | Test the help output | data_out/removefacts/help | 

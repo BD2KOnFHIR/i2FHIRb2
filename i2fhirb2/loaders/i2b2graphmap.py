@@ -41,15 +41,16 @@ from i2fhirb2.fhir.fhirresourcemap import FHIR_RESOURCE_MAP, FHIR_Infrastructure
     FHIR_Resource_type
 from i2fhirb2.fhir.fhirspecific import FHIR
 from i2fhirb2.fhir.fhirvisitdimension import FHIRVisitDimension
-from i2fhirb2.i2b2model.data.i2b2encountermapping import EncounterMapping
-from i2fhirb2.i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact
-from i2fhirb2.i2b2model.data.i2b2patientdimension import PatientDimension
-from i2fhirb2.i2b2model.data.i2b2patientmapping import PatientMapping
-from i2fhirb2.i2b2model.data.i2b2visitdimension import VisitDimension
-from i2fhirb2.i2b2model.shared.i2b2core import I2B2Core
-from i2fhirb2.sqlsupport.dbconnection import I2B2Tables
-from i2fhirb2.sqlsupport.i2b2tables import change_column_length
+from i2b2model.data.i2b2encountermapping import EncounterMapping
+from i2b2model.data.i2b2observationfact import ObservationFactKey, ObservationFact
+from i2b2model.data.i2b2patientdimension import PatientDimension
+from i2b2model.data.i2b2patientmapping import PatientMapping
+from i2b2model.data.i2b2visitdimension import VisitDimension
+from i2b2model.shared.i2b2core import I2B2Core
+from i2b2model.sqlsupport.dbconnection import I2B2Tables
+from i2b2model.sqlsupport.i2b2tables import change_column_length
 from i2fhirb2.tsv_support.tsvwriter import write_tsv
+from dynprops import heading
 
 
 # TODO: Handle continuation pages in queries and bundles
@@ -141,7 +142,7 @@ class I2B2GraphMap:
         self._generate_tsv_file("encounter_mapping.tsv", EncounterMapping, self.encounter_mappings)
 
     def _generate_tsv_file(self, fname: str, cls, values: List[I2B2Core]) -> None:
-        write_tsv(self._opts.outdir, fname, cls._header(), values)
+        write_tsv(self._opts.outdir, fname, heading(cls), values)
 
     @staticmethod
     def clear_i2b2_tables(tables: I2B2Tables, uploadid: int) -> None:
