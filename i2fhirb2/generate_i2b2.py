@@ -41,12 +41,13 @@ from i2fhirb2.common_cli_parameters import add_common_parameters
 from i2b2model.metadata.commondimension import CommonDimension
 from rdflib import Graph
 from sqlalchemy import delete, Table, update
+from dynprops import heading, as_dict
 
 from i2fhirb2.fhir.fhirconceptdimension import FHIRConceptDimension
 from i2fhirb2.fhir.fhirmodifierdimension import FHIRModifierDimension
 from i2fhirb2.fhir.fhirontologytable import FHIROntologyTable
 from i2fhirb2.fhir.fhirspecific import FHIR, DEFAULT_BASE
-from i2b2model.metadata.i2b2ontology import OntologyEntry, OntologyRoot
+from i2b2model.metadata.i2b2ontology import OntologyEntry
 from i2b2model.metadata.i2b2tableaccess import TableAccess
 from i2b2model.shared.tablenames import i2b2tablenames
 from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args
@@ -112,7 +113,7 @@ def output_table_access(opts: Namespace) -> bool:
         if opts.outdir:
             return write_tsv(opts.outdir, 'table_access', heading(table_access), [table_access])
         else:
-            return update_table_access_table(opts, opts.tables.table_access, as_dict([table_access)])
+            return update_table_access_table(opts, opts.tables.table_access, [as_dict(table_access)])
     else:
         return True
 
@@ -199,7 +200,7 @@ def update_dimension_table(output: DIMENSION_LIST, opts: Namespace, table: Table
     ndel = opts.tables.crc_connection.execute(q).rowcount
     if ndel > 0:
         print("{} {} {} deleted".format(ndel, table, pluralize(ndel, "record")))
-    nins = opts.tables.crc_connection.execute(table.insert(), as_dict([e) for e in output]).rowcount
+    nins = opts.tables.crc_connection.execute(table.insert(), [as_dict(e) for e in output]).rowcount
     print("{} {} {} inserted".format(nins, table, pluralize(nins, "record")))
     return True
 

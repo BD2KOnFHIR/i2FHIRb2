@@ -92,7 +92,7 @@ Testing write access
 
 ## Quick Summary
 The sections below tell you how to:
-1) [Load the FHIR Metadata Vocabulary as an i2b2 ontology](#loading-the-FHIR-metadata-vocabulary-into-i2b2)
+1) [Load the FHIR Metadata Vocabulary as an i2b2 ontology](#loading-the-FHIR-Metadata-Vocabulary-into-i2b2)
 2) [Load FHIR data as observation facts]()
 3) [Run i2b2 queries across FHIR data]()
 

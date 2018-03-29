@@ -47,7 +47,7 @@ class ObsElement:
     """ Salient elements in an Observation Fact entry """
     def __init__(self, concept_cd: str, modifier_cd: str="@", instance_num: int=0, tval_char: Optional[str]=None,
                  nval_num: Optional[float]=None, encounter_num: int=0, units_cd: Optional[str]=None,
-                 alternate_tvals: List[str]=[]) -> None:
+                 alternate_tvals: List[str]=None) -> None:
         self.instance_num = instance_num
         self.concept_cd = concept_cd
         self.modifier_cd = modifier_cd
@@ -55,7 +55,7 @@ class ObsElement:
         self.nval_num = nval_num
         self.units_cd = units_cd
         self.encounter_num = encounter_num  # 0 means no encounter number
-        self.alternate_tvals = [tval_char] + alternate_tvals
+        self.alternate_tvals = [tval_char] + (alternate_tvals if alternate_tvals else [])
 
     def __str__(self) -> str:
         return f"{self.instance_num}, {self.concept_cd}, {self.modifier_cd}, {self.tval_char}, {self.nval_num}, " \
@@ -150,7 +150,7 @@ class CodeMappingResourcesTestCase(LoadFactsHelper):
             print(output_buffer.getvalue())
         if self.summarize_output:
             print("*" * 20)
-            print(',\n'.join([row(e) for e in sorted([obs_element(e) for e in ofl.observation_facts
+            print(',\n'.join([repr(e) for e in sorted([obs_element(e) for e in ofl.observation_facts
                                                       if e.concept_cd.startswith(self.print_output_filter)])]))
 
         output = output_buffer.getvalue()

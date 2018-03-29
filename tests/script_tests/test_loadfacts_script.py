@@ -30,11 +30,15 @@ import unittest
 
 import os
 
-from tests.utils.script_test_base import ScriptTestBase
+from i2b2model.testingutils.script_test_base import ScriptTestBase
+from i2fhirb2 import __version__
+
 from i2fhirb2.loadfacts import load_facts
 
 
 class LoadFactsTestCase(ScriptTestBase):
+    dirname = os.path.abspath(os.path.dirname(__file__))
+    version = __version__
 
     @classmethod
     def setUpClass(cls):

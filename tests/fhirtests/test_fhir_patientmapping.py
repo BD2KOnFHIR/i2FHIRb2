@@ -43,10 +43,11 @@ class FHIRPatientMappingTestCase(CRCTestCase):
 
     def test_patient_mapping(self):
         from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
-        from i2b2model.data.i2b2patientmapping import PatientMapping
 
         I2B2Core.update_date = datetime(2017, 5, 25)
         I2B2CoreWithUploadId.upload_id = 1773486
+
+        FHIRPatientMapping._clear()
 
         with self.sourcesystem_cd():
             I2B2Core.sourcesystem_cd = self._sourcesystem_cd

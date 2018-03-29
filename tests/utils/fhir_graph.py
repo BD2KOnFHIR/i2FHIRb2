@@ -36,6 +36,7 @@ test_data_directory = os.path.join(test_directory, 'data')
 
 mvdir = os.path.abspath(os.path.join(test_data_directory, 'fhir_metadata_vocabulary'))
 
+
 def FHIRGraph():
     print("Loading graph", end="")
     fmv = FHIRMetaVoc(os.path.join(mvdir, 'fhir.ttl'))

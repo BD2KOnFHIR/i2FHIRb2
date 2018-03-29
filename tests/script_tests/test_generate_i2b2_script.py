@@ -32,11 +32,15 @@ import os
 from contextlib import redirect_stdout
 from io import StringIO
 
+from i2b2model.testingutils.script_test_base import ScriptTestBase
+from i2fhirb2 import __version__
+
 from i2fhirb2.generate_i2b2 import generate_i2b2
-from tests.utils.script_test_base import ScriptTestBase
 
 
 class GenerateI2B2TestCase(ScriptTestBase):
+    dirname = os.path.abspath(os.path.dirname(__file__))
+    version = __version__
 
     @classmethod
     def setUpClass(cls):

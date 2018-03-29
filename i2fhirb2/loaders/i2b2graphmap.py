@@ -78,7 +78,7 @@ class I2B2GraphMap:
         nresources = 0
         for subj, subj_type in g.subject_objects(RDF.type):
             if isinstance(subj, URIRef) and subj_type in FHIR_RESOURCE_MAP:
-                action =  f"{nresources}: ({str(subj_type).split('/')[-1]}) - {subj}"
+                action = f"{nresources}: ({str(subj_type).split('/')[-1]}) - {subj}"
                 nresources += 1
                 mapped_type = FHIR_RESOURCE_MAP[subj_type]
                 if isinstance(mapped_type, FHIR_Infrastructure_type):

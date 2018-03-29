@@ -84,6 +84,7 @@ class ModifierOntologyEntry(OntologyEntry):
         return modifier_name(self.graph, self._mod)
 
     def c_metadataxml(self) -> Optional[str]:
+        # noinspection PyTypeChecker
         return metadata_xml(self._primitive_type, self.c_basecode, self.c_name, self.update_date) \
             if self._primitive_type else None
 

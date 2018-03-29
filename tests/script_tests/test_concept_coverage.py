@@ -53,7 +53,6 @@ class ConceptCoverageTestCase(unittest.TestCase):
     process_parsed_args(opts, None)
 
     @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
-    @unittest.expectedFailure
     def test_concept_coverage(self):
         """
         This test determines whether there are any concept codes in the observation fact table that don't have
@@ -74,7 +73,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
                              x.concept_dimension.c.concept_cd, isouter=True)).\
             where(and_(x.observation_fact.c.concept_cd.like(fhir_concept_prefix + '%'),
                        x.observation_fact.c.modifier_cd == '@',
-                       x.concept_dimension.c.concept_cd == None))
+                       x.concept_dimension.c.concept_cd is None))
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():
@@ -86,7 +85,6 @@ class ConceptCoverageTestCase(unittest.TestCase):
         self.assertEqual(0, count, "Orphan concept codes in observation fact table")
 
     @unittest.skipIf(skip_tests, "Test skipped because data tables not loaded")
-    @unittest.expectedFailure
     def test_modifier_coverage(self):
         """
         This test determines whether there are any modifier codes in the observation fact table that don't have
@@ -101,7 +99,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
                         join(x.modifier_dimension, x.observation_fact.c.modifier_cd ==
                              x.modifier_dimension.c.modifier_cd, isouter=True)).\
             where(and_(x.observation_fact.c.modifier_cd.like(fhir_concept_prefix + '%'),
-                       x.modifier_dimension.c.modifier_cd == None))
+                       x.modifier_dimension.c.modifier_cd is None))
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():
@@ -130,7 +128,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
                        ont_table.c.c_columnname == 'concept_path',
                        ont_table.c.c_operator == '=',
                        ont_table.c.c_dimcode.like('%FHIR%'),
-                       x.concept_dimension.c.concept_path == None))
+                       x.concept_dimension.c.concept_path is None))
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():
@@ -154,10 +152,10 @@ class ConceptCoverageTestCase(unittest.TestCase):
             select_from(x.concept_dimension.
                         join(ont_table, x.concept_dimension.c.concept_path ==
                              ont_table.c.c_dimcode, isouter=True)). \
-            where(and_(or_(ont_table.c.c_tablename == 'concept_dimension', ont_table.c.c_tablename == None),
-                       or_(ont_table.c.c_columnname == 'concept_path', ont_table.c.c_columnname == None),
+            where(and_(or_(ont_table.c.c_tablename == 'concept_dimension', ont_table.c.c_tablename is None),
+                       or_(ont_table.c.c_columnname == 'concept_path', ont_table.c.c_columnname is None),
                        x.concept_dimension.c.concept_path.like('%FHIR%'),
-                       ont_table.c.c_tablename == None))
+                       ont_table.c.c_tablename is None))
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():
@@ -185,7 +183,7 @@ class ConceptCoverageTestCase(unittest.TestCase):
                        ont_table.c.c_columnname == 'modifier_path',
                        ont_table.c.c_visualattributes == 'RA',
                        ont_table.c.c_dimcode.like('%FHIR%'),
-                       x.modifier_dimension.c.modifier_path == None))
+                       x.modifier_dimension.c.modifier_path is None))
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():
@@ -209,10 +207,10 @@ class ConceptCoverageTestCase(unittest.TestCase):
             select_from(x.modifier_dimension.
                         join(ont_table, x.modifier_dimension.c.modifier_path ==
                              ont_table.c.c_dimcode, isouter=True)). \
-            where(and_(or_(ont_table.c.c_tablename == 'modifier_dimension', ont_table.c.c_tablename == None),
-                       or_(ont_table.c.c_columnname == 'modifier_path', ont_table.c.c_columnname == None),
+            where(and_(or_(ont_table.c.c_tablename == 'modifier_dimension', ont_table.c.c_tablename is None),
+                       or_(ont_table.c.c_columnname == 'modifier_path', ont_table.c.c_columnname is None),
                        x.modifier_dimension.c.modifier_path.like('%FHIR%'),
-                       ont_table.c.c_tablename == None))        # see note at front of document
+                       ont_table.c.c_tablename is None))        # see note at front of document
 
         count = 0
         for e in x.crc_engine.execute(s).fetchall():

@@ -31,15 +31,21 @@ import unittest
 import os
 from functools import reduce
 
+from i2b2model.testingutils.script_test_base import ScriptTestBase
+
+from i2fhirb2.fhir.fhirencountermapping import FHIREncounterMapping
+from i2fhirb2.fhir.fhirpatientmapping import FHIRPatientMapping
 from tests.utils.crc_testcase import CRCTestCase
 
-from tests.utils.script_test_base import ScriptTestBase
 
 from i2fhirb2.loadfacts import load_facts
 from tests.utils.fhir_graph import test_conf_file
 
 
 class Issue8TestCase(ScriptTestBase, CRCTestCase):
+    dirname = os.path.abspath(os.path.dirname(__file__))
+    version = re.__version__
+
     enc_re = r'Starting encounter number: (\d+)'
     pat_re = r'Starting patient number: (\d+)'
     triples_re = r'\d+ triples'
@@ -55,6 +61,8 @@ class Issue8TestCase(ScriptTestBase, CRCTestCase):
         cls.save_output = False
         cls.tst_dir = "issue8"
         cls.tst_fcn = load_facts
+        FHIRPatientMapping._clear()
+        FHIREncounterMapping._clear()
 
     def test_patient_dimension_issue(self):
         datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))

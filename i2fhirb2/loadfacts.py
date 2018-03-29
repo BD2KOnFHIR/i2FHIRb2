@@ -45,7 +45,7 @@ from i2b2model.data.i2b2observationfact import ObservationFact
 
 from i2b2model.data.i2b2patientdimension import PatientDimension
 from i2b2model.data.i2b2patientmapping import PatientMapping
-from i2b2model.shared.i2b2core import I2B2CoreWithUploadId, I2B2Core
+from i2b2model.shared.i2b2core import I2B2Core, I2B2CoreWithUploadId
 
 from i2fhirb2.loaders.i2b2graphmap import I2B2GraphMap
 from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args, I2B2Tables

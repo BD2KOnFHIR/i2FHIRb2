@@ -31,15 +31,14 @@ from collections import OrderedDict
 
 import datetime
 
-from i2b2model.shared.i2b2core import I2B2CoreWithUploadId, I2B2Core
+from dynprops import as_dict
+from i2b2model.shared.i2b2core import I2B2Core, I2B2CoreWithUploadId
 
 from tests.utils.crc_testcase import CRCTestCase
 from rdflib import Graph, Literal, XSD
 
 from tests.utils.connection_helper import connection_helper
-from dynprops import as_dict, warn_mode
 
-warn_mode = True
 
 class FHIRPatientDimensionTestCase(CRCTestCase):
     def test_load_ttl(self):
@@ -117,7 +116,7 @@ class FHIRPatientDimensionTestCase(CRCTestCase):
     def test_patient_death_dates(self):
         """ Test the various types of deathdates"""
         # TODO: This test needs to be completed
-        from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension, PatientDimension
+        from i2fhirb2.fhir.fhirpatientdimension import FHIRPatientDimension
         from i2fhirb2.fhir.fhirspecific import FHIR
 
         g = Graph()

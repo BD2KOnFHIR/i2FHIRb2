@@ -30,11 +30,15 @@ import unittest
 
 import os
 
+from i2b2model.testingutils.script_test_base import ScriptTestBase
+from i2fhirb2 import __version__
+
 from i2fhirb2.conf_file import conf_file
-from tests.utils.script_test_base import ScriptTestBase
 
 
 class ConfFile(ScriptTestBase):
+    ScriptTestBase.dirname = os.path.abspath(os.path.dirname(__file__))
+    ScriptTestBase.version = __version__
 
     @classmethod
     def setUpClass(cls):
@@ -77,7 +81,8 @@ class ConfFile(ScriptTestBase):
         argstr = "-mv metavoc -ss sourcesystemcode -u 17334 --base BASE -ub uribase -p provider -db dburl " \
                  "--user defuser --password defpassword --crcdb crcdburl --crcuser crcuser --crcpassword crcpwd " \
                  "--ontodb ontdburl --ontouser ontuser --ontopassword ontpasswd --onttable tables"
-        self.check_output_output(f"-f {self.data_out_dir}/conf_file/big_conf -c! " + argstr, "all_args", multipart_test=True)
+        self.check_output_output(f"-f {self.data_out_dir}/conf_file/big_conf -c! " + argstr, "all_args",
+                                 multipart_test=True)
         self.check_output_output(f"-f {self.data_out_dir}/conf_file/big_conf", "show_all_args")
 
     def test_create_and_show(self):

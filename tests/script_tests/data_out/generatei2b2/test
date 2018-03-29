@@ -12,6 +12,7 @@ Validating target tables
 	Table patient_dimension exists
 	Table patient_mapping exists
 	Table provider_dimension exists
+	Table schemes exists
 	Table table_access exists
 	Table visit_dimension exists
 Testing write access

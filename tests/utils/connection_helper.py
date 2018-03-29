@@ -29,15 +29,11 @@ from argparse import Namespace, ArgumentParser
 
 from i2b2model.sqlsupport.dbconnection import add_connection_args, process_parsed_args
 from i2b2model.sqlsupport.file_aware_parser import FileAwareParser
-from tests.utils.fhir_graph import test_conf_directory
+from i2b2model.testingutils.connection_helper import create_parser, parse_args
+from tests.utils.fhir_graph import test_conf_file
 
 
 def connection_helper() -> Namespace:
-    parser = FileAwareParser(description="Test connection")
-    parser.add_argument("-l", "--load", help="Load i2b2 SQL tables", action="store_true")
-    parser.add_argument("-u", "--uploadid", metavar="Upload identifier",
-                        help="Upload identifer -- uniquely identifies this batch", type=int, required=True)
+    parser = create_parser()
     parser.add_argument("-mv", "--metavoc", help="Unused")
-    opts = add_connection_args(parser)\
-        .parse_args(parser.decode_file_args(['-u', '41712', '--conf', test_conf_directory + '/db_conf']))
-    return process_parsed_args(opts, parser.error)
+    return process_parsed_args(parse_args(parser, 41713, test_conf_file, []), FileAwareParser.error)
