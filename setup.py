@@ -1,28 +1,29 @@
-from setuptools import setup
-
-import sys
+from setuptools import setup, find_packages
+from os import path
 
 from i2fhirb2 import __version__
 
-requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2-binary', 'jsonasobj>=1.1.1',
-            'dirlistproc', 'fhirtordf>=0.9.3', 'isodate', 'i2b2model>=0.2.1', 'dynprops']
-if sys.version_info < (3, 5):
-    requires.append('typing')
+
+with open(path.join(path.abspath(path.dirname(__file__)), 'README.rst')) as f:
+    long_description = f.read()
+
+requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2-binary', 'jsonasobj>=1.1.3',
+            'dirlistproc', 'fhirtordf>=1.2.1', 'isodate', 'i2b2model>=0.2.4', 'dynprops>=0.2.1']
+packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
+print(packages)
 
 setup(
     name='i2FHIRb2',
     version=__version__,
-    packages=['tests', 'scripts', 'i2fhirb2', 'i2fhirb2.fhir', 'i2fhirb2.i2b2model', 'i2fhirb2.sqlsupport',
-              'i2fhirb2.i2b2model.data', 'i2fhirb2.i2b2model.metadata', 'i2fhirb2.i2b2model.shared',
-              'i2fhirb2.tsv_support', 'i2fhirb2.loaders'],
+    packages=packages,
     url='https://github.com/BD2KOnFHIR/i2FHIRb2',
     license='Apache 2.0',
     author='Harold Solbrig',
     author_email='solbrig.harold@mayo.edu',
     description='FHIR in i2b2 model conversion tools',
-    long_description='Toolkit to represent the "FHIR Ontology" in i2b2',
+    long_description=long_description,
     install_requires=requires,
-    scripts=['scripts/generate_i2b2', 'scripts/loadfacts', 'scripts/removefacts', 'scripts/conf_file'],
+    scripts=['scripts/conf_file', 'scripts/generate_i2b2', 'scripts/loadfacts', 'scripts/removefacts'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
