@@ -181,13 +181,13 @@ class FHIRPatientDimension:
         else:
             # TODO: decide whether we want to refine this further
             if dd.datatype == XSD.gYear:
-                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_year
+                self.patient_dimension_entry.vital_status_cd_.deathcode = VitalStatusCd.dd_year
             elif dd.datatype == XSD.gYearMonth:
-                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_month
+                self.patient_dimension_entry.vital_status_cd_.deathcode = VitalStatusCd.dd_month
             elif dd.datatype == XSD.date:
-                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_day
+                self.patient_dimension_entry.vital_status_cd_.deathcode = VitalStatusCd.dd_day
             else:
-                self.patient_dimension_entry.vital_status_code_.deathcode = VitalStatusCd.dd_hour
+                self.patient_dimension_entry.vital_status_cd_.deathcode = VitalStatusCd.dd_hour
             self.patient_dimension_entry.death_date = dd.toPython()
 
     def as_observation_facts(self, encounter_num: int, provider_id: str, start_date: datetime) -> List[ObservationFact]:

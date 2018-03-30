@@ -7,10 +7,8 @@ from i2fhirb2 import __version__
 with open(path.join(path.abspath(path.dirname(__file__)), 'README.rst')) as f:
     long_description = f.read()
 
-requires = ['SQLAlchemy', 'python_dateutil', 'rdflib', 'psycopg2-binary', 'jsonasobj>=1.1.3',
-            'dirlistproc', 'fhirtordf>=1.2.1', 'isodate', 'i2b2model>=0.2.4', 'dynprops>=0.2.1']
+requires = ['SQLAlchemy', 'rdflib', 'fhirtordf>=1.2.1', 'isodate', 'i2b2model>=0.2.4', 'dynprops>=0.2.1']
 packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
-print(packages)
 
 setup(
     name='i2FHIRb2',

@@ -113,7 +113,8 @@ class ConceptOntologyEntry(OntologyEntry):
         return concept_name(self.graph, self._subject)
 
     def c_metadataxml(self) -> Optional[str]:
-        return metadata_xml(self._primitive_type, self.c_basecode, self.c_name(), self.update_date) \
+        # noinspection PyTypeChecker
+        return metadata_xml(self._primitive_type, self.c_basecode, self.c_name, self.update_date) \
             if self._primitive_type else None
 
     def c_comment(self) -> Optional[str]:
